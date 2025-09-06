@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>猫の年齢計算｜【無料ツール】誕生日から人間年齢に換算</title>
+  <meta name="description" content="誕生日を入力するだけで、猫の年齢を人間年齢に換算。ライフステージと次の誕生日までの日数も表示します。入力はブラウザ内のみで安全。">
+  <link rel="canonical" href="https://tools.catnote.tokyo/cat-age">
+
+  <!-- Open Graph (任意) -->
+  <meta property="og:title" content="猫の年齢計算｜人間年齢に換算">
+  <meta property="og:description" content="誕生日を入れるだけで、猫の年齢を人間年齢に換算。ライフステージも表示。">
+  <meta property="og:type" content="website">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400..700&family=Outfit:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --primary:#FF69B4;         /* アウトライン/ホバーのライト */
+      --primary-strong:#E00070;  /* 主役数字/アクセント */
+      --text:#111; --muted:#666; --border:#E9E9EA;
+
+      --r-sm:8px; --r-md:12px; --r-lg:16px; --r-xl:24px;
+      --s-1:8px; --s-2:16px; --s-3:24px; --s-4:40px;
+      --ring:0 0 0 2px rgba(224,0,112,.35);
+    }
+
+    /* 基本とタイポ */
+    *,*::before,*::after{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{
+      margin:0; background:#fff; color:var(--text);
+      font-family:"Zen Kaku Gothic New","Noto Sans JP",-apple-system,system-ui,Segoe UI,Meiryo,sans-serif;
+      -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    }
+    .container{ max-width:760px; margin:0 auto; padding:0 var(--s-3) var(--s-4) }
+    .eyebrow{ font-size:14px; letter-spacing:.08em; text-transform:uppercase; color:rgba(224,0,112,.85); margin-top:var(--s-3) }
+    h1{ font-size:32px; line-height:1.25; font-weight:700; margin:.4rem 0 0 }
+    @media (min-width:768px){ h1{ font-size:40px; line-height:1.2 } }
+    .lead{ font-size:14px; color:var(--muted); margin:.6rem 0 var(--s-3); line-height:1.7 }
+    .section{ margin-top:var(--s-4) }
+    .label{ font-size:18px; font-weight:700; color:#111 }
+
+    /* 入力（上下並び） */
+    .surface{
+      padding:var(--s-3);
+      border:none; border-radius:0;               /* 枠と角丸をやめる */
+      border-bottom:1px solid var(--border);      /* 下線だけ */
+      overflow:hidden;
+    }
+    .row{ display:flex; flex-direction:column; gap:var(--s-2); margin-top:var(--s-2) }
+    input[type="date"]{
+      width:100%; height:64px; padding:0 var(--s-3);
+      border:2px solid #F0C7D8; border-radius:var(--r-xl);
+      font-size:18px; color:var(--text); background:#fff; box-shadow:inset 0 1px 0 #fff;
+      appearance:none; -webkit-appearance:none;
+    }
+    input[type="date"]:focus-visible{ outline:none; box-shadow:var(--ring) }
+    input[type="date"]::-webkit-datetime-edit-fields-wrapper{ padding:0 }
+    input[type="date"]::-webkit-inner-spin-button{ display:none }
+    input[type="date"]::-webkit-calendar-picker-indicator{ opacity:.75; padding:0 10px; margin-right:6px; cursor:pointer }
+
+    /* 結果表示（結果ブロックの下にも区切り線） */
+    .result{
+      text-align:center; position:relative; padding-top:8px; padding-bottom:var(--s-3);
+      border-bottom:1px solid var(--border);
+    }
+    .result .muted{ color:var(--muted); margin-bottom:6px; letter-spacing:.04em }
+    .numeral{
+      font-family:"Outfit",ui-sans-serif,system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+      font-variant-numeric:tabular-nums; letter-spacing:-.01em;
+    }
+    .big{ display:flex; align-items:baseline; justify-content:center; gap:10px; font-size:0 }
+    .age-group{ display:flex; align-items:baseline; gap:4px }
+    .age-group .numeral{ font-size:56px; font-weight:800; color:var(--primary-strong) }
+    .age-group .unit{ font-size:18px; color:#111; position:relative; top:-8px }
+    @media (min-width:768px){
+      .age-group .numeral{ font-size:88px }
+      .age-group .unit{ top:-10px; font-size:20px }
+    }
+
+    /* サブ情報：縦罫区切り */
+    .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-top:18px }
+    .cell{ background:transparent; border-left:1px solid #F0C7D8; padding:14px 16px }
+    .cell:first-child{ border-left:none }
+    .cell .k{ font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:#808080; text-align:center }
+    .cell .v{ font-weight:700; font-size:16px; text-align:center; margin-top:6px }
+
+    /* 共有ボタン＋メニュー */
+    .share-btn{
+      position:absolute; right:0; top:0; transform:translateY(-60%);
+      width:40px; height:40px; border-radius:999px; border:1px solid #D7DADF;
+      background:#fff; display:inline-grid; place-items:center; cursor:pointer;
+    }
+    .share-btn:hover{ border-color:#B7BBC3 }
+    .share-menu{
+      position:absolute; right:0; top:0; transform:translateY(-10%); z-index:20;
+      background:#fff; border:1px solid #E5E7EB; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,.08);
+      padding:6px; display:none; min-width:200px;
+    }
+    .share-menu.open{ display:block }
+    .share-item{
+      display:flex; align-items:center; gap:10px; width:100%;
+      padding:10px 12px; border-radius:8px; background:#fff; color:#111; text-decoration:none; cursor:pointer;
+    }
+    .share-item:hover{ background:#F8F9FB }
+    .share-item svg{ flex-shrink:0 }
+
+    /* FAQ（メリハリ強化） */
+    .section-title{ margin-top:var(--s-4); padding-top:var(--s-2); border-top:1px solid var(--border); font-weight:800; font-size:22px; letter-spacing:-.01em }
+    @media (min-width:768px){ .section-title{ font-size:24px } }
+    details{ border:none; border-top:1px solid #eee; padding:18px 0 }
+    details+details{ margin-top:0 }
+    summary{ list-style:none; cursor:pointer; display:flex; align-items:center; justify-content:space-between; font-weight:400; color:#111 }
+    summary::-webkit-details-marker{ display:none }
+    summary:hover{ color:var(--primary-strong) }
+    .chev{ transition:transform .15s ease }
+    details[open] .chev{ transform:rotate(180deg) }
+
+    .error{ color:#b00020; font-size:13px; margin-top:6px; min-height:1.2em }
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0 }
+    @media (prefers-reduced-motion:reduce){ .chev{ transition:none } }
+    footer{ color:#888; font-size:13px; margin-top:var(--s-4) }
+
+    /* トースト（コピーなどのフィードバック） */
+    .toast{
+      position:fixed; left:50%; bottom:24px; transform:translateX(-50%);
+      background:#111; color:#fff; font-size:14px; padding:10px 14px; border-radius:10px;
+      opacity:0; pointer-events:none; transition:opacity .18s ease;
+    }
+    .toast.show{ opacity:1 }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <!-- Hero -->
+    <section class="section">
+        <p class="eyebrow">猫の年齢を人間年齢に換算</p>
+        <h1>猫の年齢計算ツール</h1>
+        <p class="lead">誕生日を入力するだけで、人間年齢・ライフステージ・次の誕生日までを表示します。</p>
+    
+        <div class="surface">
+        <div class="label">誕生日を入力</div>
+        <div class="row">
+            <label for="dob" class="sr-only">猫の誕生日</label>
+            <input id="dob" type="date" autocomplete="bday" placeholder="2023-04-01" aria-describedby="dobHelp">
+        </div>
+        <div id="error" class="error" role="alert" aria-live="polite"></div>
+        </div>
+    </section>
+    
+    <!-- Result -->
+    <section id="resultSection" class="section" hidden aria-live="polite">
+        <div class="result">
+        <div class="muted">人間に換算すると</div>
+    
+        <div class="big">
+            <span class="age-group">
+            <span id="humanAgeYears" class="numeral">--</span><span class="unit">歳</span>
+            </span>
+            <span class="age-group">
+            <span id="humanAgeMonths" class="numeral">--</span><span class="unit">か月</span>
+            </span>
+        </div>
+    
+        <!-- 共有ボタン -->
+        <button id="shareBtn" class="share-btn" aria-haspopup="menu" aria-expanded="false" aria-label="共有メニューを開く">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#69707D" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+            <path d="M12 16V4"/>
+            <path d="M8 8l4-4 4 4"/>
+            </svg>
+        </button>
+    
+        <!-- 共有メニュー（JSで項目を注入） -->
+        <div id="shareMenu" class="share-menu" role="menu" aria-label="共有メニュー"></div>
+    
+        <div class="grid">
+            <div class="cell"><div class="k">実年齢</div><div id="realAge" class="v">—</div></div>
+            <div class="cell"><div class="k">ライフステージ</div><div id="stage" class="v">—</div></div>
+            <div class="cell"><div class="k">次の誕生日まで</div><div id="toBday" class="v">—</div></div>
+        </div>
+        </div>
+    </section>
+    
+    <!-- FAQ（常時表示） -->
+    <section class="section" aria-labelledby="faqTitle">
+        <h2 id="faqTitle" class="section-title">よくある質問</h2>
+        <div>
+        <details>
+            <summary>誕生日がはっきり分からないときは？ <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="muted" style="margin-top:8px">
+            だいたいで大丈夫です。月だけ分かるなら「その月の1日 or 15日」、年だけなら「その年の7/1」など、近い日を入れて目安として使ってください。
+            </div>
+        </details>
+        <details>
+            <summary>入力を変えるとすぐ計算されますか？ <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="muted" style="margin-top:8px">
+            はい。日付を変更すると下の結果が自動で更新されます。
+            </div>
+        </details>
+        <details>
+            <summary>どうやって換算しているの？ <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="muted" style="margin-top:8px">
+            目安として「1歳=人の15歳、2歳=24歳、以降は1年ごとに+4歳」で計算し、月はなめらかに補間しています。
+            </div>
+        </details>
+        <details>
+            <summary>ライフステージは何の役に立つ？ <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="muted" style="margin-top:8px">
+            成長のだいたいの段階が分かります。<br>
+            ・子猫：遊びやすい環境づくり<br>
+            ・若年成猫：遊び＋体重管理のペースづくり<br>
+            ・成猫：生活リズムの見直しに<br>
+            ・シニア：無理のない運動やチェックの目安に
+            </div>
+        </details>
+        <details>
+            <summary>結果は共有できますか？プライバシーは？ <svg class="chev" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5"><path d="M6 9l6 6 6-6"/></svg></summary>
+            <div class="muted" style="margin-top:8px">
+            右上の共有ボタンからURLをコピー・共有できます。サーバーには何も送信されず、URLに含まれるのは誕生日の日付だけです。
+            </div>
+        </details>
+        </div>
+    </section>
+    
+    <footer class="section">© <span id="year"></span> CAT LINK tools</footer>  
+  </main>
+
+  <!-- FAQ 構造化データ（更新版） -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"FAQPage",
+    "mainEntity":[
+      {"@type":"Question","name":"誕生日がはっきり分からないときは？","acceptedAnswer":{"@type":"Answer","text":"だいたいで大丈夫です。月だけ分かるならその月の1日や15日、年だけならその年の7/1など、近い日を入れて目安として使ってください。"}},
+      {"@type":"Question","name":"入力を変えるとすぐ計算されますか？","acceptedAnswer":{"@type":"Answer","text":"はい。日付を変更すると結果が自動で更新されます。"}},
+      {"@type":"Question","name":"どうやって換算しているの？","acceptedAnswer":{"@type":"Answer","text":"目安として、1歳=人の15歳、2歳=24歳、以降は1年ごとに+4歳で計算し、月はなめらかに補間しています。"}},
+      {"@type":"Question","name":"ライフステージは何の役に立つ？","acceptedAnswer":{"@type":"Answer","text":"成長のだいたいの段階が分かります。子猫→若年成猫→成猫→シニアの目安で、遊びや体重管理、無理のない運動などの参考にしてください。"}},
+      {"@type":"Question","name":"結果は共有できますか？プライバシーは？","acceptedAnswer":{"@type":"Answer","text":"右上の共有ボタンからURLをコピー・共有できます。サーバーには何も送信されず、URLに含まれるのは誕生日の日付だけです。"}}
+    ]
+  }
+  </script>
+
+  <script>
+    const $ = (s)=>document.querySelector(s);
+    const dobInput = $('#dob');
+    const resultSection = $('#resultSection');
+    const humanAgeYearsEl = $('#humanAgeYears');
+    const humanAgeMonthsEl = $('#humanAgeMonths');
+    const realAgeEl = $('#realAge');
+    const stageEl = $('#stage');
+    const toBdayEl = $('#toBday');
+    const errEl = $('#error');
+    const yearEl = $('#year');
+    const shareBtn = $('#shareBtn');
+    const shareMenu = $('#shareMenu');
+    const toast = document.createElement('div'); toast.className='toast'; document.body.appendChild(toast);
+    yearEl.textContent = String(new Date().getFullYear());
+
+    // URL ?dob=YYYY-MM-DD を反映
+    const params = new URLSearchParams(location.search);
+    if (params.get('dob')) { dobInput.value = params.get('dob'); calculate(); }
+
+    // 入力変更でリアクティブ
+    dobInput.addEventListener('change', calculate);
+
+    // 未来日をUIでもブロック
+    (function setMaxToday(){
+      const t = new Date(); t.setHours(0,0,0,0);
+      const yyyy = t.getFullYear();
+      const mm = String(t.getMonth()+1).padStart(2,'0');
+      const dd = String(t.getDate()).padStart(2,'0');
+      dobInput.setAttribute('max', `${yyyy}-${mm}-${dd}`);
+    })();
+
+    function calculate(){
+      errEl.textContent='';
+      const v = dobInput.value;
+      if(!v){ errEl.textContent = '誕生日を入力してください。'; resultSection.hidden = true; return; }
+
+      const dob = toLocalDate(v);
+      const today = new Date();
+      if(dob > today){ errEl.textContent='未来日は指定できません。'; resultSection.hidden=true; return; }
+
+      // 実年齢（月）
+      const months = diffInMonths(dob, today);
+      const realY = Math.floor(months/12);
+      const realM = months % 12;
+
+      // 人間年齢（年の小数）→ 年＋月に変換（四捨五入で最も近い月）
+      const humanYears = humanAgeYearsDecimal(months);
+      const hmTotal = Math.round(humanYears * 12);
+      const humanY = Math.floor(hmTotal / 12);
+      const humanM = hmTotal % 12;
+
+      // ライフステージ（目安）
+      const st = lifeStage(humanYears);
+
+      // 次の誕生日まで（日）
+      const days = daysUntilNextBirthday(dob, today);
+
+      // 表示
+      humanAgeYearsEl.textContent = String(humanY);
+      humanAgeMonthsEl.textContent = String(humanM);
+      realAgeEl.textContent = `${realY}年${realM}か月`;
+      stageEl.textContent = st;
+      toBdayEl.textContent = `${days}日`;
+
+      // 共有URL同期
+      const url = new URL(location.href);
+      url.searchParams.set('dob', v);
+      history.replaceState(null,'',url);
+
+      resultSection.hidden = false;
+    }
+
+    // ===== 共有メニュー =====
+    function buildShareMenu(){
+      shareMenu.innerHTML = '';
+      const url = new URL(location.href).toString();
+      const text = `うちの猫の人間年齢は「${humanAgeYearsEl.textContent}歳${humanAgeMonthsEl.textContent}か月」でした🐾`;
+
+      // Web Share API が使える端末（主にSP）には「共有」ボタンも出す
+      if (navigator.share){
+        const btnShare = document.createElement('button');
+        btnShare.className='share-item';
+        btnShare.innerHTML = iconShare() + '<span>この結果を共有</span>';
+        btnShare.addEventListener('click', async () => {
+          try {
+            await navigator.share({ title: '猫の年齢計算', text, url });
+          } catch(e) {}
+          toggleShare(false);
+        });
+        shareMenu.appendChild(btnShare);
+      }
+
+      // X でシェア（PC/モバイル共通で表示）
+      const btnX = document.createElement('a');
+      btnX.className='share-item';
+      btnX.href = xShareUrl(url, text);
+      btnX.target = '_blank'; btnX.rel='noopener';
+      btnX.innerHTML = iconX() + '<span>Xでシェア</span>';
+      btnX.addEventListener('click', ()=> toggleShare(false));
+      shareMenu.appendChild(btnX);
+
+      // URLコピー（おまけ）
+      const btnCopy = document.createElement('button');
+      btnCopy.className='share-item';
+      btnCopy.innerHTML = iconLink() + '<span>リンクをコピー</span>';
+      btnCopy.addEventListener('click', async () => {
+        await navigator.clipboard.writeText(url);
+        showToast('リンクをコピーしました');
+        toggleShare(false);
+      });
+      shareMenu.appendChild(btnCopy);
+    }
+
+    function toggleShare(open){
+      if (typeof open === 'undefined') open = !shareMenu.classList.contains('open');
+      shareMenu.classList.toggle('open', open);
+      shareBtn.setAttribute('aria-expanded', String(open));
+      if (open) buildShareMenu();
+    }
+
+    shareBtn.addEventListener('click', (e)=>{ e.stopPropagation(); toggleShare(); });
+    document.addEventListener('click', (e)=> {
+      if (!shareMenu.contains(e.target) && e.target !== shareBtn) toggleShare(false);
+    });
+    document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') toggleShare(false); });
+
+    function xShareUrl(url, text){
+      const p = new URLSearchParams({ url, text });
+      // x.com で失敗する環境もあるので twitter.com も許容
+      return `https://x.com/intent/post?${p.toString()}`;
+    }
+    function iconX(){ return `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M18.2 3h2.4l-5.2 5.9L22 21h-4.8l-3.7-7-4.2 4.8V21H4V3h5.3v7.5L18.2 3z"/>
+      </svg>`;}
+    function iconShare(){ return `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 16V4"/><path d="M8 8l4-4 4 4"/>
+      </svg>`;}
+    function iconLink(){ return `
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true">
+        <path d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 12"/>
+        <path d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 1 1-7-7L7 12"/>
+      </svg>`;}
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(()=> toast.classList.remove('show'), 1600);
+    }
+
+    // ===== 計算ユーティリティ =====
+    function toLocalDate(yyyyMMdd){ const [y,m,d] = yyyyMMdd.split('-').map(Number); const dt=new Date(); dt.setHours(0,0,0,0); dt.setFullYear(y,m-1,d); return dt; }
+    function stripTime(d){ const x=new Date(d); x.setHours(0,0,0,0); return x; }
+    function diffInMonths(a,b){ let months=(b.getFullYear()-a.getFullYear())*12+(b.getMonth()-a.getMonth()); if (b.getDate()<a.getDate()) months--; return Math.max(0,months); }
+    function humanAgeYearsDecimal(months){ if(months<=0) return 0; if(months<12) return 15*(months/12); if(months<24) return 15+9*((months-12)/12); return 24+4*((months-24)/12); }
+    function lifeStage(h){ if(h<15) return '子猫'; if(h<40) return '若年成猫'; if(h<56) return '成猫'; return 'シニア'; }
+    function daysUntilNextBirthday(dob,today){ const next=new Date(today); next.setHours(0,0,0,0); next.setMonth(dob.getMonth(), dob.getDate()); if(next<=today) next.setFullYear(today.getFullYear()+1); return Math.ceil((next - stripTime(today))/86400000); }
+
+    // 初期描画（入力済みURLの時に共有メニューも正しく出すため）
+    buildShareMenu();
+  </script>
+</body>
+</html>
