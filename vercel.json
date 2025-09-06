@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/cat-age",
-      "destination": "/"
+      "destination": "/calculate-cat-age"
     }
   ],
   "headers": [

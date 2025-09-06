@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://tools.catnote.tokyo'),
   alternates: {
-    canonical: '/cat-age',
+    canonical: '/calculate-cat-age',
   },
   openGraph: {
     title: "猫の年齢計算｜人間年齢に換算",

@@ -28,7 +28,3 @@ npm run dev
 ## デプロイ
 
 Vercelでホスティング予定
-
-## ライセンス
-
-© CAT LINK tools
