@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     description: "誕生日を入れるだけで、猫の年齢を人間年齢に換算。ライフステージも表示。",
     type: "website",
     locale: "ja_JP",
-    url: "https://tools.catnote.tokyo/cat-age",
+    url: "https://tools.catnote.tokyo/calculate-cat-age",
     siteName: "CAT LINK tools",
   },
   twitter: {
@@ -66,6 +66,8 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
@@ -78,10 +80,26 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "FAQPage",
-              "mainEntity": [
+            __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "猫の年齢計算ツール",
+                "url": "https://tools.catnote.tokyo/calculate-cat-age",
+                "description": "誕生日を入力するだけで、猫の年齢を人間年齢に換算。ライフステージと次の誕生日までの日数も表示します。",
+                "applicationCategory": "CalculatorApplication",
+                "operatingSystem": "Any",
+                "browserRequirements": "Requires JavaScript",
+                "offers": {
+                  "@type": "Offer",
+                  "price": "0",
+                  "priceCurrency": "JPY"
+                }
+              },
+              {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": [
                 {
                   "@type": "Question",
                   "name": "誕生日がはっきり分からないときは？",
@@ -123,7 +141,8 @@ export default function RootLayout({
                   }
                 }
               ]
-            })
+              }
+            ])
           }}
         />
       </body>
