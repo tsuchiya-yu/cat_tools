@@ -36,20 +36,34 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
           humanAgeMonths={result.humanAgeMonths}
         />
 
-        <div className="grid grid-cols-3 gap-0 mt-4.5">
-          <div className="cell bg-transparent border-l border-pink-200 px-4 py-3.5 first:border-l-0">
-            <div className="k text-xs uppercase tracking-wide text-gray-500 text-center">実年齢</div>
-            <div className="v font-bold text-base text-center mt-1.5">
+        {/* モバイルでは縦並び、PCでは横並び */}
+        <div className="flex flex-col sm:grid sm:grid-cols-3 mt-8">
+          {/* PCでの区切り線 */}
+          <div className="hidden sm:block absolute left-1/3 top-1/2 -translate-y-1/2 w-px h-16 bg-pink-200"></div>
+          <div className="hidden sm:block absolute left-2/3 top-1/2 -translate-y-1/2 w-px h-16 bg-pink-200"></div>
+
+          {/* 実年齢 */}
+          <div className="py-4 sm:py-0">
+            <div className="text-sm text-gray-500 mb-1.5">実年齢</div>
+            <div className="font-extrabold text-2xl sm:text-xl font-mono">
               {result.realAgeYears}年{result.realAgeMonths}か月
             </div>
           </div>
-          <div className="cell bg-transparent border-l border-pink-200 px-4 py-3.5">
-            <div className="k text-xs uppercase tracking-wide text-gray-500 text-center">ライフステージ</div>
-            <div className="v font-bold text-base text-center mt-1.5">{result.lifeStage}</div>
+
+          {/* ライフステージ */}
+          <div className="py-4 sm:py-0 border-t sm:border-t-0 border-pink-100">
+            <div className="text-sm text-gray-500 mb-1.5">ライフステージ</div>
+            <div className="font-extrabold text-2xl sm:text-xl">
+              {result.lifeStage}
+            </div>
           </div>
-          <div className="cell bg-transparent border-l border-pink-200 px-4 py-3.5">
-            <div className="k text-xs uppercase tracking-wide text-gray-500 text-center">次の誕生日まで</div>
-            <div className="v font-bold text-base text-center mt-1.5">{result.daysUntilBirthday}日</div>
+
+          {/* 次の誕生日まで */}
+          <div className="py-4 sm:py-0 border-t sm:border-t-0 border-pink-100">
+            <div className="text-sm text-gray-500 mb-1.5">次の誕生日まで</div>
+            <div className="font-extrabold text-2xl sm:text-xl font-mono">
+              {result.daysUntilBirthday}日
+            </div>
           </div>
         </div>
       </div>

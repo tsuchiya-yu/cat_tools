@@ -47,11 +47,14 @@ export function humanAgeYearsDecimal(months: number): number {
 /**
  * 人間年齢からライフステージを判定
  */
-export function lifeStage(humanAge: number): string {
-  if (humanAge < 15) return '子猫';
-  if (humanAge < 40) return '若年成猫';
-  if (humanAge < 56) return '成猫';
-  return 'シニア';
+export function lifeStage(humanAge: number, years: number, months: number): string {
+  // 実年齢からライフステージを判定
+  const realAge = years + months / 12;
+  
+  if (realAge <= 1) return '子猫(0–1歳)';
+  if (realAge <= 6) return '若年成猫(1–6歳)';
+  if (realAge <= 10) return '成熟成猫(7–10歳)';
+  return 'シニア(11歳〜)';
 }
 
 /**
@@ -88,7 +91,7 @@ export function calculateCatAge(birthDateString: string): CatAgeResult {
   const humanAgeMonths = hmTotal % 12;
   
   // ライフステージ
-  const stage = lifeStage(humanYears);
+  const stage = lifeStage(humanYears, realAgeYears, realAgeMonths);
   
   // 次の誕生日まで
   const days = daysUntilNextBirthday(birthDate, today);

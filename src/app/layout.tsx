@@ -128,6 +128,9 @@ export default function RootLayout({
         className={`${zenKakuGothicNew.variable} ${outfit.variable} antialiased`}
       >
         {children}
+        <footer className="section text-gray-500 text-sm mt-10">
+          © {new Date().getFullYear()} CAT LINK tools
+        </footer>
       </body>
     </html>
   );

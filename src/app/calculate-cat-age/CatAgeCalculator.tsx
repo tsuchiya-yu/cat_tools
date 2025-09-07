@@ -91,11 +91,6 @@ export default function CatAgeCalculator() {
 
         {/* FAQ Section */}
         <FAQ />
-
-        {/* Footer */}
-        <footer className="section text-gray-500 text-sm mt-10">
-          © {new Date().getFullYear()} CAT LINK tools
-        </footer>
     </main>
   );
 }
