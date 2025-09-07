@@ -69,11 +69,11 @@ export default function CatAgeCalculator() {
           <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">
             猫の年齢計算ツール
           </h1>
-          <p className="lead text-sm text-gray-600 mt-2.5 mb-4 leading-relaxed">
+          <p className="lead text-sm text-gray-600 mt-2.5 mb-0 leading-relaxed">
             誕生日を入力するだけで、人間年齢・ライフステージ・次の誕生日までを表示します。
           </p>
 
-          <div className="surface p-6 border-none overflow-hidden">
+          <div className="surface p-4 border-none overflow-hidden">
             <DateInput
               value={birthDate}
               onChange={handleDateChange}

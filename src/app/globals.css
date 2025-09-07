@@ -80,7 +80,7 @@ h1 {
 }
 
 .section {
-  margin-top: var(--s-4);
+  margin-top: var(--s-2);
 }
 
 .label {
@@ -139,13 +139,12 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
 }
 
-/* 結果表示（結果ブロックの下にも区切り線） */
+/* 結果表示 */
 .result {
   text-align: center;
   position: relative;
   padding-top: 8px;
   padding-bottom: var(--s-3);
-  border-bottom: 1px solid var(--border);
 }
 
 .result .muted {
@@ -234,7 +233,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .share-btn {
   position: absolute;
   right: 0;
-  top: 0;
+  top: 50px;
   transform: translateY(-60%);
   width: 40px;
   height: 40px;
@@ -293,7 +292,6 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 .section-title {
   margin-top: var(--s-4);
   padding-top: var(--s-2);
-  border-top: 1px solid var(--border);
   font-weight: 800;
   font-size: 22px;
   letter-spacing: -.01em;

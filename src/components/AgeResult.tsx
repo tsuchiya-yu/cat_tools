@@ -13,7 +13,7 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
 
   return (
     <section className="section" aria-live="polite">
-      <div className="result relative text-center pt-2 pb-6 border-b border-gray-200">
+      <div className="result relative text-center py-6">
         <div className="text-gray-600 mb-1.5 tracking-wide text-sm">人間に換算すると</div>
 
         <div className="big flex items-baseline justify-center gap-2.5 text-[0]">

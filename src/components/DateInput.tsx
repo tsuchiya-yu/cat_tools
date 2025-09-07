@@ -12,7 +12,7 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
   const maxDate = getTodayString();
 
   return (
-    <div className="surface">
+    <div className="mb-4">
       <div className="label">誕生日を入力</div>
       <div className="row">
         <label htmlFor="dob" className="sr-only">
