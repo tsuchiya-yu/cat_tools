@@ -44,8 +44,8 @@ export default function FAQ() {
   };
 
   return (
-    <section className="section mt-10" aria-labelledby="faqTitle">
-      <h2 id="faqTitle" className="section-title mt-10 pt-4 border-t border-gray-200 font-extrabold text-xl md:text-2xl tracking-tight">
+    <section className="section mt-10 mb-8" aria-labelledby="faqTitle">
+      <h2 id="faqTitle" className="section-title mt-10 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
         よくある質問
       </h2>
       <div>

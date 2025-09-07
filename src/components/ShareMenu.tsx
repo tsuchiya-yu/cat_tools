@@ -82,7 +82,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
   return (
     <>
       <button
-        className="share-btn absolute right-0 top-0 -translate-y-3/5 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
+        className="share-btn absolute right-0 top-2 -translate-y-3/5 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
         onClick={(e) => {
           e.stopPropagation();
           toggleShare();
@@ -99,7 +99,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
       </button>
 
       {isOpen && (
-        <div className="share-menu absolute right-0 top-0 -translate-y-1/10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 min-w-[200px]" role="menu" aria-label="共有メニュー">
+        <div className="share-menu absolute right-0 top-2 -translate-y-1/10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 min-w-[200px]" role="menu" aria-label="共有メニュー">
           {navigator.share && (
             <button
               className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
