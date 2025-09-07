@@ -6,6 +6,7 @@ import { CatAgeResult } from '@/types';
 import DateInput from '@/components/DateInput';
 import AgeResult from '@/components/AgeResult';
 import FAQ from '@/components/FAQ';
+import { UI_TEXT } from '@/constants/text';
 
 export default function CatAgeCalculator() {
   const [birthDate, setBirthDate] = useState('');
@@ -26,7 +27,7 @@ export default function CatAgeCalculator() {
     setError('');
     
     if (!dateValue) {
-      setError('誕生日を入力してください。');
+      setError(UI_TEXT.INPUT.ERROR.REQUIRED);
       setResult(null);
       return;
     }
@@ -35,7 +36,7 @@ export default function CatAgeCalculator() {
     const today = new Date();
     
     if (birthDateObj > today) {
-      setError('未来日は指定できません。');
+      setError(UI_TEXT.INPUT.ERROR.FUTURE_DATE);
       setResult(null);
       return;
     }
@@ -49,7 +50,7 @@ export default function CatAgeCalculator() {
       url.searchParams.set('dob', dateValue);
       window.history.replaceState(null, '', url.toString());
     } catch (err) {
-      setError('計算中にエラーが発生しました。');
+      setError(UI_TEXT.INPUT.ERROR.CALCULATION_ERROR);
       setResult(null);
     }
   };
@@ -64,13 +65,13 @@ export default function CatAgeCalculator() {
         {/* Hero Section */}
         <section className="section mt-6">
           <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 opacity-85 mt-6">
-            猫の年齢を人間年齢に換算
+            {UI_TEXT.HEADER.EYECATCH}
           </p>
           <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">
-            猫の年齢計算ツール
+            {UI_TEXT.HEADER.TITLE}
           </h1>
           <p className="lead text-sm text-gray-600 mt-2.5 mb-0 leading-relaxed">
-            誕生日を入力するだけで、人間年齢・ライフステージ・次の誕生日までを表示します。
+            {UI_TEXT.HEADER.DESCRIPTION}
           </p>
 
           <div className="surface p-4 border-none overflow-hidden">
