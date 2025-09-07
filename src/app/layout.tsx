@@ -128,8 +128,68 @@ export default function RootLayout({
         className={`${zenKakuGothicNew.variable} ${outfit.variable} antialiased`}
       >
         {children}
-        <footer className="section text-gray-500 text-sm mt-10">
-          © {new Date().getFullYear()} CAT LINK tools
+        <footer className="section text-gray-500 text-sm mt-10 pb-10">
+          <div className="container max-w-3xl mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* 規約 */}
+              <div>
+                <h2 className="font-bold mb-2">規約</h2>
+                <ul className="space-y-2">
+                  <li>
+                    <a 
+                      href="https://cat-link.catnote.tokyo/terms" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      利用規約
+                    </a>
+                  </li>
+                  <li>
+                    <a 
+                      href="https://cat-link.catnote.tokyo/privacy" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      プライバシーポリシー
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              {/* お問い合わせ・SNS */}
+              <div>
+                <h2 className="font-bold mb-2">お問い合わせ・SNS</h2>
+                <ul className="space-y-2">
+                  <li>
+                    <a 
+                      href="https://docs.google.com/forms/d/e/1FAIpQLSeGH6AykLYDuxFasGFDUGGuCv72Ejfm1P1SDfPh2Q2RZVOzkg/viewform" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      お問い合わせ
+                    </a>
+                  </li>
+                  <li>
+                    <a 
+                      href="https://x.com/CATLINK_PR" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      SNS
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="text-center mt-8">
+              © {new Date().getFullYear()} CAT LINK tools
+            </div>
+          </div>
         </footer>
       </body>
     </html>
