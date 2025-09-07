@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { UI_TEXT } from '@/constants/text';
+import { IoShareOutline } from 'react-icons/io5';
+import { FaXTwitter } from 'react-icons/fa6';
+import { IoLinkOutline } from 'react-icons/io5';
 
 interface ShareMenuProps {
   humanAgeYears: number;
@@ -92,11 +95,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
         aria-expanded={isOpen}
         aria-label={UI_TEXT.SHARE.BUTTON_LABEL}
       >
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#69707D" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
-          <path d="M12 16V4"/>
-          <path d="M8 8l4-4 4 4"/>
-        </svg>
+        <IoShareOutline className="w-5 h-5 text-gray-600" aria-hidden="true" />
       </button>
 
       {isOpen && (
@@ -106,11 +105,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
               className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
               onClick={handleShare}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
-                <path d="M12 16V4"/>
-                <path d="M8 8l4-4 4 4"/>
-              </svg>
+              <IoShareOutline className="w-[18px] h-[18px]" aria-hidden="true" />
               <span>{UI_TEXT.SHARE.MENU_ITEMS.SHARE}</span>
             </button>
           )}
@@ -119,9 +114,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
             className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
             onClick={handleXShare}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M18.2 3h2.4l-5.2 5.9L22 21h-4.8l-3.7-7-4.2 4.8V21H4V3h5.3v7.5L18.2 3z"/>
-            </svg>
+            <FaXTwitter className="w-[18px] h-[18px]" aria-hidden="true" />
             <span>{UI_TEXT.SHARE.MENU_ITEMS.X_SHARE}</span>
           </button>
 
@@ -129,10 +122,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
             className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
             onClick={handleCopyLink}
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-              <path d="M10 13a5 5 0 0 1 0-7l1.5-1.5a5 5 0 0 1 7 7L17 12"/>
-              <path d="M14 11a5 5 0 0 1 0 7L12.5 19.5a5 5 0 1 1-7-7L7 12"/>
-            </svg>
+            <IoLinkOutline className="w-[18px] h-[18px]" aria-hidden="true" />
             <span>{UI_TEXT.SHARE.MENU_ITEMS.COPY_LINK}</span>
           </button>
         </div>
