@@ -85,3 +85,18 @@ export const FAQ_ITEMS = [
     answer: '右上の共有ボタンからURLをコピー・共有できます。サーバーには何も送信されず、URLに含まれるのは誕生日の日付だけです。',
   },
 ] as const;
+
+// 構造化データ（JSON-LD）用のテキスト
+export const STRUCTURED_DATA = {
+  FAQ: {
+    TYPE: 'FAQPage',
+    ITEMS: FAQ_ITEMS.map(item => ({
+      '@type': 'Question',
+      'name': item.question,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': item.answer.replace(/\n/g, ' ') // 改行を空白に変換
+      }
+    }))
+  }
+} as const;
