@@ -2,6 +2,9 @@ import type { Metadata, Viewport } from "next";
 import { Zen_Kaku_Gothic_New, Outfit } from "next/font/google";
 import "./globals.css";
 import { STRUCTURED_DATA } from '@/constants/text';
+import { GA_MEASUREMENT_ID } from '@/lib/gtag';
+import { Suspense } from 'react';
+import Analytics from '@/components/Analytics';
 
 const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   weight: ['400', '700'],
@@ -95,6 +98,28 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
+        {/* Google Analytics 4 */}
+        {GA_MEASUREMENT_ID && (
+          <>
+            <script
+              async
+              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+            />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                  window.dataLayer = window.dataLayer || [];
+                  function gtag(){dataLayer.push(arguments);}
+                  gtag('js', new Date());
+                  gtag('config', '${GA_MEASUREMENT_ID}', {
+                    page_path: window.location.pathname,
+                  });
+                `,
+              }}
+            />
+          </>
+        )}
+        
         {/* サイト全体の構造化データ */}
         <script
           type="application/ld+json"
@@ -162,6 +187,9 @@ export default function RootLayout({
       <body
         className={`${zenKakuGothicNew.variable} ${outfit.variable} antialiased`}
       >
+        <Suspense fallback={null}>
+          <Analytics />
+        </Suspense>
         {children}
         <footer className="section text-gray-500 text-sm mt-10 pb-10">
           <div className="container max-w-3xl mx-auto px-6">
