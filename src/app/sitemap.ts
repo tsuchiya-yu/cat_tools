@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://tools.catnote.tokyo';
+  const baseUrl = 'https://cat-tools.catnote.tokyo';
   
   return [
     {

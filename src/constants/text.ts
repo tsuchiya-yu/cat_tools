@@ -6,7 +6,7 @@ export const META = {
   OG: {
     TITLE: '猫の年齢計算｜人間年齢に換算',
     DESCRIPTION: '誕生日を入れるだけで、猫の年齢を人間年齢に換算。ライフステージも表示。',
-    URL: 'https://tools.catnote.tokyo/calculate-cat-age',
+    URL: 'https://cat-tools.catnote.tokyo/calculate-cat-age',
     SITE_NAME: 'ねこツールズ',
   },
 } as const;

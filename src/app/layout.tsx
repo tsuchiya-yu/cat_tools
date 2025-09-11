@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://tools.catnote.tokyo'),
+  metadataBase: new URL('https://cat-tools.catnote.tokyo'),
   alternates: {
     canonical: '/',
   },
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     description: "飼い主さんのために猫に関する便利なツールを集めています。愛猫との生活をより豊かにするためのWebアプリケーション集です。",
     type: "website",
     locale: "ja_JP",
-    url: "https://tools.catnote.tokyo",
+    url: "https://cat-tools.catnote.tokyo",
     siteName: "ねこツールズ",
     images: [
       {
@@ -103,7 +103,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "ねこツールズ",
-              "url": "https://tools.catnote.tokyo",
+              "url": "https://cat-tools.catnote.tokyo",
               "description": "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
               "publisher": {
                 "@type": "Organization",
@@ -111,7 +111,7 @@ export default function RootLayout({
               },
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://tools.catnote.tokyo/search?q={search_term_string}",
+                "target": "https://cat-tools.catnote.tokyo/search?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               }
             })
@@ -131,7 +131,7 @@ export default function RootLayout({
                     "@type": "ListItem",
                     "position": 1,
                     "name": "ねこツールズ",
-                    "item": "https://tools.catnote.tokyo"
+                    "item": "https://cat-tools.catnote.tokyo"
                   }
                 ]
               },
@@ -139,7 +139,7 @@ export default function RootLayout({
                 "@context": "https://schema.org",
                 "@type": "WebApplication",
                 "name": "猫の年齢計算ツール",
-                "url": "https://tools.catnote.tokyo/calculate-cat-age",
+                "url": "https://cat-tools.catnote.tokyo/calculate-cat-age",
                 "description": "誕生日を入力するだけで、猫の年齢を人間年齢に換算。ライフステージと次の誕生日までの日数も表示します。",
                 "applicationCategory": "CalculatorApplication",
                 "operatingSystem": "Any",
