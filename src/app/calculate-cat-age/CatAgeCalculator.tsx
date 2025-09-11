@@ -49,7 +49,7 @@ export default function CatAgeCalculator() {
       const url = new URL(window.location.href);
       url.searchParams.set('dob', dateValue);
       window.history.replaceState(null, '', url.toString());
-    } catch (err) {
+    } catch {
       setError(UI_TEXT.INPUT.ERROR.CALCULATION_ERROR);
       setResult(null);
     }

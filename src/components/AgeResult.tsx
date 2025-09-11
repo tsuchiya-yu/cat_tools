@@ -16,7 +16,7 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
       <div className="result relative text-center py-6">
         <div className="text-gray-600 mb-1.5 tracking-wide text-sm">人間に換算すると</div>
 
-        <div className="big flex items-baseline justify-center gap-2.5 text-[0]">
+        <div className="big flex items-baseline justify-center text-[0]">
           <span className="age-group flex items-baseline gap-1">
             <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
               {result.humanAgeYears}
@@ -38,9 +38,6 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
 
         {/* モバイルでは縦並び、PCでは横並び */}
         <div className="flex flex-col sm:grid sm:grid-cols-3 mt-8">
-          {/* PCでの区切り線 */}
-          <div className="hidden sm:block absolute left-1/3 top-1/2 -translate-y-1/2 w-px h-16 bg-pink-200"></div>
-          <div className="hidden sm:block absolute left-2/3 top-1/2 -translate-y-1/2 w-px h-16 bg-pink-200"></div>
 
           {/* 実年齢 */}
           <div className="py-4 sm:py-0">

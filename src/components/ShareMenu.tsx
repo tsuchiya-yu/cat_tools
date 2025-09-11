@@ -33,7 +33,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
     if (navigator.share) {
       try {
         await navigator.share({ title: UI_TEXT.HEADER.TITLE, text, url });
-      } catch (e) {
+      } catch {
         // ユーザーがキャンセルした場合など
       }
     }
@@ -52,7 +52,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
     try {
       await navigator.clipboard.writeText(window.location.href);
       showToastMessage(UI_TEXT.SHARE.TOAST.SUCCESS);
-    } catch (e) {
+    } catch {
       showToastMessage(UI_TEXT.SHARE.TOAST.ERROR);
     }
     toggleShare(false);
@@ -81,7 +81,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
-  }, [isOpen]);
+  }, [isOpen, toggleShare]);
 
   return (
     <>
@@ -100,7 +100,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
 
       {isOpen && (
         <div className="share-menu absolute right-0 top-8 -translate-y-1/10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 min-w-[200px]" role="menu" aria-label={UI_TEXT.SHARE.MENU_LABEL}>
-          {navigator.share && (
+          {'share' in navigator && (
             <button
               className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
               onClick={handleShare}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Zen_Kaku_Gothic_New, Outfit } from "next/font/google";
 import "./globals.css";
 import { STRUCTURED_DATA } from '@/constants/text';
@@ -19,32 +19,52 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | CAT LINK tools',
-    default: 'CAT LINK tools｜飼い主さんのための猫ツール集',
+    template: '%s | ねこツールズ',
+    default: 'ねこツールズ｜飼い主さんのための猫ツール集',
   },
   description: "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
   keywords: "猫, ペット, ツール, 飼い主, 年齢計算, 健康管理, お世話",
-  authors: [{ name: "CAT LINK tools" }],
-  creator: "CAT LINK tools",
-  publisher: "CAT LINK tools",
+  authors: [{ name: "ねこツールズ" }],
+  creator: "ねこツールズ",
+  publisher: "ねこツールズ",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
   metadataBase: new URL('https://tools.catnote.tokyo'),
+  alternates: {
+    canonical: '/',
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
+  manifest: '/site.webmanifest',
   openGraph: {
-    title: "CAT LINK tools｜飼い主さんのための猫ツール集",
+    title: "ねこツールズ｜飼い主さんのための猫ツール集",
     description: "飼い主さんのために猫に関する便利なツールを集めています。愛猫との生活をより豊かにするためのWebアプリケーション集です。",
     type: "website",
     locale: "ja_JP",
     url: "https://tools.catnote.tokyo",
-    siteName: "CAT LINK tools",
+    siteName: "ねこツールズ",
+    images: [
+      {
+        url: '/og.png',
+        width: 1200,
+        height: 630,
+        alt: 'ねこツールズ｜飼い主さんのための猫ツール集',
+      },
+    ],
   },
   twitter: {
-    card: "summary",
-    title: "CAT LINK tools｜飼い主さんのための猫ツール集",
+    card: "summary_large_image",
+    title: "ねこツールズ｜飼い主さんのための猫ツール集",
     description: "飼い主さんのために猫に関する便利なツールを集めています。愛猫との生活をより豊かにするためのWebアプリケーション集です。",
+    images: ['/og.png'],
   },
   robots: {
     index: true,
@@ -59,6 +79,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -67,8 +92,6 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         
@@ -79,12 +102,12 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "WebSite",
-              "name": "CAT LINK tools",
+              "name": "ねこツールズ",
               "url": "https://tools.catnote.tokyo",
               "description": "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
               "publisher": {
                 "@type": "Organization",
-                "name": "CAT LINK tools"
+                "name": "ねこツールズ"
               },
               "potentialAction": {
                 "@type": "SearchAction",
@@ -100,6 +123,18 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify([
+              {
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "ねこツールズ",
+                    "item": "https://tools.catnote.tokyo"
+                  }
+                ]
+              },
               {
                 "@context": "https://schema.org",
                 "@type": "WebApplication",
@@ -187,7 +222,7 @@ export default function RootLayout({
             </div>
 
             <div className="text-center mt-8">
-              © {new Date().getFullYear()} CAT LINK tools
+              © {new Date().getFullYear()} ねこツールズ
             </div>
           </div>
         </footer>
