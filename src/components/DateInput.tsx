@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -68,6 +69,9 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
   // 文字列の日付をDateオブジェクトに変換
   const dateValue = value ? new Date(value) : null;
 
+  // DatePickerの開閉状態を管理
+  const [open, setOpen] = React.useState(false);
+
   // DateオブジェクトをYYYY-MM-DD形式の文字列に変換
   const handleDateChange = (newDate: Date | null) => {
     if (newDate) {
@@ -79,6 +83,11 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
     } else {
       onChange('');
     }
+  };
+
+  // テキストフィールドがクリックされた時にカレンダーを開く
+  const handleTextFieldClick = () => {
+    setOpen(true);
   };
 
   return (
@@ -101,6 +110,9 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
               maxDate={maxDate}
               views={['year', 'month', 'day']}
               openTo="year"
+              open={open}
+              onOpen={() => setOpen(true)}
+              onClose={() => setOpen(false)}
               enableAccessibleFieldDOMStructure={false}
               slotProps={{
                 textField: {
@@ -109,6 +121,13 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
                   'aria-describedby': error ? 'error' : 'dobHelp',
                   error: !!error,
                   fullWidth: true,
+                  onClick: handleTextFieldClick,
+                  inputProps: {
+                    readOnly: true, // テキストフィールドを読み取り専用にしてカレンダーのみで入力
+                  },
+                },
+                calendarHeader: {
+                  format: 'yyyy年 M月',
                 },
               }}
               slots={{
