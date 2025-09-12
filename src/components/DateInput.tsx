@@ -86,7 +86,7 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
   };
 
   // テキストフィールドがクリックされた時にカレンダーを開く
-  const handleTextFieldClick = () => {
+  const handleTextFieldClick = (event: React.MouseEvent) => {
     setOpen(true);
   };
 
@@ -128,6 +128,23 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
                 },
                 calendarHeader: {
                   format: 'yyyy年 M月',
+                },
+                mobilePaper: {
+                  sx: {
+                    '& .MuiDatePickerToolbar-title': {
+                      display: 'none', // スマホ表示での「15 8月」のような日付表示を非表示
+                    },
+                    '& .MuiPickersCalendarHeader-label': {
+                      display: 'none', // カレンダーヘッダーの日付表示を非表示
+                    },
+                  },
+                },
+                desktopPaper: {
+                  sx: {
+                    '& .MuiPickersCalendarHeader-label': {
+                      display: 'none', // デスクトップ表示での日付表示を非表示
+                    },
+                  },
                 },
               }}
               slots={{
