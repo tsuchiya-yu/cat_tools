@@ -42,3 +42,6 @@ next-env.d.ts
 
 # cursor settings
 .cursor-settings/
+
+# playwright
+.playwright-mcp/
