@@ -48,8 +48,13 @@ export const UI_TEXT = {
   SHARE: {
     BUTTON_LABEL: '共有メニューを開く',
     MENU_LABEL: '共有メニュー',
-    SHARE_TEXT: (years: number, months: number) => 
-      `うちの猫の人間年齢は「${years}歳${months}か月」でした🐾`,
+    SHARE_TEXT: (years: number, months: number, baseUrl: string) => 
+      `うちの猫ちゃん、人間に換算したら${years}歳${months}か月でした🐱✨
+みんなの猫ちゃんは何歳かにゃ？🐾
+
+${baseUrl}
+
+#猫の年齢計算 #ねこ好きさんと繋がりたい #猫のいる暮らし #ねこツールズ`,
     MENU_ITEMS: {
       SHARE: '結果を共有',
       X_SHARE: 'Xでシェア',
