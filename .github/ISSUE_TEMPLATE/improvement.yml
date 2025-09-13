@@ -1,0 +1,42 @@
+name: "改善の提案（UX/SEO/パフォーマンス/リファクタ等）"
+description: "既存機能の使い勝手・表示速度・コード品質などを良くします"
+title: "improve: 何を改善したいか一言で"
+labels: ["improvement"]
+assignees: []
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 種別
+      options:
+        - UX/UI
+        - SEO
+        - パフォーマンス
+        - アクセシビリティ
+        - コード品質/リファクタ
+        - ドキュメント
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: 現状/課題
+      placeholder: 例）Heroの対比が弱く、第一印象が薄い
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 改善案（具体策）
+      placeholder: 例）h1のフォントサイズを+8px、leadを14px→15px、余白+8px、OGPの余白調整
+    validations:
+      required: true
+  - type: textarea
+    id: metrics
+    attributes:
+      label: 効果の測り方（任意）
+      placeholder: 例）直帰率、クリック率、アクセシビリティ監査スコア
+  - type: textarea
+    id: notes
+    attributes:
+      label: 追加情報（スクショ・参考リンクなど）

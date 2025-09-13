@@ -1,0 +1,61 @@
+name: "機能追加の提案"
+description: "新しい機能・画面・計算項目の追加を提案します"
+title: "feat: 何を実現したいか一言で"
+labels: ["feature"]
+assignees: []
+body:
+  - type: textarea
+    id: background
+    attributes:
+      label: 背景/課題
+      placeholder: 例）「猫 カロリー計算」で来たユーザーが給餌量まで知りたいケースが多い
+    validations:
+      required: true
+  - type: textarea
+    id: user_story
+    attributes:
+      label: ユーザーストーリー
+      description: As/When/So that の形式推奨
+      placeholder: |
+        As a 飼い主,
+        When 体重とライフステージを入力したとき,
+        So that 1日の必要カロリーが分かる。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 提案内容
+      placeholder: 例）入力は体重/ステージ/目標のみ。結果は中心値＋参考幅で表示
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 受け入れ基準（テスト観点）
+      placeholder: |
+        - 体重4.2kg/成猫/維持 で中心値が XXX kcal/日に一致
+        - URLクエリで状態復元できる（w/s/g/n）
+  - type: textarea
+    id: design
+    attributes:
+      label: 参考（UI/仕様/競合）
+      placeholder: 画像・リンク・ラフスケッチなど
+  - type: checkboxes
+    id: risk
+    attributes:
+      label: リスク/影響
+      options:
+        - label: 既存ページのパフォーマンスに影響する可能性
+        - label: SEO（構造化データ/タイトル）に要配慮
+        - label: アクセシビリティ調整が必要
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 優先度（目安）
+      options:
+        - priority:low
+        - priority:medium
+        - priority:high
+    validations:
+      required: true

@@ -1,0 +1,72 @@
+name: "不具合の報告（バグ）"
+description: "誤動作・表示崩れ・ビルド失敗などを報告します"
+title: "bug: 何が起きているか一言で"
+labels: ["bug"]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ありがとうございます！再現できる情報が多いほど修正が早くなります。
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何が起きているか、どこで気づいたかを短く書いてください
+      placeholder: 例）猫の年齢計算ページで日付入力後に結果が表示されない
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: できるだけ具体的に
+      placeholder: |
+        1. /calculate-cat-age を開く
+        2. 誕生日に 2023-04-01 を入力
+        3. 結果セクションが表示されない
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する結果
+      placeholder: 例）「2歳6か月」などが表示される
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の結果
+      placeholder: 例）結果セクションが非表示のまま
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: 問題が起きたURL
+      placeholder: 例）https://cat-tools.catnote.tokyo/calculate-cat-age
+  - type: dropdown
+    id: scope
+    attributes:
+      label: 影響範囲（体感）
+      options:
+        - 一部ユーザーのみ
+        - 多くのユーザー
+        - 全ユーザー/クリティカル
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: 発生環境
+      description: 可能な範囲で記載してください
+      placeholder: |
+        デバイス/OS：iPhone 14 / iOS 17.5
+        ブラウザ：Safari 17
+        回線/モード：4G、プライベートリレーOFF
+  - type: textarea
+    id: logs
+    attributes:
+      label: 追加情報（スクリーンショット・ログなど）
+      description: 画像はこの欄にドラッグ&ドロップで添付できます
