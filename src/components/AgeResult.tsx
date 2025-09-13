@@ -43,7 +43,7 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
           <div className="py-4 sm:py-0">
             <div className="text-sm text-gray-500 mb-1.5">実年齢</div>
             <div className="font-extrabold text-2xl sm:text-xl font-mono">
-              {result.realAgeYears}年{result.realAgeMonths}か月
+              {result.realAgeYears}歳{result.realAgeMonths}か月
             </div>
           </div>
 
