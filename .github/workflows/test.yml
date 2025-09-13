@@ -1,5 +1,6 @@
 name: Test
 
+# PR時にテストを自動実行するワークフロー
 on:
   pull_request:
     branches: [ main ]
