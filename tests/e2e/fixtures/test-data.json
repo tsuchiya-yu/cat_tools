@@ -1,0 +1,38 @@
+{
+  "validBirthDates": [
+    {
+      "date": "2020-01-01",
+      "description": "5歳の猫",
+      "expectedHumanAge": 36
+    },
+    {
+      "date": "2021-06-15",
+      "description": "3歳半の猫",
+      "expectedHumanAge": 28
+    },
+    {
+      "date": "2023-03-20",
+      "description": "1歳半の猫",
+      "expectedHumanAge": 20
+    }
+  ],
+  "invalidInputs": [
+    {
+      "date": "",
+      "description": "空の入力",
+      "expectedError": "生年月日を入力してください"
+    },
+    {
+      "date": "2030-01-01",
+      "description": "未来の日付",
+      "expectedError": "未来の日付は選択できません"
+    }
+  ],
+  "urlParameters": [
+    {
+      "url": "/calculate-cat-age?dob=2020-01-01",
+      "expectedDate": "2020-01-01",
+      "description": "URLパラメータでの初期値設定"
+    }
+  ]
+}
