@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #FF69B4;         /* アウトライン/ホバーのライト */
-  --primary-strong: #E00070;  /* 主役数字/アクセント */
+  --primary: #FF69B4;
+  --primary-strong: #E00070;
   --text: #111;
-  --muted: #666;
+  --muted: #595959;
   --border: #E9E9EA;
 
   --r-sm: 8px;
@@ -54,7 +54,7 @@ body {
   font-size: 14px;
   letter-spacing: .08em;
   text-transform: uppercase;
-  color: rgba(224,0,112,.85);
+  color: rgba(224,0,112,1);
   margin-top: var(--s-3);
 }
 
@@ -229,7 +229,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: .04em;
-  color: #808080;
+  color: #595959;
   text-align: center;
 }
 
@@ -376,7 +376,7 @@ details[open] .chev {
 }
 
 footer {
-  color: #888;
+  color: #595959;
   font-size: 13px;
   margin-top: var(--s-4);
 }
