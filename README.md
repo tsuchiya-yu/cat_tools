@@ -73,4 +73,17 @@ Vercelでホスティング予定
 - 動作確認チェックリストを必ず実施
 - スクリーンショットがあると理解が早まります
 
+## Gemini Code Assist
+
+このプロジェクトではGemini Code Assistを使用した自動コードレビューを導入しています。
+
+### 自動レビューの動作
+- PR作成時に自動的にコードレビューが実行されます
+- 日本語でのレビューコメントが提供されます
+- アクセシビリティ、パフォーマンス、セキュリティ等に重点を置いたレビューを行います
+
+### 設定ファイル
+- `.gemini/config.yaml`: Gemini Code Assistの基本設定
+- `.gemini/styleguide.md`: プロジェクト固有のコーディングガイドライン
+
 質問や相談は [Discussions](https://github.com/tsuchiya-yu/cat_tools/discussions) をご利用ください。
