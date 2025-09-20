@@ -64,7 +64,7 @@ export default function CatAgeCalculator() {
     <main className="container max-w-3xl mx-auto px-6 pb-10">
         {/* Hero Section */}
         <section className="section mt-6">
-          <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 opacity-85 mt-6">
+          <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 mt-6">
             {UI_TEXT.HEADER.EYECATCH}
           </p>
           <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">
