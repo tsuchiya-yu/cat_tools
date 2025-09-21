@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { UI_TEXT } from '@/constants/text';
 import { IoShareOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -16,6 +16,11 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
+  const shareText = useMemo(() => {
+    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
+    return UI_TEXT.SHARE.SHARE_TEXT(humanAgeYears, humanAgeMonths, baseUrl);
+  }, [humanAgeYears, humanAgeMonths]);
+
   const toggleShare = (open?: boolean) => {
     setIsOpen(open !== undefined ? open : !isOpen);
   };
@@ -28,12 +33,10 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
 
   const handleShare = async () => {
     const url = window.location.href;
-    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-    const text = UI_TEXT.SHARE.SHARE_TEXT(humanAgeYears, humanAgeMonths, baseUrl);
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: UI_TEXT.HEADER.TITLE, text, url });
+        await navigator.share({ title: UI_TEXT.HEADER.TITLE, text: shareText, url });
       } catch {
         // ユーザーがキャンセルした場合など
       }
@@ -42,10 +45,7 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
   };
 
   const handleXShare = () => {
-    const url = window.location.href;
-    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-    const text = UI_TEXT.SHARE.SHARE_TEXT(humanAgeYears, humanAgeMonths, baseUrl);
-    const params = new URLSearchParams({ url, text });
+    const params = new URLSearchParams({ text: shareText });
     window.open(`https://x.com/intent/post?${params.toString()}`, '_blank', 'noopener');
     toggleShare(false);
   };
