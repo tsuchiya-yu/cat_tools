@@ -42,10 +42,9 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
   };
 
   const handleXShare = () => {
-    const url = window.location.href;
     const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
     const text = UI_TEXT.SHARE.SHARE_TEXT(humanAgeYears, humanAgeMonths, baseUrl);
-    const params = new URLSearchParams({ url, text });
+    const params = new URLSearchParams({ text });
     window.open(`https://x.com/intent/post?${params.toString()}`, '_blank', 'noopener');
     toggleShare(false);
   };
