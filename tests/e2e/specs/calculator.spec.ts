@@ -26,9 +26,7 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
     
     // 年齢が表示されることを確認
-    await expect(page.getByTestId('human-age-value')).toBeVisible();
-    const ageText = await page.getByTestId('human-age-value').textContent();
-    expect(ageText).toMatch(/\d+/); // 数字が含まれていることを確認
+    await expect(page.getByTestId('human-age-value')).toHaveText('36');
     
     // URLにパラメータが含まれていることを確認
     expect(page.url()).toContain(`dob=${testDate}`);
