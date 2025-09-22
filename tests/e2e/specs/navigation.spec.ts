@@ -20,7 +20,7 @@ test.describe('ナビゲーション', () => {
     
     // ページが正しく表示されることを確認
     await expect(page.locator('h1')).toBeVisible();
-    await expect(page.locator('input[type="date"]')).toBeVisible();
+    await expect(page.locator('#dob')).toBeVisible();
   });
 
   test('存在しないページで404が表示される', async ({ page }) => {
