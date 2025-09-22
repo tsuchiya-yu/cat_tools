@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import testData from '../fixtures/test-data.json';
 
+const VISIBILITY_TIMEOUT = 10000;
+
 test.describe('猫の年齢計算機', () => {
   test('ページが正しく表示される', async ({ page }) => {
     await page.goto('/calculate-cat-age');
@@ -16,29 +18,13 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#dob')).toBeVisible();
   });
 
-  test('URLパラメータで初期値が設定され結果が表示される', async ({ page }) => {
-    const testDate = '2020-01-01';
-    
-    // URLパラメータ付きでページにアクセス
-    await page.goto(`/calculate-cat-age?dob=${testDate}`);
-    
-    // 結果セクションが表示されることを確認
-    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
-    
-    // 年齢が表示されることを確認
-    await expect(page.getByTestId('human-age-value')).toHaveText('36');
-    
-    // URLにパラメータが含まれていることを確認
-    expect(page.url()).toContain(`dob=${testDate}`);
-  });
-
   test('URLパラメータでの年齢計算が正しい（複数パターン）', async ({ page }) => {
     for (const { date, description, expectedHumanAge } of testData.validBirthDates) {
       await test.step(description, async () => {
         await page.goto(`/calculate-cat-age?dob=${date}`);
         
         // 結果が表示されるまで待機
-        await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
+        await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: VISIBILITY_TIMEOUT });
         
         // 人間年齢が正しいことを確認
         await expect(page.getByTestId('human-age-value')).toHaveText(String(expectedHumanAge));
@@ -76,7 +62,7 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#dob')).toBeVisible();
     
     // 結果が表示されることを確認
-    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
+    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: VISIBILITY_TIMEOUT });
     
     // デスクトップサイズに戻す
     await page.setViewportSize({ width: 1280, height: 720 });
