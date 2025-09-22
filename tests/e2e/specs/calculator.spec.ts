@@ -22,15 +22,12 @@ test.describe('猫の年齢計算機', () => {
     // URLパラメータ付きでページにアクセス
     await page.goto(`/calculate-cat-age?dob=${testDate}`);
     
-    // 結果が表示されるまで待機
-    await page.waitForSelector('.result', { state: 'visible', timeout: 10000 });
-    
     // 結果セクションが表示されることを確認
-    await expect(page.locator('.result')).toBeVisible();
+    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
     
     // 年齢が表示されることを確認
-    await expect(page.locator('.numeral').first()).toBeVisible();
-    const ageText = await page.locator('.numeral').first().textContent();
+    await expect(page.getByTestId('human-age-value')).toBeVisible();
+    const ageText = await page.getByTestId('human-age-value').textContent();
     expect(ageText).toMatch(/\d+/); // 数字が含まれていることを確認
     
     // URLにパラメータが含まれていることを確認
@@ -43,14 +40,14 @@ test.describe('猫の年齢計算機', () => {
         await page.goto(`/calculate-cat-age?dob=${date}`);
         
         // 結果が表示されるまで待機
-        await expect(page.locator('.result')).toBeVisible({ timeout: 10000 });
+        await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
         
         // 人間年齢が正しいことを確認
-        await expect(page.locator('.numeral').first()).toHaveText(String(expectedHumanAge));
+        await expect(page.getByTestId('human-age-value')).toHaveText(String(expectedHumanAge));
         
         // 実年齢とライフステージが表示されることを確認
-        await expect(page.locator('.result').locator('text=実年齢')).toBeVisible();
-        await expect(page.locator('.result').locator('text=ライフステージ')).toBeVisible();
+        await expect(page.getByTestId('calculation-result').locator('text=実年齢')).toBeVisible();
+        await expect(page.getByTestId('calculation-result').locator('text=ライフステージ')).toBeVisible();
       });
     }
   });
@@ -81,14 +78,13 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#dob')).toBeVisible();
     
     // 結果が表示されることを確認
-    await page.waitForSelector('.result', { state: 'visible', timeout: 10000 });
-    await expect(page.locator('.result')).toBeVisible();
+    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: 10000 });
     
     // デスクトップサイズに戻す
     await page.setViewportSize({ width: 1280, height: 720 });
     
     // 結果が引き続き表示されることを確認
-    await expect(page.locator('.result')).toBeVisible();
+    await expect(page.getByTestId('calculation-result')).toBeVisible();
   });
 
   test('ページのメタ情報が正しく設定されている', async ({ page }) => {
