@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import testData from '../fixtures/test-data.json';
 
 test.describe('猫の年齢計算機', () => {
   test('ページが正しく表示される', async ({ page }) => {
@@ -37,31 +38,20 @@ test.describe('猫の年齢計算機', () => {
   });
 
   test('URLパラメータでの年齢計算が正しい（複数パターン）', async ({ page }) => {
-    const testCases = [
-      { date: '2020-01-01', description: '5歳の猫' },
-      { date: '2021-06-15', description: '3歳半の猫' },
-      { date: '2023-03-20', description: '1歳半の猫' }
-    ];
-
-    for (const { date, description } of testCases) {
-      await page.goto(`/calculate-cat-age?dob=${date}`);
-      
-      // 結果が表示されるまで待機
-      await page.waitForSelector('.result', { state: 'visible', timeout: 10000 });
-      
-      // 結果が表示されることを確認
-      await expect(page.locator('.result')).toBeVisible();
-      
-      // 人間年齢が表示されることを確認
-      await expect(page.locator('.numeral').first()).toBeVisible();
-      
-      // 実年齢が表示されることを確認
-      await expect(page.locator('.result').locator('text=実年齢')).toBeVisible();
-      
-      // ライフステージが表示されることを確認（結果セクション内のもの）
-      await expect(page.locator('.result').locator('text=ライフステージ')).toBeVisible();
-      
-      console.log(`✓ ${description} (${date}) のテスト完了`);
+    for (const { date, description, expectedHumanAge } of testData.validBirthDates) {
+      await test.step(description, async () => {
+        await page.goto(`/calculate-cat-age?dob=${date}`);
+        
+        // 結果が表示されるまで待機
+        await expect(page.locator('.result')).toBeVisible({ timeout: 10000 });
+        
+        // 人間年齢が正しいことを確認
+        await expect(page.locator('.numeral').first()).toHaveText(String(expectedHumanAge));
+        
+        // 実年齢とライフステージが表示されることを確認
+        await expect(page.locator('.result').locator('text=実年齢')).toBeVisible();
+        await expect(page.locator('.result').locator('text=ライフステージ')).toBeVisible();
+      });
     }
   });
 
