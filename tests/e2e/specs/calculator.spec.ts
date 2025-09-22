@@ -21,8 +21,24 @@ test.describe('猫の年齢計算機', () => {
   test.describe('URLパラメータでの年齢計算が正しい（複数パターン）', () => {
       for (const { date, expectedHumanAge, description } of testData.validBirthDates) {
         test(description, async ({ page, context }) => {
-          // テスト実行日を2025-01-01に固定
-          await context.clock(new Date('2025-01-01T00:00:00'), ['Date']);
+          // テスト実行日を2025-01-01に固定（Playwright 1.40 互換: Dateのみモック）
+          await context.addInitScript(({ fixedTime }) => {
+            const OriginalDate = Date as unknown as typeof Date;
+            class MockDate extends (OriginalDate as any) {
+              constructor(...args: any[]) {
+                if (args.length === 0) {
+                  super(fixedTime);
+                } else {
+                  super(...args);
+                }
+              }
+              static now() { return fixedTime; }
+              static parse = OriginalDate.parse;
+              static UTC = OriginalDate.UTC;
+            }
+            // @ts-ignore - ここでは実行環境（ブラウザ）側のglobalに代入する
+            globalThis.Date = MockDate as unknown as DateConstructor;
+          }, { fixedTime: new Date('2025-01-01T00:00:00').getTime() });
 
           // URLパラメータを使ってページにアクセス
           await page.goto(`/calculate-cat-age?dob=${date}`);
