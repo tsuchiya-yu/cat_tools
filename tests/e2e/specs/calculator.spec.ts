@@ -18,10 +18,14 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#dob')).toBeVisible();
   });
 
-  test('URLパラメータでの年齢計算が正しい（複数パターン）', async ({ page }) => {
-    for (const { date, description, expectedHumanAge } of testData.validBirthDates) {
-      await test.step(description, async () => {
-        await page.goto(`/calculate-cat-age?dob=${date}`);
+  test.describe('URLパラメータでの年齢計算が正しい（複数パターン）', () => {
+      for (const { date, expectedHumanAge, description } of testData.validBirthDates) {
+        test(description, async ({ page }) => {
+          // テスト実行日を2025-01-01に固定
+          await page.context().clock(new Date('2025-01-01T00:00:00'), ['Date']);
+
+          // URLパラメータを使ってページにアクセス
+          await page.goto(`/calculate-cat-age?dob=${date}`);
         
         // 結果が表示されるまで待機
         await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: VISIBILITY_TIMEOUT });
