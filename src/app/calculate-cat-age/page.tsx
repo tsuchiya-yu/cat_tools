@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import CatAgeCalculator from './CatAgeCalculator';
-import { META, STRUCTURED_DATA } from '@/constants/text';
+import { META } from '@/constants/text';
 
 export const metadata: Metadata = {
   title: META.TITLE,
