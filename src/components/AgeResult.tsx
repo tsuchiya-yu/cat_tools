@@ -13,12 +13,12 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
 
   return (
     <section className="section" aria-live="polite">
-      <div className="result relative text-center py-6">
+      <div className="result relative text-center py-6" data-testid="calculation-result">
         <div className="text-gray-600 mb-1.5 tracking-wide text-sm">人間に換算すると</div>
 
         <div className="big flex items-baseline justify-center text-[0]">
           <span className="age-group flex items-baseline gap-1">
-            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
+            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight" data-testid="human-age-value">
               {result.humanAgeYears}
             </span>
             <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">歳</span>

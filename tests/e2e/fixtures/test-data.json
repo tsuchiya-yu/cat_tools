@@ -8,12 +8,12 @@
     {
       "date": "2021-06-15",
       "description": "3歳半の猫",
-      "expectedHumanAge": 28
+      "expectedHumanAge": 30
     },
     {
       "date": "2023-03-20",
       "description": "1歳半の猫",
-      "expectedHumanAge": 20
+      "expectedHumanAge": 21
     }
   ],
   "invalidInputs": [
