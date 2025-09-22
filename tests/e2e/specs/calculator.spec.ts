@@ -20,9 +20,9 @@ test.describe('猫の年齢計算機', () => {
 
   test.describe('URLパラメータでの年齢計算が正しい（複数パターン）', () => {
       for (const { date, expectedHumanAge, description } of testData.validBirthDates) {
-        test(description, async ({ page }) => {
+        test(description, async ({ page, context }) => {
           // テスト実行日を2025-01-01に固定
-          await page.context().clock(new Date('2025-01-01T00:00:00'), ['Date']);
+          await context.clock(new Date('2025-01-01T00:00:00'), ['Date']);
 
           // URLパラメータを使ってページにアクセス
           await page.goto(`/calculate-cat-age?dob=${date}`);
