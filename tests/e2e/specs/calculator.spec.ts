@@ -1,4 +1,7 @@
 import { test, expect } from '@playwright/test';
+import testData from '../fixtures/test-data.json';
+
+const VISIBILITY_TIMEOUT = 10000;
 
 test.describe('猫の年齢計算機', () => {
   test('ページが正しく表示される', async ({ page }) => {
@@ -15,53 +18,41 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#dob')).toBeVisible();
   });
 
-  test('URLパラメータで初期値が設定され結果が表示される', async ({ page }) => {
-    const testDate = '2020-01-01';
-    
-    // URLパラメータ付きでページにアクセス
-    await page.goto(`/calculate-cat-age?dob=${testDate}`);
-    
-    // 結果が表示されるまで待機
-    await page.waitForSelector('.result', { state: 'visible', timeout: 10000 });
-    
-    // 結果セクションが表示されることを確認
-    await expect(page.locator('.result')).toBeVisible();
-    
-    // 年齢が表示されることを確認
-    await expect(page.locator('.numeral').first()).toBeVisible();
-    const ageText = await page.locator('.numeral').first().textContent();
-    expect(ageText).toMatch(/\d+/); // 数字が含まれていることを確認
-    
-    // URLにパラメータが含まれていることを確認
-    expect(page.url()).toContain(`dob=${testDate}`);
-  });
+  test.describe('URLパラメータでの年齢計算が正しい（複数パターン）', () => {
+      for (const { date, expectedHumanAge, description } of testData.validBirthDates) {
+        test(description, async ({ page, context }) => {
+          // テスト実行日を2025-01-01に固定（Playwright 1.40 互換: Dateのみモック）
+          await context.addInitScript(({ fixedTime }) => {
+            const OriginalDate = Date;
+            class MockDate extends OriginalDate {
+              constructor(...args: ConstructorParameters<typeof Date>) {
+                if (args.length === 0) {
+                  super(fixedTime);
+                } else {
+                  super(...args);
+                }
+              }
+              static now() {
+                return fixedTime;
+              }
+            }
+            // @ts-expect-error - ここでは実行環境（ブラウザ）側のglobalに代入する
+            globalThis.Date = MockDate;
+          }, { fixedTime: new Date('2025-01-01T00:00:00').getTime() });
 
-  test('URLパラメータでの年齢計算が正しい（複数パターン）', async ({ page }) => {
-    const testCases = [
-      { date: '2020-01-01', description: '5歳の猫' },
-      { date: '2021-06-15', description: '3歳半の猫' },
-      { date: '2023-03-20', description: '1歳半の猫' }
-    ];
-
-    for (const { date, description } of testCases) {
-      await page.goto(`/calculate-cat-age?dob=${date}`);
-      
-      // 結果が表示されるまで待機
-      await page.waitForSelector('.result', { state: 'visible', timeout: 10000 });
-      
-      // 結果が表示されることを確認
-      await expect(page.locator('.result')).toBeVisible();
-      
-      // 人間年齢が表示されることを確認
-      await expect(page.locator('.numeral').first()).toBeVisible();
-      
-      // 実年齢が表示されることを確認
-      await expect(page.locator('.result').locator('text=実年齢')).toBeVisible();
-      
-      // ライフステージが表示されることを確認（結果セクション内のもの）
-      await expect(page.locator('.result').locator('text=ライフステージ')).toBeVisible();
-      
-      console.log(`✓ ${description} (${date}) のテスト完了`);
+          // URLパラメータを使ってページにアクセス
+          await page.goto(`/calculate-cat-age?dob=${date}`);
+        
+        // 結果が表示されるまで待機
+        await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: VISIBILITY_TIMEOUT });
+        
+        // 人間年齢が正しいことを確認
+        await expect(page.getByTestId('human-age-value')).toHaveText(String(expectedHumanAge));
+        
+        // 実年齢とライフステージが表示されることを確認
+        await expect(page.getByTestId('calculation-result').locator('text=実年齢')).toBeVisible();
+        await expect(page.getByTestId('calculation-result').locator('text=ライフステージ')).toBeVisible();
+      });
     }
   });
 
@@ -91,14 +82,13 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#dob')).toBeVisible();
     
     // 結果が表示されることを確認
-    await page.waitForSelector('.result', { state: 'visible', timeout: 10000 });
-    await expect(page.locator('.result')).toBeVisible();
+    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: VISIBILITY_TIMEOUT });
     
     // デスクトップサイズに戻す
     await page.setViewportSize({ width: 1280, height: 720 });
     
     // 結果が引き続き表示されることを確認
-    await expect(page.locator('.result')).toBeVisible();
+    await expect(page.getByTestId('calculation-result')).toBeVisible();
   });
 
   test('ページのメタ情報が正しく設定されている', async ({ page }) => {
