@@ -23,21 +23,21 @@ test.describe('猫の年齢計算機', () => {
         test(description, async ({ page, context }) => {
           // テスト実行日を2025-01-01に固定（Playwright 1.40 互換: Dateのみモック）
           await context.addInitScript(({ fixedTime }) => {
-            const OriginalDate = Date as unknown as typeof Date;
-            class MockDate extends (OriginalDate as any) {
-              constructor(...args: any[]) {
+            const OriginalDate = Date;
+            class MockDate extends OriginalDate {
+              constructor(...args: ConstructorParameters<typeof Date>) {
                 if (args.length === 0) {
                   super(fixedTime);
                 } else {
                   super(...args);
                 }
               }
-              static now() { return fixedTime; }
-              static parse = OriginalDate.parse;
-              static UTC = OriginalDate.UTC;
+              static now() {
+                return fixedTime;
+              }
             }
-            // @ts-ignore - ここでは実行環境（ブラウザ）側のglobalに代入する
-            globalThis.Date = MockDate as unknown as DateConstructor;
+            // @ts-expect-error - ここでは実行環境（ブラウザ）側のglobalに代入する
+            globalThis.Date = MockDate;
           }, { fixedTime: new Date('2025-01-01T00:00:00').getTime() });
 
           // URLパラメータを使ってページにアクセス
