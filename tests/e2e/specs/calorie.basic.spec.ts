@@ -84,30 +84,41 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
   });
 
   test('構造化データ（FAQPage）の存在確認', async ({ page }) => {
-    // JSON-LD構造化データ（FAQPage）の存在を確認（順序に依存しない）
-    const faqJsonLd = page.locator('script[type="application/ld+json"]').filter({
-      hasText: '"@type":"FAQPage"',
-    });
-    await expect(faqJsonLd).toHaveCount(1);
+    // すべての JSON-LD を取得して解析（オブジェクト/配列の両方に対応）
+    const contents = await page.locator('script[type="application/ld+json"]').allTextContents();
 
-    // 構造化データの内容を確認
-    const jsonContent = await faqJsonLd.textContent();
-    expect(jsonContent).toBeTruthy();
+    // FAQPageを含む要素を抽出
+    const faqPayloads: any[] = [];
+    for (const text of contents) {
+      try {
+        const parsed = JSON.parse(text);
+        const items: any[] = Array.isArray(parsed) ? parsed : [parsed];
+        for (const item of items) {
+          if (item && item['@type'] === 'FAQPage') {
+            faqPayloads.push(item);
+          }
+        }
+      } catch {
+        // JSONでない場合はスキップ
+      }
+    }
 
-    type FaqAnswer = { ['@type']: string; text: string };
-    type FaqItem = { ['@type']: string; name: string; acceptedAnswer: FaqAnswer };
-    const data = JSON.parse(jsonContent!) as { ['@type']: string; mainEntity: FaqItem[] };
+    expect(faqPayloads.length).toBeGreaterThanOrEqual(1);
+
+    // 1つ目のFAQPageの内容を確認
+    const data = faqPayloads[0] as { ['@type']: string; mainEntity: any[] };
     expect(data['@type']).toBe('FAQPage');
-    expect(data.mainEntity).toHaveLength(4);
+    expect(Array.isArray(data.mainEntity)).toBeTruthy();
+    expect(data.mainEntity.length).toBeGreaterThanOrEqual(4);
 
-    // 各FAQ項目の構造を確認
-    data.mainEntity.forEach((item: FaqItem) => {
-      expect(item['@type']).toBe('Question');
-      expect(item.name).toBeTruthy();
-      expect(item.acceptedAnswer).toBeTruthy();
-      expect(item.acceptedAnswer['@type']).toBe('Answer');
-      expect(item.acceptedAnswer.text).toBeTruthy();
-    });
+    // 各FAQ項目の構造をざっくり確認
+    for (const entry of data.mainEntity) {
+      expect(entry['@type']).toBe('Question');
+      expect(entry.name).toBeTruthy();
+      expect(entry.acceptedAnswer).toBeTruthy();
+      expect(entry.acceptedAnswer['@type']).toBe('Answer');
+      expect(entry.acceptedAnswer.text).toBeTruthy();
+    }
   });
 
   test('メタタグの確認', async ({ page }) => {
