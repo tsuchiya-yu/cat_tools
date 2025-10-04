@@ -86,7 +86,7 @@ export default function DateInput({ value, onChange, error }: DateInputProps) {
   };
 
   // テキストフィールドがクリックされた時にカレンダーを開く
-  const handleTextFieldClick = (event: React.MouseEvent) => {
+  const handleTextFieldClick = () => {
     setOpen(true);
   };
 

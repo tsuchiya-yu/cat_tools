@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { UI_TEXT } from '@/constants/text';
 import { IoShareOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
@@ -21,9 +21,9 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
     return UI_TEXT.SHARE.SHARE_TEXT(humanAgeYears, humanAgeMonths, baseUrl);
   }, [humanAgeYears, humanAgeMonths]);
 
-  const toggleShare = (open?: boolean) => {
-    setIsOpen(open !== undefined ? open : !isOpen);
-  };
+  const toggleShare = useCallback((open?: boolean) => {
+    setIsOpen((prev) => (open !== undefined ? open : !prev));
+  }, []);
 
   const showToastMessage = (message: string) => {
     setToastMessage(message);
