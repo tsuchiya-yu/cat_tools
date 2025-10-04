@@ -33,14 +33,14 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
 
   test('デフォルト選択状態', async ({ page }) => {
     // デフォルトでadultとmaintainが選択されている想定
-    await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-pressed', 'true');
-    await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-checked', 'true');
+    await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-checked', 'true');
 
     // 他のボタンは選択されていない
-    await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-pressed', 'false');
-    await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-pressed', 'false');
+    await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-checked', 'false');
+    await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-checked', 'false');
   });
 
   test('去勢/避妊トグルの初期表示制御', async ({ page }) => {
@@ -162,7 +162,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
 
     // セグメントボタンがモバイルでも操作可能
     await page.click('button[data-value="kitten"]');
-    await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-pressed', 'true');
+    await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-checked', 'true');
   });
 
   test('アクセシビリティの基本確認', async ({ page }) => {
@@ -171,17 +171,17 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     await expect(weightLabel).toBeVisible();
     await expect(weightLabel).toHaveText('体重(kg)');
 
-    // セグメントボタンのaria-pressed属性
+    // セグメントボタンのaria-checked属性
     const stageButtons = page.locator('button[data-value^="kitten"], button[data-value^="adult"], button[data-value^="senior"]');
     for (let i = 0; i < await stageButtons.count(); i++) {
       const button = stageButtons.nth(i);
-      await expect(button).toHaveAttribute('aria-pressed');
+      await expect(button).toHaveAttribute('aria-checked');
     }
 
     const goalButtons = page.locator('button[data-value^="maintain"], button[data-value^="loss"], button[data-value^="gain"]');
     for (let i = 0; i < await goalButtons.count(); i++) {
       const button = goalButtons.nth(i);
-      await expect(button).toHaveAttribute('aria-pressed');
+      await expect(button).toHaveAttribute('aria-checked');
     }
 
     // 共有メニューは実装中のため、一時的にコメントアウト
@@ -201,6 +201,6 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
 
     // Enterキーでボタン操作
     await page.keyboard.press('Enter');
-    await expect(focusedElement).toHaveAttribute('aria-pressed', 'true');
+    await expect(focusedElement).toHaveAttribute('aria-checked', 'true');
   });
 });

@@ -9,36 +9,36 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
   test.describe('セグメントボタンの選択制御', () => {
     test('ステージボタンは単一選択', async ({ page }) => {
       // 初期状態でadultが選択されている想定
-      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-checked', 'true');
 
       // kittenを選択
       await page.click('button[data-value="kitten"]');
-      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-pressed', 'false');
-      await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-pressed', 'false');
+      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-checked', 'false');
+      await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-checked', 'false');
 
       // seniorを選択
       await page.click('button[data-value="senior"]');
-      await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-pressed', 'false');
-      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-pressed', 'false');
+      await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-checked', 'false');
+      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-checked', 'false');
     });
 
     test('目標ボタンは単一選択', async ({ page }) => {
       // 初期状態でmaintainが選択されている想定
-      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-checked', 'true');
 
       // lossを選択
       await page.click('button[data-value="loss"]');
-      await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-pressed', 'false');
-      await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-pressed', 'false');
+      await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-checked', 'false');
+      await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-checked', 'false');
 
       // gainを選択
       await page.click('button[data-value="gain"]')
-      await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-pressed', 'false');
-      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-pressed', 'false');
+      await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-checked', 'false');
+      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-checked', 'false');
     });
   });
 
@@ -175,8 +175,8 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
 
       // 入力値が復元されることを確認
       await expect(page.locator('#weight')).toHaveValue('3.5');
-      await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('button[data-value="senior"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="loss"]')).toHaveAttribute('aria-checked', 'true');
       
       // 去勢/避妊の状態も復元（seniorなので非表示だが内部状態は保持）
       // 計算結果も正しく表示される
@@ -200,8 +200,8 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
 
       // 状態が保持されることを確認
       await expect(page.locator('#weight')).toHaveValue('5.5');
-      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="gain"]')).toHaveAttribute('aria-checked', 'true');
 
       // 計算結果も同じ
       await expect(page.locator('#kcal')).toHaveText(originalKcal || '');
@@ -215,8 +215,8 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
 
       // デフォルト状態に戻る
       await expect(page.locator('#weight')).toHaveValue('');
-      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-pressed', 'true');
-      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('button[data-value="adult"]')).toHaveAttribute('aria-checked', 'true');
+      await expect(page.locator('button[data-value="maintain"]')).toHaveAttribute('aria-checked', 'true');
     });
   });
 
@@ -247,7 +247,7 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
 
       // Enterキーで選択
       await page.keyboard.press('Enter');
-      await expect(focusedButton).toHaveAttribute('aria-pressed', 'true');
+      await expect(focusedButton).toHaveAttribute('aria-checked', 'true');
 
       // 矢印キーでナビゲーション（実装されている場合）
       await page.keyboard.press('ArrowRight');
@@ -299,8 +299,8 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
       for (let i = 0; i < await stageButtons.count(); i++) {
         const button = stageButtons.nth(i);
         
-        // aria-pressed属性の存在
-        await expect(button).toHaveAttribute('aria-pressed');
+        // aria-checked属性の存在
+        await expect(button).toHaveAttribute('aria-checked');
         
         // role属性（必要に応じて）
         const role = await button.getAttribute('role');
@@ -384,7 +384,7 @@ test.describe('猫のカロリー計算 - UI制御テスト', () => {
       // マウス操作での使いやすさ
       await page.hover('button[data-value="kitten"]');
       await page.click('button[data-value="kitten"]');
-      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-pressed', 'true');
+      await expect(page.locator('button[data-value="kitten"]')).toHaveAttribute('aria-checked', 'true');
     });
   });
 });
