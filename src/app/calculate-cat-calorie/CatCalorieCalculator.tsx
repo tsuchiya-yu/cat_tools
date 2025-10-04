@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { LifeStage, Goal, CatCalorieResult } from '@/types';
-import { computeCatCalorie } from '@/lib/catCalorie';
+import { calculateCatCalorie } from '@/lib/catCalorie';
 import { CALORIE_UI_TEXT } from '@/constants/text';
+import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
 import CalorieResult from '@/components/CalorieResult';
 import CalorieFAQ from '@/components/CalorieFAQ';
@@ -40,14 +41,7 @@ export default function CatCalorieCalculator() {
     }
 
     try {
-      const raw = computeCatCalorie(weightNum, stageValue, goalValue, neuteredValue);
-      const rangeUnit = 'kcal/日';
-      const formatted: CatCalorieResult = {
-        kcal: raw.centerKcal,
-        range: `${raw.minKcal}〜${raw.maxKcal} ${rangeUnit}`,
-        factor: `× ${raw.factor.center.toFixed(2)}（${raw.factor.label}）`,
-        note: raw.note,
-      };
+      const formatted = calculateCatCalorie(weightNum, stageValue, goalValue, neuteredValue);
       setResult(formatted);
     } catch {
       setError('計算中にエラーが発生しました。');
@@ -98,10 +92,10 @@ export default function CatCalorieCalculator() {
     const neuteredParam = params.get('n');
 
     if (weightParam) setWeight(weightParam);
-    if (stageParam && ['kitten', 'adult', 'senior'].includes(stageParam)) {
+    if (stageParam && (LIFE_STAGES as readonly string[]).includes(stageParam)) {
       setLifeStage(stageParam);
     }
-    if (goalParam && ['maintain', 'loss', 'gain'].includes(goalParam)) {
+    if (goalParam && (GOALS as readonly string[]).includes(goalParam)) {
       setGoal(goalParam);
     }
     if (neuteredParam) {
