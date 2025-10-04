@@ -87,28 +87,43 @@ export default function CatCalorieCalculator() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const weightParam = params.get('w');
-    const stageParam = params.get('s') as LifeStage;
-    const goalParam = params.get('g') as Goal;
+    const stageParam = params.get('s');
+    const goalParam = params.get('g');
     const neuteredParam = params.get('n');
 
-    if (weightParam) setWeight(weightParam);
-    if (stageParam && (LIFE_STAGES as readonly string[]).includes(stageParam)) {
-      setLifeStage(stageParam);
+    const validStage =
+      stageParam && (LIFE_STAGES as readonly string[]).includes(stageParam as LifeStage)
+        ? (stageParam as LifeStage)
+        : null;
+    const validGoal =
+      goalParam && (GOALS as readonly string[]).includes(goalParam as Goal)
+        ? (goalParam as Goal)
+        : null;
+    // '0' の場合のみ false、それ以外（'1', null, 不正値）はデフォルトの true とする
+    const validNeutered = neuteredParam !== '0';
+
+    if (weightParam) {
+      setWeight(weightParam);
     }
-    if (goalParam && (GOALS as readonly string[]).includes(goalParam)) {
-      setGoal(goalParam);
+    if (validStage) {
+      setLifeStage(validStage);
     }
-    if (neuteredParam) {
-      setNeutered(neuteredParam === '1');
+    if (validGoal) {
+      setGoal(validGoal);
+    }
+    // neuteredParam が存在する場合のみ state を更新
+    if (neuteredParam !== null) {
+      setNeutered(validNeutered);
     }
 
     // 初期計算
     if (weightParam) {
-      const initialStage = stageParam || 'adult';
-      const initialGoal = goalParam || 'maintain';
-      const initialNeutered = neuteredParam ? neuteredParam === '1' : true;
-      
-      handleCalculate(weightParam, initialStage, initialGoal, initialNeutered);
+      handleCalculate(
+        weightParam,
+        validStage || 'adult',
+        validGoal || 'maintain',
+        validNeutered
+      );
     }
   }, [handleCalculate]);
 

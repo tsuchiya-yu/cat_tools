@@ -213,10 +213,8 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
       const copyBtn = page.locator('button:has-text("リンクをコピー")');
       await copyBtn.click();
 
-      // メニューが閉じる（実装に依存）
-      // 一定時間後にメニューが閉じることを確認
-      await page.waitForTimeout(1000);
-      // メニューの状態は実装により異なる
+      // メニューが閉じることをアサーションします
+      await expect(page.locator('#shareMenu')).not.toBeVisible();
     });
   });
 

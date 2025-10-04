@@ -19,7 +19,7 @@ export default function SegmentedButton<T extends string>({
   ariaLabel,
 }: SegmentedButtonProps<T>) {
   return (
-    <div className="seg flex gap-2 flex-wrap" role="tablist" aria-label={ariaLabel}>
+    <div className="seg flex gap-2 flex-wrap" role="radiogroup" aria-label={ariaLabel}>
       {options.map((option) => (
         <button
           key={option.value}
@@ -29,7 +29,8 @@ export default function SegmentedButton<T extends string>({
               : 'border-gray-300 bg-white text-gray-900'
           }`}
           data-value={option.value}
-          aria-pressed={value === option.value}
+          role="radio"
+          aria-checked={value === option.value}
           onClick={() => onChange(option.value)}
         >
           {option.label}

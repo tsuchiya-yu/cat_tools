@@ -7,13 +7,13 @@ export function calculateRER(weight: number): number {
 
 // ステージ/目標/去勢 から 係数の標準値と幅（min,max）を返す
 const FACTORS = {
-  LOSS: { center: 0.85, min: 0.8, max: 1.0, label: '減量の目安' },
-  GAIN: { center: 1.3, min: 1.2, max: 1.4, label: '増量の目安' },
-  KITTEN: { center: 2.5, min: 2.0, max: 3.0, label: '子猫の成長' },
-  SENIOR: { center: 1.2, min: 1.1, max: 1.4, label: 'シニアの目安' },
-  ADULT_NEUTERED: { center: 1.2, min: 1.0, max: 1.6, label: '成猫・去勢/避妊済' },
-  ADULT_INTACT: { center: 1.4, min: 1.2, max: 1.6, label: '成猫・未去勢/未避妊' },
-} as const;
+  LOSS: { c: 0.85, min: 0.8, max: 1.0, label: '減量の目安' },
+  GAIN: { c: 1.3, min: 1.2, max: 1.4, label: '増量の目安' },
+  KITTEN: { c: 2.5, min: 2.0, max: 3.0, label: '子猫の成長' },
+  SENIOR: { c: 1.2, min: 1.1, max: 1.4, label: 'シニアの目安' },
+  ADULT_NEUTERED: { c: 1.2, min: 1.0, max: 1.6, label: '成猫・去勢/避妊済' },
+  ADULT_INTACT: { c: 1.4, min: 1.2, max: 1.6, label: '成猫・未去勢/未避妊' },
+} as const satisfies Record<string, CalorieFactorResult>;
 
 export function getCalorieFactor(stage: LifeStage, goal: Goal, neutered: boolean): CalorieFactorResult {
   // goalが最優先（減量/増量）
@@ -71,7 +71,7 @@ export function computeCatCalorie(
   const rer = calculateRER(weight);
   const factor = getCalorieFactor(stage, goal, neutered);
 
-  const center = rer * factor.center;
+  const center = rer * factor.c;
   const min = rer * factor.min;
   const max = rer * factor.max;
 
@@ -95,7 +95,7 @@ export function calculateCatCalorie(
   return {
     kcal: raw.centerKcal,
     range: `${raw.minKcal}〜${raw.maxKcal} kcal/日`,
-    factor: `× ${raw.factor.center.toFixed(2)}（${raw.factor.label}）`,
+    factor: `× ${raw.factor.c.toFixed(2)}（${raw.factor.label}）`,
     note: raw.note,
   };
 }

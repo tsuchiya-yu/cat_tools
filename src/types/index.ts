@@ -18,7 +18,7 @@ export type LifeStage = 'kitten' | 'adult' | 'senior';
 export type Goal = 'maintain' | 'loss' | 'gain';
 
 export interface CalorieFactorResult {
-  center: number;
+  c: number;
   min: number;
   max: number;
   label: string;
