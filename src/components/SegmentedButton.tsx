@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
+import type React from 'react';
 
 interface SegmentedButtonOption<T> {
   value: T;
@@ -53,7 +54,9 @@ export default function SegmentedButton<T extends string>({
         return (
           <button
             key={option.value}
-            ref={(el) => (btnRefs.current[i] = el)}
+            ref={(el) => {
+              btnRefs.current[i] = el;
+            }}
             type="button"
             className={`appearance-none border px-3.5 py-2.5 rounded-full cursor-pointer text-sm font-semibold transition-colors ${
               isSelected

@@ -31,24 +31,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/calculate-cat-calorie',
   },
+  other: {
+    'application/ld+json': JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": STRUCTURED_DATA.CALORIE_FAQ.TYPE,
+      "mainEntity": STRUCTURED_DATA.CALORIE_FAQ.ITEMS
+    })
+  }
 };
 
 export default function Page() {
-  return (
-    <>
-      <CatCalorieCalculator />
-      
-      {/* FAQ 構造化データ */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": STRUCTURED_DATA.CALORIE_FAQ.TYPE,
-            "mainEntity": STRUCTURED_DATA.CALORIE_FAQ.ITEMS
-          })
-        }}
-      />
-    </>
-  );
+  return <CatCalorieCalculator />;
 }
