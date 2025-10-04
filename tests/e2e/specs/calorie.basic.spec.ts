@@ -87,14 +87,25 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     // すべての JSON-LD を取得して解析（オブジェクト/配列の両方に対応）
     const contents = await page.locator('script[type="application/ld+json"]').allTextContents();
 
+    // 型定義と簡易ガード
+    type FaqAnswer = { ['@type']: string; text: string };
+    type FaqItem = { ['@type']: string; name: string; acceptedAnswer: FaqAnswer };
+    type FaqPage = { ['@type']: string; mainEntity: FaqItem[] };
+    const isFaqPage = (v: unknown): v is FaqPage => {
+      if (!v || typeof v !== 'object') return false;
+      const t = (v as Record<string, unknown>)['@type'];
+      const me = (v as Record<string, unknown>)['mainEntity'];
+      return t === 'FAQPage' && Array.isArray(me);
+    };
+
     // FAQPageを含む要素を抽出
-    const faqPayloads: any[] = [];
+    const faqPayloads: FaqPage[] = [];
     for (const text of contents) {
       try {
-        const parsed = JSON.parse(text);
-        const items: any[] = Array.isArray(parsed) ? parsed : [parsed];
+        const parsed = JSON.parse(text) as unknown;
+        const items = Array.isArray(parsed) ? parsed : [parsed];
         for (const item of items) {
-          if (item && item['@type'] === 'FAQPage') {
+          if (isFaqPage(item)) {
             faqPayloads.push(item);
           }
         }
@@ -106,7 +117,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     expect(faqPayloads.length).toBeGreaterThanOrEqual(1);
 
     // 1つ目のFAQPageの内容を確認
-    const data = faqPayloads[0] as { ['@type']: string; mainEntity: any[] };
+    const data = faqPayloads[0];
     expect(data['@type']).toBe('FAQPage');
     expect(Array.isArray(data.mainEntity)).toBeTruthy();
     expect(data.mainEntity.length).toBeGreaterThanOrEqual(4);

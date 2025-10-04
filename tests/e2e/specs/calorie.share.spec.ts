@@ -214,7 +214,6 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
       await copyBtn.click();
 
       // メニューが閉じる（実装に依存）
-      const shareMenu = page.locator('#shareMenu');
       // 一定時間後にメニューが閉じることを確認
       await page.waitForTimeout(1000);
       // メニューの状態は実装により異なる
