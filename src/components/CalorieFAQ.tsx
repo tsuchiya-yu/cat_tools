@@ -30,7 +30,8 @@ export default function CalorieFAQ() {
           >
             <summary
               className="list-none cursor-pointer flex items-center justify-between font-normal text-gray-900 hover:text-pink-600"
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 toggleItem(index);
               }}
             >

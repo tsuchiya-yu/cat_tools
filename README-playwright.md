@@ -124,7 +124,7 @@ playwright.config.ts               # Playwright設定
 ### 1. 基本機能テスト (`calorie.basic.spec.ts`)
 - ページの初期表示確認
 - デフォルト選択状態
-- FAQ セクション（3件の構造化データ）
+- FAQ セクション（4件の構造化データ）
 - メタタグ（OGP、Twitterカード）
 - アクセシビリティ基本確認
 - キーボードナビゲーション
