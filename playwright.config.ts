@@ -13,6 +13,8 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
+  // デフォルトのテストタイムアウト（各テストの最大実行時間）
+  timeout: 90000, // 90 seconds
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -22,9 +24,6 @@ export default defineConfig({
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
-
-    // テストのタイムアウト時間を90秒に設定
-    timeout: 90000, // 90 seconds
 
     // ページ遷移のタイムアウト時間を90秒に設定
     navigationTimeout: 90000, // 90 seconds
