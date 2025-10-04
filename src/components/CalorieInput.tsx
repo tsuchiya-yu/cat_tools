@@ -51,9 +51,9 @@ export default function CalorieInput({
 
         {/* ライフステージ */}
         <div>
-          <h3 className="text-base font-bold text-gray-900 mb-1.5">
+          <h2 className="text-base font-bold text-gray-900 mb-1.5">
             {CALORIE_UI_TEXT.INPUT.LIFE_STAGE_LABEL}
-          </h3>
+          </h2>
           <SegmentedButton
             options={[
               { value: 'kitten', label: CALORIE_UI_TEXT.INPUT.STAGES.KITTEN },
@@ -87,9 +87,9 @@ export default function CalorieInput({
 
         {/* 目標 */}
         <div>
-          <h3 className="text-base font-bold text-gray-900 mb-1.5">
+          <h2 className="text-base font-bold text-gray-900 mb-1.5">
             {CALORIE_UI_TEXT.INPUT.GOAL_LABEL}
-          </h3>
+          </h2>
           <SegmentedButton
             options={[
               { value: 'maintain', label: CALORIE_UI_TEXT.INPUT.GOALS.MAINTAIN },
