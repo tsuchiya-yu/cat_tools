@@ -16,41 +16,7 @@ export default function CatCalorieCalculator() {
   const [result, setResult] = useState<CatCalorieResult | null>(null);
   const [error, setError] = useState('');
 
-  // URL パラメータから初期値を設定
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const weightParam = params.get('w');
-    const stageParam = params.get('s') as LifeStage;
-    const goalParam = params.get('g') as Goal;
-    const neuteredParam = params.get('n');
-
-    if (weightParam) setWeight(weightParam);
-    if (stageParam && ['kitten', 'adult', 'senior'].includes(stageParam)) {
-      setLifeStage(stageParam);
-    }
-    if (goalParam && ['maintain', 'loss', 'gain'].includes(goalParam)) {
-      setGoal(goalParam);
-    }
-    if (neuteredParam) {
-      setNeutered(neuteredParam === '1');
-    }
-
-    // 初期計算
-    if (weightParam) {
-      const initialStage = stageParam || 'adult';
-      const initialGoal = goalParam || 'maintain';
-      const initialNeutered = neuteredParam ? neuteredParam === '1' : true;
-      
-      handleCalculate(weightParam, initialStage, initialGoal, initialNeutered);
-    }
-  }, [handleCalculate]);
-
-  // state 変更時に URL を同期
-  useEffect(() => {
-    if (weight) { // weight が空文字列でない場合のみ同期
-      syncURL(weight, lifeStage, goal, neutered);
-    }
-  }, [weight, lifeStage, goal, neutered, syncURL]); // これらの state が変更されたら syncURL を呼ぶ
+  
 
   const handleCalculate = useCallback((
     weightValue: string,
@@ -122,6 +88,42 @@ export default function CatCalorieCalculator() {
     setNeutered(isNeutered);
     handleCalculate(weight, lifeStage, goal, isNeutered);
   }, [weight, lifeStage, goal, handleCalculate]);
+
+  // URL パラメータから初期値を設定（ハンドラ定義後に実行）
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const weightParam = params.get('w');
+    const stageParam = params.get('s') as LifeStage;
+    const goalParam = params.get('g') as Goal;
+    const neuteredParam = params.get('n');
+
+    if (weightParam) setWeight(weightParam);
+    if (stageParam && ['kitten', 'adult', 'senior'].includes(stageParam)) {
+      setLifeStage(stageParam);
+    }
+    if (goalParam && ['maintain', 'loss', 'gain'].includes(goalParam)) {
+      setGoal(goalParam);
+    }
+    if (neuteredParam) {
+      setNeutered(neuteredParam === '1');
+    }
+
+    // 初期計算
+    if (weightParam) {
+      const initialStage = stageParam || 'adult';
+      const initialGoal = goalParam || 'maintain';
+      const initialNeutered = neuteredParam ? neuteredParam === '1' : true;
+      
+      handleCalculate(weightParam, initialStage, initialGoal, initialNeutered);
+    }
+  }, [handleCalculate]);
+
+  // state 変更時に URL を同期
+  useEffect(() => {
+    if (weight) { // weight が空文字列でない場合のみ同期
+      syncURL(weight, lifeStage, goal, neutered);
+    }
+  }, [weight, lifeStage, goal, neutered, syncURL]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
