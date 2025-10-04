@@ -84,20 +84,22 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
   });
 
   test('構造化データ（FAQPage）の存在確認', async ({ page }) => {
-    // JSON-LD構造化データの存在を確認
-    const jsonLd = page.locator('script[type="application/ld+json"]');
-    await expect(jsonLd).toHaveCount(3); // WebSite, BreadcrumbList+WebApplication, FAQPage
+    // JSON-LD構造化データ（FAQPage）の存在を確認（順序に依存しない）
+    const faqJsonLd = page.locator('script[type="application/ld+json"]').filter({
+      hasText: '"@type":"FAQPage"',
+    });
+    await expect(faqJsonLd).toHaveCount(1);
 
     // 構造化データの内容を確認
-    const jsonContent = await jsonLd.nth(2).textContent(); // FAQPageは3番目のJSON-LD
+    const jsonContent = await faqJsonLd.textContent();
     expect(jsonContent).toBeTruthy();
-    
+
     type FaqAnswer = { ['@type']: string; text: string };
     type FaqItem = { ['@type']: string; name: string; acceptedAnswer: FaqAnswer };
     const data = JSON.parse(jsonContent!) as { ['@type']: string; mainEntity: FaqItem[] };
     expect(data['@type']).toBe('FAQPage');
     expect(data.mainEntity).toHaveLength(4);
-    
+
     // 各FAQ項目の構造を確認
     data.mainEntity.forEach((item: FaqItem) => {
       expect(item['@type']).toBe('Question');

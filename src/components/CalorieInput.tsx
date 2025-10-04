@@ -31,13 +31,12 @@ export default function CalorieInput({
 
   return (
     <div className="surface p-6 border-none overflow-hidden border-b border-gray-200">
-      <div className="label text-lg font-bold text-gray-900 mb-4">体重(kg)</div>
+      <label htmlFor="weight" className="label text-lg font-bold text-gray-900 mb-4">
+        {CALORIE_UI_TEXT.INPUT.WEIGHT_LABEL}
+      </label>
       <div className="row flex flex-col gap-4">
         {/* 体重 */}
         <div>
-          <label className="sr-only" htmlFor="weight">
-            {CALORIE_UI_TEXT.INPUT.WEIGHT_LABEL}
-          </label>
           <input
             id="weight"
             type="number"

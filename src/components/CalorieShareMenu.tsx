@@ -12,16 +12,14 @@ interface CalorieShareMenuProps {
 }
 
 export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps) {
+  const TOAST_DURATION_MS = 1600;
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
   const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   const shareText = useMemo(() => {
-    if (kcal !== '--' && range !== '—') {
-      return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(kcal, range);
-    }
-    return CALORIE_UI_TEXT.SHARE.DEFAULT_SHARE_TEXT;
+    return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(kcal, range);
   }, [kcal, range]);
 
   const twitterUrl = useMemo(() => {
@@ -76,7 +74,7 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
     try {
       await navigator.clipboard.writeText(currentUrl);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), 1600);
+      setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
     } catch (error) {
       console.error('Failed to copy link:', error); // エラーログ出力
       // コピーに失敗した場合は何もしない
