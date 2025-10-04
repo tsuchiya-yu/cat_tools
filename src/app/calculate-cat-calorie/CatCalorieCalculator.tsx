@@ -43,7 +43,6 @@ export default function CatCalorieCalculator() {
       
       handleCalculate(weightParam, initialStage, initialGoal, initialNeutered);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // state 変更時に URL を同期

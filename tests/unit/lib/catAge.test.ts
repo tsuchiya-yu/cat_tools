@@ -8,7 +8,6 @@ import {
   calculateCatAge,
   getTodayString
 } from '../../../src/lib/catAge';
-import { CatAgeResult } from '../../../src/types';
 
 describe('catAge.ts', () => {
   describe('toLocalDate', () => {

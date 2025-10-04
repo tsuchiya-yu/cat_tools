@@ -6,9 +6,7 @@ import {
   expected,
   isValidWeight,
   buildUrlParams,
-  parseUrlParams,
-  type Stage,
-  type Goal
+  parseUrlParams
 } from '../utils/calc';
 
 test.describe('計算ユーティリティのテスト', () => {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { buildUrlParams, parseUrlParams } from '../utils/calc';
+import { buildUrlParams } from '../utils/calc';
 
 test.describe('猫のカロリー計算 - UI制御テスト', () => {
   test.beforeEach(async ({ page }) => {

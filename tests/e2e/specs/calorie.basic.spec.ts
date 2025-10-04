@@ -92,12 +92,14 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     const jsonContent = await jsonLd.nth(2).textContent(); // FAQPageは3番目のJSON-LD
     expect(jsonContent).toBeTruthy();
     
-    const data = JSON.parse(jsonContent!);
+    type FaqAnswer = { ['@type']: string; text: string };
+    type FaqItem = { ['@type']: string; name: string; acceptedAnswer: FaqAnswer };
+    const data = JSON.parse(jsonContent!) as { ['@type']: string; mainEntity: FaqItem[] };
     expect(data['@type']).toBe('FAQPage');
     expect(data.mainEntity).toHaveLength(4);
     
     // 各FAQ項目の構造を確認
-    data.mainEntity.forEach((item: any) => {
+    data.mainEntity.forEach((item: FaqItem) => {
       expect(item['@type']).toBe('Question');
       expect(item.name).toBeTruthy();
       expect(item.acceptedAnswer).toBeTruthy();
@@ -141,7 +143,6 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
 
   test('アクセシビリティの基本確認', async ({ page }) => {
     // フォーム要素のラベル関連付け
-    const weightInput = page.locator('#weight');
     const weightLabel = page.locator('label[for="weight"]');
     await expect(weightLabel).toBeVisible();
     await expect(weightLabel).toHaveText('体重(kg)');

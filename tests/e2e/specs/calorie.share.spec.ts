@@ -6,18 +6,27 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
     // navigator.share と navigator.clipboard をモック
     await page.addInitScript(() => {
       // Web Share API のモック
-      (window as any).navigator.share = async (data: any) => {
-        (window as any).__shared__ = data;
+      type ShareData = { title: string; text: string; url: string };
+      const w = window as unknown as {
+        navigator: {
+          share?: (data: ShareData) => Promise<void>;
+          clipboard?: { writeText: (text: string) => Promise<void> };
+        };
+        __shared__?: ShareData;
+        __copied__?: string;
+      };
+      w.navigator.share = async (data: ShareData) => {
+        w.__shared__ = data;
         return Promise.resolve();
       };
 
       // Clipboard API のモック
-      Object.defineProperty(navigator, 'clipboard', {
+      Object.defineProperty(w.navigator, 'clipboard', {
         value: {
           writeText: async (text: string) => {
-            (window as any).__copied__ = text;
+            w.__copied__ = text;
             return Promise.resolve();
-          }
+          },
         },
         writable: true, // 変更可能にする
         configurable: true, // 再定義可能にする
@@ -101,7 +110,7 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
         await nativeShareBtn.click();
 
         // モックされたshareが呼ばれたことを確認
-        const sharedData = await page.evaluate(() => (window as any).__shared__);
+        const sharedData = await page.evaluate(() => (window as unknown as { __shared__?: { title: string; text: string; url: string } }).__shared__);
         expect(sharedData).toBeTruthy();
         expect(sharedData.title).toMatch(/猫のカロリー計算/);
         expect(sharedData.text).toBeTruthy();
@@ -181,10 +190,10 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
       await copyBtn.click();
 
       // __copied__ 変数がセットされるまで待つ
-      await page.waitForFunction(() => (window as any).__copied__ !== undefined);
+      await page.waitForFunction(() => (window as unknown as { __copied__?: string }).__copied__ !== undefined);
 
       // クリップボードにコピーされたことを確認
-      const copiedText = await page.evaluate(() => (window as any).__copied__);
+      const copiedText = await page.evaluate(() => (window as unknown as { __copied__?: string }).__copied__);
       expect(copiedText).toBeTruthy();
       expect(copiedText).toMatch(/w=6\.8/);
       expect(copiedText).toMatch(/s=senior/);
@@ -276,7 +285,7 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
     test('Clipboard API が利用できない場合', async ({ page }) => {
       // Clipboard API を無効化
       await page.addInitScript(() => {
-        delete (window.navigator as any).clipboard;
+        delete (window.navigator as unknown as { clipboard?: unknown }).clipboard;
       });
 
       await page.goto('/calculate-cat-calorie', { timeout: 90000 });
@@ -299,7 +308,7 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
     test('Web Share API が利用できない場合', async ({ page }) => {
       // Web Share API を無効化
       await page.addInitScript(() => {
-        delete (window.navigator as any).share;
+        delete (window.navigator as unknown as { share?: unknown }).share;
       });
 
       await page.goto('/calculate-cat-calorie', { timeout: 90000 });
