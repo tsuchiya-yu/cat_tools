@@ -63,6 +63,15 @@ export default function CatCalorieCalculator() {
     window.history.replaceState(null, '', url.toString());
   }, []);
 
+  const buildShareUrl = useCallback(() => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('w', weight || '');
+    url.searchParams.set('s', lifeStage);
+    url.searchParams.set('g', goal);
+    url.searchParams.set('n', neutered ? '1' : '0');
+    return url.toString();
+  }, [weight, lifeStage, goal, neutered]);
+
   const handleWeightChange = useCallback((value: string) => {
     setWeight(value);
     handleCalculate(value, lifeStage, goal, neutered);
@@ -165,6 +174,7 @@ export default function CatCalorieCalculator() {
       <CalorieResult 
         result={result}
         isVisible={!!result}
+        shareUrl={typeof window !== 'undefined' ? buildShareUrl() : undefined}
       />
 
       {/* FAQ Section */}

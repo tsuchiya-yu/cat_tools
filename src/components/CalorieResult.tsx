@@ -7,9 +7,10 @@ import CalorieShareMenu from './CalorieShareMenu';
 interface CalorieResultProps {
   result: CatCalorieResult | null;
   isVisible: boolean;
+  shareUrl?: string;
 }
 
-export default function CalorieResult({ result, isVisible }: CalorieResultProps) {
+export default function CalorieResult({ result, isVisible, shareUrl }: CalorieResultProps) {
   if (!isVisible || !result) return null;
 
   return (
@@ -34,6 +35,7 @@ export default function CalorieResult({ result, isVisible }: CalorieResultProps)
         <CalorieShareMenu 
           kcal={result.kcal.toString()}
           range={result.range}
+          shareUrl={shareUrl}
         />
 
         {/* モバイルでは縦並び、PCでは横並び */}

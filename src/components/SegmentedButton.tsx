@@ -31,6 +31,7 @@ export default function SegmentedButton<T extends string>({
           data-value={option.value}
           role="radio"
           aria-checked={value === option.value}
+          aria-pressed={value === option.value}
           onClick={() => onChange(option.value)}
         >
           {option.label}
