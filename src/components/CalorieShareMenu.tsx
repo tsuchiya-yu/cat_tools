@@ -16,19 +16,18 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
-
   const shareText = useMemo(() => {
     return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(kcal, range);
   }, [kcal, range]);
 
   const twitterUrl = useMemo(() => {
+    const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
     const params = new URLSearchParams({
       url: currentUrl,
       text: shareText,
     });
     return `https://x.com/intent/post?${params.toString()}`;
-  }, [currentUrl, shareText]);
+  }, [shareText]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -61,7 +60,7 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
         await navigator.share({
           title: '猫のカロリー計算',
           text: shareText,
-          url: currentUrl,
+          url: window.location.href,
         });
       } catch {
         // ユーザーがキャンセルした場合など、エラーは無視
@@ -72,7 +71,7 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
 
   const handleCopyLink = async () => {
     try {
-      await navigator.clipboard.writeText(currentUrl);
+      await navigator.clipboard.writeText(window.location.href);
       setShowToast(true);
       setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
     } catch (error) {
