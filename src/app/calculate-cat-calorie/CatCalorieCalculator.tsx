@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { LifeStage, Goal, CatCalorieResult } from '@/types';
-import { calculateCatCalorie } from '@/lib/catCalorie';
+import { computeCatCalorie } from '@/lib/catCalorie';
 import { CALORIE_UI_TEXT } from '@/constants/text';
 import CalorieInput from '@/components/CalorieInput';
 import CalorieResult from '@/components/CalorieResult';
@@ -43,16 +43,16 @@ export default function CatCalorieCalculator() {
       
       handleCalculate(weightParam, initialStage, initialGoal, initialNeutered);
     }
-  }, []);
+  }, [handleCalculate]);
 
   // state 変更時に URL を同期
   useEffect(() => {
     if (weight) { // weight が空文字列でない場合のみ同期
       syncURL(weight, lifeStage, goal, neutered);
     }
-  }, [weight, lifeStage, goal, neutered]); // これらの state が変更されたら syncURL を呼ぶ
+  }, [weight, lifeStage, goal, neutered, syncURL]); // これらの state が変更されたら syncURL を呼ぶ
 
-  const handleCalculate = (
+  const handleCalculate = useCallback((
     weightValue: string,
     stageValue: LifeStage,
     goalValue: Goal,
@@ -74,15 +74,22 @@ export default function CatCalorieCalculator() {
     }
 
     try {
-      const calculatedResult = calculateCatCalorie(weightNum, stageValue, goalValue, neuteredValue);
-      setResult(calculatedResult);
+      const raw = computeCatCalorie(weightNum, stageValue, goalValue, neuteredValue);
+      const rangeUnit = 'kcal/日';
+      const formatted: CatCalorieResult = {
+        kcal: raw.centerKcal,
+        range: `${raw.minKcal}〜${raw.maxKcal} ${rangeUnit}`,
+        factor: `× ${raw.factor.center.toFixed(2)}（${raw.factor.label}）`,
+        note: raw.note,
+      };
+      setResult(formatted);
     } catch {
       setError('計算中にエラーが発生しました。');
       setResult(null);
     }
-  };
+  }, []);
 
-  const syncURL = (
+  const syncURL = useCallback((
     weightValue: string,
     stageValue: LifeStage,
     goalValue: Goal,
@@ -94,27 +101,27 @@ export default function CatCalorieCalculator() {
     url.searchParams.set('g', goalValue);
     url.searchParams.set('n', neuteredValue ? '1' : '0');
     window.history.replaceState(null, '', url.toString());
-  };
+  }, []);
 
-  const handleWeightChange = (value: string) => {
+  const handleWeightChange = useCallback((value: string) => {
     setWeight(value);
     handleCalculate(value, lifeStage, goal, neutered);
-  };
+  }, [lifeStage, goal, neutered, handleCalculate]);
 
-  const handleLifeStageChange = (stage: LifeStage) => {
+  const handleLifeStageChange = useCallback((stage: LifeStage) => {
     setLifeStage(stage);
     handleCalculate(weight, stage, goal, neutered);
-  };
+  }, [weight, goal, neutered, handleCalculate]);
 
-  const handleGoalChange = (newGoal: Goal) => {
+  const handleGoalChange = useCallback((newGoal: Goal) => {
     setGoal(newGoal);
     handleCalculate(weight, lifeStage, newGoal, neutered);
-  };
+  }, [weight, lifeStage, neutered, handleCalculate]);
 
-  const handleNeuteredChange = (isNeutered: boolean) => {
+  const handleNeuteredChange = useCallback((isNeutered: boolean) => {
     setNeutered(isNeutered);
     handleCalculate(weight, lifeStage, goal, isNeutered);
-  };
+  }, [weight, lifeStage, goal, handleCalculate]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">

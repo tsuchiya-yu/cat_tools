@@ -30,3 +30,12 @@ export interface CatCalorieResult {
   factor: string;
   note: string;
 }
+
+// カロリー計算の生データ（UI整形前）
+export interface CatCalorieRawResult {
+  centerKcal: number;
+  minKcal: number;
+  maxKcal: number;
+  factor: CalorieFactorResult;
+  note: string;
+}
