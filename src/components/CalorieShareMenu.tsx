@@ -15,12 +15,7 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const currentUrl = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      return window.location.href;
-    }
-    return '';
-  }, []);
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   const shareText = useMemo(() => {
     if (kcal !== '--' && range !== '—') {
@@ -82,7 +77,8 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
       await navigator.clipboard.writeText(currentUrl);
       setShowToast(true);
       setTimeout(() => setShowToast(false), 1600);
-    } catch {
+    } catch (error) {
+      console.error('Failed to copy link:', error); // エラーログ出力
       // コピーに失敗した場合は何もしない
     }
     setIsOpen(false);
@@ -96,6 +92,7 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
     <>
       {/* 共有ボタン */}
       <button
+        id="shareBtn"
         className="share-btn absolute right-0 top-0 -translate-y-3/5 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
         aria-haspopup="menu"
         aria-expanded={isOpen}
@@ -111,7 +108,8 @@ export default function CalorieShareMenu({ kcal, range }: CalorieShareMenuProps)
       {/* 共有メニュー */}
       {isOpen && (
         <div
-          className="share-menu absolute right-0 top-0 -translate-y-2.5 z-20 bg-white border border-gray-300 rounded-xl shadow-lg p-1.5 min-w-[220px]"
+          id="shareMenu"
+          className="share-menu absolute right-0 top-12 z-20 bg-white border border-gray-300 rounded-xl shadow-lg p-1.5 min-w-[220px]"
           role="menu"
           aria-label={CALORIE_UI_TEXT.SHARE.MENU_LABEL}
         >

@@ -46,6 +46,13 @@ export default function CatCalorieCalculator() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // state 変更時に URL を同期
+  useEffect(() => {
+    if (weight) { // weight が空文字列でない場合のみ同期
+      syncURL(weight, lifeStage, goal, neutered);
+    }
+  }, [weight, lifeStage, goal, neutered]); // これらの state が変更されたら syncURL を呼ぶ
+
   const handleCalculate = (
     weightValue: string,
     stageValue: LifeStage,
@@ -57,19 +64,19 @@ export default function CatCalorieCalculator() {
     const weightNum = parseFloat(weightValue);
     if (!weightValue || !(weightNum > 0)) {
       setResult(null);
-      syncURL(weightValue, stageValue, goalValue, neuteredValue);
       return;
     }
 
     // 体重の範囲チェック
     if (weightNum < 0.5 || weightNum > 12) {
       setError(CALORIE_UI_TEXT.INPUT.ERROR.WEIGHT_RANGE);
+      setResult(null);
+      return;
     }
 
     try {
       const calculatedResult = calculateCatCalorie(weightNum, stageValue, goalValue, neuteredValue);
       setResult(calculatedResult);
-      syncURL(weightValue, stageValue, goalValue, neuteredValue);
     } catch {
       setError('計算中にエラーが発生しました。');
       setResult(null);

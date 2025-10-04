@@ -21,7 +21,7 @@ export default function CalorieResult({ result, isVisible }: CalorieResultProps)
 
         <div className="big flex items-baseline justify-center gap-3.5 text-[0] flex-wrap">
           <span className="age-group flex items-baseline gap-1.5">
-            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
+            <span id="kcal" className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
               {result.kcal}
             </span>
             <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
@@ -42,7 +42,7 @@ export default function CalorieResult({ result, isVisible }: CalorieResultProps)
           {/* 参考幅 */}
           <div className="py-4 sm:py-0">
             <div className="text-sm text-gray-500 mb-1.5">{CALORIE_UI_TEXT.RESULT.DETAILS.RANGE}</div>
-            <div className="font-extrabold text-2xl sm:text-xl">
+            <div id="range" className="font-extrabold text-2xl sm:text-xl">
               {result.range}
             </div>
           </div>
@@ -50,7 +50,7 @@ export default function CalorieResult({ result, isVisible }: CalorieResultProps)
           {/* 係数 */}
           <div className="py-4 sm:py-0 border-t sm:border-t-0 border-pink-100">
             <div className="text-sm text-gray-500 mb-1.5">{CALORIE_UI_TEXT.RESULT.DETAILS.FACTOR}</div>
-            <div className="font-extrabold text-2xl sm:text-xl">
+            <div id="factor" className="font-extrabold text-2xl sm:text-xl">
               {result.factor}
             </div>
           </div>
