@@ -149,7 +149,7 @@ export default function CatCalorieCalculator() {
       <Breadcrumbs
         items={[
           { label: CALORIE_UI_TEXT.BREADCRUMBS.HOME, href: '/' },
-          { label: CALORIE_UI_TEXT.HEADER.TITLE },
+          { label: CALORIE_UI_TEXT.BREADCRUMBS.CAT_CALORIE_CALCULATOR },
         ]}
       />
       {/* Hero Section */}

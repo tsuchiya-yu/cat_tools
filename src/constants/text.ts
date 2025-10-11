@@ -113,6 +113,7 @@ export const CALORIE_UI_TEXT = {
   },
   BREADCRUMBS: {
     HOME: 'ホーム',
+    CAT_CALORIE_CALCULATOR: '猫のカロリー計算',
   },
   INPUT: {
     WEIGHT_LABEL: '体重(kg)',
@@ -162,6 +163,22 @@ export const CALORIE_UI_TEXT = {
     },
   },
 } as const;
+
+// トップページで表示するツール一覧
+export const TOOLS = [
+  {
+    href: '/calculate-cat-age',
+    ariaLabel: '猫の年齢計算ツールを開く',
+    title: '猫の年齢計算',
+    description: '誕生日から人間年齢・ライフステージ・次の誕生日までを表示します。',
+  },
+  {
+    href: '/calculate-cat-calorie',
+    ariaLabel: '猫のカロリー計算ツールを開く',
+    title: '猫のカロリー計算',
+    description: '体重などから1日の必要カロリーと参考幅を表示します。',
+  },
+] as const;
 
 // カロリー計算用のFAQ
 export const CALORIE_FAQ_ITEMS = [

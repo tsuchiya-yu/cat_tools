@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { TOOLS } from '@/constants/text';
 
 export default function Home() {
   return (
@@ -15,20 +16,7 @@ export default function Home() {
 
       {/* Tools */}
       <section className="section mt-8 space-y-4" aria-label="ツール一覧">
-        {[
-          {
-            href: '/calculate-cat-age',
-            ariaLabel: '猫の年齢計算ツールを開く',
-            title: '猫の年齢計算',
-            description: '誕生日から人間年齢・ライフステージ・次の誕生日までを表示します。',
-          },
-          {
-            href: '/calculate-cat-calorie',
-            ariaLabel: '猫のカロリー計算ツールを開く',
-            title: '猫のカロリー計算',
-            description: '体重などから1日の必要カロリーと参考幅を表示します。',
-          },
-        ].map((tool) => (
+        {TOOLS.map((tool) => (
           <Link
             key={tool.href}
             href={tool.href}
