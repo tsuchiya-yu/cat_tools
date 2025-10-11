@@ -23,7 +23,7 @@ export default function Breadcrumbs({
     <nav aria-label={ariaLabel} className={`${className} text-sm text-gray-600`}>
       <ol className="flex items-center gap-2">
         {items.map((item, idx) => (
-          <React.Fragment key={`${item.label}-${idx}`}>
+          <React.Fragment key={item.href || item.label}>
             <li aria-current={item.href ? undefined : 'page'} className={item.href ? undefined : 'text-gray-600'}>
               {item.href ? (
                 <Link
@@ -47,4 +47,3 @@ export default function Breadcrumbs({
     </nav>
   );
 }
-

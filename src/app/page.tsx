@@ -15,35 +15,35 @@ export default function Home() {
 
       {/* Tools */}
       <section className="section mt-8 space-y-4" aria-label="ツール一覧">
-        {/* Age Calculator Card */}
-        <Link
-          href="/calculate-cat-age"
-          aria-label="猫の年齢計算ツールを開く"
-          className="block no-underline rounded-xl border border-[#E9E9EA] bg-white p-5 transition-shadow hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600"
-        >
-          <h2 className="text-xl font-bold text-[#111]">猫の年齢計算</h2>
-          <p className="text-sm text-gray-600 mt-1.5">
-            誕生日から人間年齢・ライフステージ・次の誕生日までを表示します。
-          </p>
-          <span className="inline-block mt-3 text-pink-600 font-semibold">
-            使ってみる →
-          </span>
-        </Link>
-
-        {/* Calorie Calculator Card */}
-        <Link
-          href="/calculate-cat-calorie"
-          aria-label="猫のカロリー計算ツールを開く"
-          className="block no-underline rounded-xl border border-[#E9E9EA] bg-white p-5 transition-shadow hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600"
-        >
-          <h2 className="text-xl font-bold text-[#111]">猫のカロリー計算</h2>
-          <p className="text-sm text-gray-600 mt-1.5">
-            体重などから1日の必要カロリーと参考幅を表示します。
-          </p>
-          <span className="inline-block mt-3 text-pink-600 font-semibold">
-            使ってみる →
-          </span>
-        </Link>
+        {[
+          {
+            href: '/calculate-cat-age',
+            ariaLabel: '猫の年齢計算ツールを開く',
+            title: '猫の年齢計算',
+            description: '誕生日から人間年齢・ライフステージ・次の誕生日までを表示します。',
+          },
+          {
+            href: '/calculate-cat-calorie',
+            ariaLabel: '猫のカロリー計算ツールを開く',
+            title: '猫のカロリー計算',
+            description: '体重などから1日の必要カロリーと参考幅を表示します。',
+          },
+        ].map((tool) => (
+          <Link
+            key={tool.href}
+            href={tool.href}
+            aria-label={tool.ariaLabel}
+            className="block no-underline rounded-xl border border-[var(--border)] bg-white p-5 transition-shadow hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600"
+          >
+            <h2 className="text-xl font-bold text-[var(--text)]">{tool.title}</h2>
+            <p className="text-sm text-gray-600 mt-1.5">
+              {tool.description}
+            </p>
+            <span className="inline-block mt-3 text-pink-600 font-semibold">
+              使ってみる →
+            </span>
+          </Link>
+        ))}
       </section>
     </main>
   );
