@@ -18,6 +18,10 @@ export const UI_TEXT = {
     TITLE: '猫の年齢計算ツール',
     DESCRIPTION: '誕生日を入力するだけで、人間年齢・ライフステージ・次の誕生日までを表示します。',
   },
+  BREADCRUMBS: {
+    HOME: 'ホーム',
+    CAT_AGE_CALCULATOR: '猫の年齢計算',
+  },
   INPUT: {
     LABEL: '誕生日を入力',
     PLACEHOLDER: '2023-04-01',
@@ -106,6 +110,9 @@ export const CALORIE_UI_TEXT = {
     EYECATCH: '猫のカロリーをかんたん計算',
     TITLE: '猫のカロリー計算',
     DESCRIPTION: '体重といくつかの選択だけで、1日の必要カロリー（kcal/日）を表示します。結果は標準値と参考幅で出るので、むずかしい設定は不要です。',
+  },
+  BREADCRUMBS: {
+    HOME: 'ホーム',
   },
   INPUT: {
     WEIGHT_LABEL: '体重(kg)',

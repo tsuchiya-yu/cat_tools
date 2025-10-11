@@ -148,8 +148,8 @@ export default function CatCalorieCalculator() {
     <main className="container max-w-3xl mx-auto px-6 pb-10">
       <Breadcrumbs
         items={[
-          { label: 'ホーム', href: '/' },
-          { label: '猫のカロリー計算' },
+          { label: CALORIE_UI_TEXT.BREADCRUMBS.HOME, href: '/' },
+          { label: CALORIE_UI_TEXT.HEADER.TITLE },
         ]}
       />
       {/* Hero Section */}

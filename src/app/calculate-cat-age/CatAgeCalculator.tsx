@@ -65,8 +65,8 @@ export default function CatAgeCalculator() {
     <main className="container max-w-3xl mx-auto px-6 pb-10">
         <Breadcrumbs
           items={[
-            { label: 'ホーム', href: '/' },
-            { label: '猫の年齢計算' },
+            { label: UI_TEXT.BREADCRUMBS.HOME, href: '/' },
+            { label: UI_TEXT.BREADCRUMBS.CAT_AGE_CALCULATOR },
           ]}
         />
         {/* Hero Section */}
