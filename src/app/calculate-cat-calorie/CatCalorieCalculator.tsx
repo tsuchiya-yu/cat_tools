@@ -8,6 +8,7 @@ import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
 import CalorieResult from '@/components/CalorieResult';
 import CalorieFAQ from '@/components/CalorieFAQ';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function CatCalorieCalculator() {
   const [weight, setWeight] = useState('');
@@ -145,6 +146,12 @@ export default function CatCalorieCalculator() {
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
+      <Breadcrumbs
+        items={[
+          { label: 'ホーム', href: '/' },
+          { label: '猫のカロリー計算' },
+        ]}
+      />
       {/* Hero Section */}
       <section className="section mt-6">
         <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 mt-6">

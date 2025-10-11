@@ -7,6 +7,7 @@ import DateInput from '@/components/DateInput';
 import AgeResult from '@/components/AgeResult';
 import FAQ from '@/components/FAQ';
 import { UI_TEXT } from '@/constants/text';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function CatAgeCalculator() {
   const [birthDate, setBirthDate] = useState('');
@@ -62,6 +63,12 @@ export default function CatAgeCalculator() {
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
+        <Breadcrumbs
+          items={[
+            { label: 'ホーム', href: '/' },
+            { label: '猫の年齢計算' },
+          ]}
+        />
         {/* Hero Section */}
         <section className="section mt-6">
           <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 mt-6">
