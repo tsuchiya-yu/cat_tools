@@ -1,16 +1,18 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('ナビゲーション', () => {
-  test('ルートから猫年齢計算ページにリダイレクトされる', async ({ page }) => {
-    // ルートページにアクセス
+  test('ルートページが表示されリンクで年齢計算へ遷移できる', async ({ page }) => {
+    // ルートページにアクセスし、ホームのUIが表示される
     await page.goto('/');
-    
-    // 猫年齢計算ページにリダイレクトされることを確認
-    await page.waitForURL('/calculate-cat-age');
-    expect(page.url()).toContain('/calculate-cat-age');
-    
-    // ページタイトルが正しいことを確認
-    await expect(page.locator('h1')).toBeVisible();
+    await expect(page.locator('main h1')).toHaveText('ねこツールズ');
+    const h2 = page.locator('main h2');
+    await expect(h2).toHaveCount(2);
+    await expect(h2.nth(0)).toHaveText('猫の年齢計算');
+    await expect(h2.nth(1)).toHaveText('猫のカロリー計算');
+
+    // 年齢計算カードのリンクで遷移できる
+    await page.getByRole('link', { name: '猫の年齢計算ツールを開く' }).click();
+    await expect(page).toHaveURL(/\/calculate-cat-age$/);
     await expect(page.locator('h1')).toContainText('猫の年齢');
   });
 

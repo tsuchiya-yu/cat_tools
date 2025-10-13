@@ -4,8 +4,11 @@ import { test, expect } from '@playwright/test';
 const VISIBILITY_TIMEOUT = 10000;
 
 test.describe('猫の年齢計算機', () => {
-  test('ページが正しく表示される', async ({ page }) => {
+  test.beforeEach(async ({ page }) => {
     await page.goto('/calculate-cat-age');
+  });
+
+  test('ページが正しく表示される', async ({ page }) => {
     
     // タイトルとヘッダーの確認
     await expect(page.locator('h1')).toBeVisible();
@@ -98,7 +101,6 @@ test.describe('猫の年齢計算機', () => {
   });
 
   test('ページのメタ情報が正しく設定されている', async ({ page }) => {
-    await page.goto('/calculate-cat-age');
     
     // ページタイトルの確認
     const title = await page.title();
