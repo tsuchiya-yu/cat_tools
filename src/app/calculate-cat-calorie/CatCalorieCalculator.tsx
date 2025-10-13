@@ -152,7 +152,6 @@ export default function CatCalorieCalculator() {
           { label: CALORIE_UI_TEXT.BREADCRUMBS.CAT_CALORIE_CALCULATOR },
         ]}
         className="mt-4"
-        disableTabbing
       />
       {/* Hero Section */}
       <section className="section mt-6">

@@ -12,6 +12,12 @@ export const META = {
 } as const;
 
 // UI文言
+export const COMMON_TEXT = {
+  BREADCRUMBS: {
+    HOME: 'ホーム',
+  },
+} as const;
+
 export const UI_TEXT = {
   HEADER: {
     EYECATCH: '猫の年齢を人間年齢に換算',
@@ -19,7 +25,7 @@ export const UI_TEXT = {
     DESCRIPTION: '誕生日を入力するだけで、人間年齢・ライフステージ・次の誕生日までを表示します。',
   },
   BREADCRUMBS: {
-    HOME: 'ホーム',
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
     CAT_AGE_CALCULATOR: '猫の年齢計算',
   },
   INPUT: {
@@ -112,7 +118,7 @@ export const CALORIE_UI_TEXT = {
     DESCRIPTION: '体重といくつかの選択だけで、1日の必要カロリー（kcal/日）を表示します。結果は標準値と参考幅で出るので、むずかしい設定は不要です。',
   },
   BREADCRUMBS: {
-    HOME: 'ホーム',
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
     CAT_CALORIE_CALCULATOR: '猫のカロリー計算',
   },
   INPUT: {

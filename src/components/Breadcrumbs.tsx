@@ -10,14 +10,12 @@ type BreadcrumbsProps = {
   items: BreadcrumbItem[];
   className?: string;
   ariaLabel?: string;
-  disableTabbing?: boolean;
 };
 
 export default function Breadcrumbs({
   items,
   className = '',
   ariaLabel = 'breadcrumb',
-  disableTabbing = false,
 }: BreadcrumbsProps) {
   if (!items || items.length === 0) return null;
 
@@ -25,13 +23,12 @@ export default function Breadcrumbs({
     <nav aria-label={ariaLabel} className={`${className} text-sm text-gray-600`}>
       <ol className="flex items-center gap-2">
         {items.map((item, idx) => (
-          <React.Fragment key={item.href || item.label}>
+          <React.Fragment key={idx}>
             <li aria-current={item.href ? undefined : 'page'} className={item.href ? undefined : 'text-gray-600'}>
               {item.href ? (
                 <Link
                   href={item.href}
                   className="text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
-                  tabIndex={disableTabbing ? -1 : undefined}
                 >
                   {item.label}
                 </Link>
