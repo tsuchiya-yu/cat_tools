@@ -68,6 +68,8 @@ export default function CatAgeCalculator() {
             { label: UI_TEXT.BREADCRUMBS.HOME, href: '/' },
             { label: UI_TEXT.BREADCRUMBS.CAT_AGE_CALCULATOR },
           ]}
+          className="mt-4"
+          disableTabbing
         />
         {/* Hero Section */}
         <section className="section mt-6">
