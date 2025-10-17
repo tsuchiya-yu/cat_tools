@@ -27,13 +27,7 @@ export default function CatFeedingCalculator() {
     if (dQ) setDensity(dQ);
   }, []);
 
-  // URL 同期（replaceState）: shareUrl に合わせる
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (shareUrl && window.location.href !== shareUrl) {
-      window.history.replaceState(null, '', shareUrl);
-    }
-  }, [shareUrl]);
+  // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
 
   // 計算（useMemoで最小化）
   const kcalNum = React.useMemo(() => normalizeNumberInput(dailyKcal), [dailyKcal]);
@@ -72,6 +66,14 @@ export default function CatFeedingCalculator() {
     if (density) url.searchParams.set('d', density);
     return url.toString();
   }, [dailyKcal, density]);
+
+  // URL 同期（replaceState）: shareUrl に合わせる
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (shareUrl && window.location.href !== shareUrl) {
+      window.history.replaceState(null, '', shareUrl);
+    }
+  }, [shareUrl]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
