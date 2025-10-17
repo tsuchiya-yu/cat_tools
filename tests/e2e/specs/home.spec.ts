@@ -29,6 +29,12 @@ test.describe('Home (/)', () => {
     await expect(page).toHaveURL(/\/calculate-cat-calorie$/);
   });
 
+  test('給餌量計算カードはキーボード操作で遷移できる', async ({ page }) => {
+    await page.getByRole('link', { name: '猫の給餌量計算ツールを開く' }).focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/calculate-cat-feeding$/);
+  });
+
   test('見出し階層: h1→h2 の降順', async ({ page }) => {
     await expect(page.locator('main h1')).toHaveCount(1);
     await expect(page.locator('main h2')).toHaveCount(3);
