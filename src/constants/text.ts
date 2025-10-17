@@ -176,19 +176,19 @@ export const TOOLS = [
     href: '/calculate-cat-age',
     ariaLabel: '猫の年齢計算ツールを開く',
     title: '猫の年齢計算',
-    description: '誕生日から猫の年齢を人間年齢にします。',
+    description: '誕生日から人間年齢・ライフステージ・次の誕生日までを表示します。',
   },
   {
     href: '/calculate-cat-calorie',
     ariaLabel: '猫のカロリー計算ツールを開く',
     title: '猫のカロリー計算',
-    description: '体重などから1日の必要カロリーを計算します。',
+    description: '体重などから1日の必要カロリーと参考幅を表示します。',
   },
   {
     href: '/calculate-cat-feeding',
     ariaLabel: '猫の給餌量計算ツールを開く',
     title: '猫の給餌量計算',
-    description: '普段お使いのフードから、1日に必要な量の目安を計算します。',
+    description: '必要カロリーとkcal/100gから、1日量と朝夜の目安を表示します。',
   },
 ] as const;
 
