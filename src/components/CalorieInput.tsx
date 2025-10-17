@@ -30,7 +30,7 @@ export default function CalorieInput({
   const showNeuteredToggle = lifeStage === 'adult';
 
   return (
-    <div className="surface p-6 border-none overflow-hidden border-b border-gray-200">
+    <div className="surface border-none overflow-hidden border-b border-gray-200">
       <label htmlFor="weight" className="label text-lg font-bold text-gray-900 mb-4">
         {CALORIE_UI_TEXT.INPUT.WEIGHT_LABEL}
       </label>
@@ -45,7 +45,7 @@ export default function CalorieInput({
             placeholder={CALORIE_UI_TEXT.INPUT.WEIGHT_PLACEHOLDER}
             value={weight}
             onChange={(e) => onWeightChange(e.target.value)}
-            className="w-full h-14 px-6 border-2 border-pink-200 rounded-3xl text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
+            className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
           />
         </div>
 

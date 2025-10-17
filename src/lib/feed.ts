@@ -1,0 +1,26 @@
+export function normalizeNumberInput(s: string): number | null {
+  if (s == null) return null;
+  const t = String(s).replace(/,/g, '').trim();
+  if (t === '') return null; // 空文字は null
+  const n = Number(t);
+  return Number.isFinite(n) ? n : null;
+}
+
+export function calcGramsPerDay(
+  dailyKcal: number,
+  kcalPer100g: number
+): number | null {
+  if (!(dailyKcal > 0) || !(kcalPer100g > 0)) return null;
+  return (dailyKcal / kcalPer100g) * 100;
+}
+
+export function splitMorningNight(totalGrams: number): {
+  morning: number;
+  night: number;
+  totalInt: number;
+} {
+  const totalInt = Math.round(totalGrams);
+  const morning = Math.round(totalInt / 2);
+  const night = totalInt - morning; // 合計ズレは朝側で吸収
+  return { morning, night, totalInt };
+}
