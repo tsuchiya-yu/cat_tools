@@ -40,7 +40,7 @@ export default function CatFeedingCalculator() {
     return calcGramsPerDay(kcalNum, densityNum);
   }, [kcalNum, densityNum]);
 
-  const split = React.useMemo(() => (gramsRaw != null ? splitMorningNight(gramsRaw) : null), [gramsRaw]);
+  const split = React.useMemo(() => (gramsRaw != null ? splitMorningNight(gramsRaw) : undefined), [gramsRaw]);
 
   const kcalWarnText = React.useMemo(() => (
     hasKcalInput &&
