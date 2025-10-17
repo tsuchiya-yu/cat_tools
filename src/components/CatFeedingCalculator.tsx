@@ -62,22 +62,18 @@ export default function CatFeedingCalculator() {
   const shareUrl = React.useMemo(() => {
     if (typeof window === 'undefined') return '';
     const url = new URL(window.location.origin + window.location.pathname);
-    if (dailyKcal) url.searchParams.set('kcal', dailyKcal);
-    if (density) url.searchParams.set('d', density);
+    if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
+    if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
     return url.toString();
   }, [dailyKcal, density]);
 
-  // URL 同期（replaceState）: 依存関係を明確化（dailyKcal / density）
+  // URL 同期（replaceState）: shareUrl に統一
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
-    const url = new URL(window.location.origin + window.location.pathname);
-    if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
-    if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
-    const next = url.toString();
-    if (window.location.href !== next) {
-      window.history.replaceState(null, '', next);
+    if (shareUrl && window.location.href !== shareUrl) {
+      window.history.replaceState(null, '', shareUrl);
     }
-  }, [dailyKcal, density]);
+  }, [shareUrl]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
