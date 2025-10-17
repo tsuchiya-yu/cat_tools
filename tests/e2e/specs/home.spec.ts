@@ -30,9 +30,12 @@ test.describe('Home (/)', () => {
   });
 
   test('給餌量計算カードはキーボード操作で遷移できる', async ({ page }) => {
-    // 一部環境でEnterキーの合成イベントが伝播しないことがあるため、直接clickで遷移を検証
-    await page.getByRole('link', { name: '猫の給餌量計算ツールを開く' }).click();
-    await expect(page).toHaveURL(/\/calculate-cat-feeding$/);
+    // ルーター更新を確実に待つ
+    const feedingLink = page.getByRole('link', { name: '猫の給餌量計算ツールを開く' });
+    await Promise.all([
+      page.waitForURL(/\/calculate-cat-feeding$/),
+      feedingLink.click(),
+    ]);
   });
 
   test('見出し階層: h1→h2 の降順', async ({ page }) => {
