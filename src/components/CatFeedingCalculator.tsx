@@ -6,6 +6,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
+import { FEEDING_UI_TEXT } from "@/constants/text";
 
 const RANGE = {
   kcal: { min: 50, max: 1000 },
@@ -39,20 +40,18 @@ export default function CatFeedingCalculator() {
     window.history.replaceState(null, "", url);
   }, [dailyKcal, density]);
 
-  // 計算
-  const kcalNum = normalizeNumberInput(dailyKcal);
-  const densityNum = normalizeNumberInput(density);
+  // 計算（useMemoで最小化）
+  const kcalNum = React.useMemo(() => normalizeNumberInput(dailyKcal), [dailyKcal]);
+  const densityNum = React.useMemo(() => normalizeNumberInput(density), [density]);
   const hasKcalInput = dailyKcal.trim() !== "";
   const hasDensityInput = density.trim() !== "";
-  const gramsRaw =
-    kcalNum != null &&
-    densityNum != null &&
-    kcalNum > 0 &&
-    densityNum > 0
-      ? calcGramsPerDay(kcalNum, densityNum)
-      : null;
+  const gramsRaw = React.useMemo(() => {
+    if (kcalNum == null || densityNum == null) return null;
+    if (!(kcalNum > 0) || !(densityNum > 0)) return null;
+    return calcGramsPerDay(kcalNum, densityNum);
+  }, [kcalNum, densityNum]);
 
-  const split = gramsRaw != null ? splitMorningNight(gramsRaw) : null;
+  const split = React.useMemo(() => (gramsRaw != null ? splitMorningNight(gramsRaw) : null), [gramsRaw]);
 
   const kcalWarnText =
     hasKcalInput &&
@@ -73,20 +72,18 @@ export default function CatFeedingCalculator() {
       {/* Hero */}
       <Breadcrumbs
         items={[
-          { label: "ホーム", href: "/" },
-          { label: "猫の給餌量計算" },
+          { label: FEEDING_UI_TEXT.BREADCRUMBS.HOME, href: "/" },
+          { label: FEEDING_UI_TEXT.BREADCRUMBS.FEEDING_CALCULATOR },
         ]}
         className="mt-4"
       />
 
       <section className="section mt-6">
         <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 mt-6">
-          必要カロリーから与える量を計算
+          {FEEDING_UI_TEXT.HEADER.EYECATCH}
         </p>
-        <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">猫の給餌量計算</h1>
-        <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">
-          1日の必要カロリーと、フードのカロリー密度（kcal/100g）から、与える目安量を自動計算します。
-        </p>
+        <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">{FEEDING_UI_TEXT.HEADER.TITLE}</h1>
+        <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">{FEEDING_UI_TEXT.HEADER.DESCRIPTION}</p>
 
         {/* 入力セクション：下線 */}
         <div className="surface border-none overflow-hidden border-b border-gray-200">
@@ -108,7 +105,7 @@ export default function CatFeedingCalculator() {
               <div className="text-xs text-gray-500">
                 必要カロリーが分からない方は
                 <Link href="/calculate-cat-calorie" className="text-pink-600 font-bold ml-1">
-                  こちら（カロリー計算ツール）
+                  {FEEDING_UI_TEXT.LINKS.CALORIE_TOOL}
                 </Link>
               </div>
               <div id="kcalWarn" className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
@@ -146,7 +143,7 @@ export default function CatFeedingCalculator() {
       {hasKcalInput && hasDensityInput && (
         <section className="section mt-6" aria-live="polite">
           <div className="relative pt-6 pb-4 border-b border-gray-200">
-            <div className="text-gray-600 text-[12px] tracking-[0.04em]">1日に与える目安量</div>
+            <div className="text-gray-600 text-[12px] tracking-[0.04em]">{FEEDING_UI_TEXT.RESULT.TITLE}</div>
             <div className="text-center mt-2">
               <span id="dailyGram" className="numeral tracking-[-.01em] text-5xl md:text-6xl font-extrabold text-pink-600">
                 {split ? String(split.totalInt) : "--"}
@@ -157,15 +154,21 @@ export default function CatFeedingCalculator() {
             <div id="perMeal" className="text-center mt-2 text-[16px] font-bold text-gray-900">
               {split ? `朝 ${split.morning} g / 夜 ${split.night} g` : "朝 -- g / 夜 -- g"}
             </div>
-            <div id="note" className="text-center mt-2 text-xs text-gray-500">
-              ※あくまで目安です。猫の体型や活動量に合わせて少しずつ調整してください。
-            </div>
+            <div id="note" className="text-center mt-2 text-xs text-gray-500">{FEEDING_UI_TEXT.RESULT.NOTE}</div>
 
             {/* 例と補足は下部FAQに移動 */}
             {split && (
               <FeedingShareMenu
                 shareText={`うちの猫の給餌量は 1日 ${split.totalInt} g（朝 ${split.morning} g / 夜 ${split.night} g）でした🐾`}
-                shareUrl={typeof window !== 'undefined' ? window.location.href : undefined}
+                shareUrl={(() => {
+                  if (typeof window === 'undefined') return undefined;
+                  const url = new URL(window.location.href);
+                  const k = dailyKcal || '';
+                  const d = density || '';
+                  if (k) url.searchParams.set('kcal', k); else url.searchParams.delete('kcal');
+                  if (d) url.searchParams.set('d', d); else url.searchParams.delete('d');
+                  return url.toString();
+                })()}
               />
             )}
           </div>

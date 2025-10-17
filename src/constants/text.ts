@@ -192,6 +192,26 @@ export const TOOLS = [
   },
 ] as const;
 
+// 給餌量計算用のUI文言
+export const FEEDING_UI_TEXT = {
+  HEADER: {
+    EYECATCH: '必要カロリーから与える量を計算',
+    TITLE: '猫の給餌量計算',
+    DESCRIPTION: '1日の必要カロリーと、フードのカロリー密度（kcal/100g）から、与える目安量を自動計算します。',
+  },
+  BREADCRUMBS: {
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
+    FEEDING_CALCULATOR: '猫の給餌量計算',
+  },
+  RESULT: {
+    TITLE: '1日に与える目安量',
+    NOTE: '※あくまで目安です。猫の体型や活動量に合わせて少しずつ調整してください。',
+  },
+  LINKS: {
+    CALORIE_TOOL: 'こちら（カロリー計算ツール）',
+  },
+} as const;
+
 // カロリー計算用のFAQ
 export const CALORIE_FAQ_ITEMS = [
     {
