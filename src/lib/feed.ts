@@ -1,5 +1,4 @@
 export function normalizeNumberInput(s: string): number | null {
-  if (s == null) return null;
   const t = String(s).replace(/,/g, '').trim();
   if (t === '') return null; // 空文字は null
   const n = Number(t);

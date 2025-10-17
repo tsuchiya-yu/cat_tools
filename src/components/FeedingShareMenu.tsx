@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IoShareOutline, IoLinkOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
-import { CALORIE_UI_TEXT } from '@/constants/text';
+import { SHARE_UI_TEXT } from '@/constants/text';
 
 interface FeedingShareMenuProps {
   shareText: string;
@@ -74,7 +74,7 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
         className="share-btn absolute right-0 top-0 -translate-y-3/5 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        aria-label={CALORIE_UI_TEXT.SHARE.BUTTON_LABEL}
+        aria-label={SHARE_UI_TEXT.BUTTON_LABEL}
         onClick={(e) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
@@ -88,7 +88,7 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
           id="shareMenu"
           className="share-menu absolute right-0 top-12 z-20 bg-white border border-gray-300 rounded-xl shadow-lg p-1.5 min-w-[220px]"
           role="menu"
-          aria-label={CALORIE_UI_TEXT.SHARE.MENU_LABEL}
+          aria-label={SHARE_UI_TEXT.MENU_LABEL}
         >
           {typeof navigator !== 'undefined' && 'share' in navigator && (
             <button
@@ -96,7 +96,7 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
               onClick={handleShare}
             >
               <IoShareOutline className="w-4.5 h-4.5 flex-shrink-0" />
-              <span>{CALORIE_UI_TEXT.SHARE.MENU_ITEMS.SHARE}</span>
+              <span>{SHARE_UI_TEXT.MENU_ITEMS.SHARE}</span>
             </button>
           )}
           <a
@@ -107,24 +107,23 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
             onClick={() => setIsOpen(false)}
           >
             <FaXTwitter className="w-4.5 h-4.5 flex-shrink-0" />
-            <span>{CALORIE_UI_TEXT.SHARE.MENU_ITEMS.X_SHARE}</span>
+            <span>{SHARE_UI_TEXT.MENU_ITEMS.X_SHARE}</span>
           </a>
           <button
             className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 no-underline cursor-pointer hover:bg-gray-50"
             onClick={handleCopyLink}
           >
             <IoLinkOutline className="w-4.5 h-4.5 flex-shrink-0" />
-            <span>{CALORIE_UI_TEXT.SHARE.MENU_ITEMS.COPY_LINK}</span>
+            <span>{SHARE_UI_TEXT.MENU_ITEMS.COPY_LINK}</span>
           </button>
         </div>
       )}
 
       {showToast && (
         <div className="toast fixed left-1/2 bottom-6 -translate-x-1/2 bg-gray-900 text-white text-sm px-3.5 py-2.5 rounded-lg opacity-100 pointer-events-none transition-opacity duration-300">
-          {CALORIE_UI_TEXT.SHARE.TOAST.SUCCESS}
+          {SHARE_UI_TEXT.TOAST.SUCCESS}
         </div>
       )}
     </>
   );
 }
-

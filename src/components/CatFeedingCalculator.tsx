@@ -8,7 +8,7 @@ import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT } from "@/constants/text";
 
-const RANGE = {
+const FEEDING_RANGE = {
   kcal: { min: 50, max: 1000 },
   density: { min: 50, max: 600 },
 };
@@ -27,24 +27,19 @@ export default function CatFeedingCalculator() {
     if (dQ) setDensity(dQ);
   }, []);
 
-  // URL 同期（replaceState）
+  // URL 同期（replaceState）: shareUrl に合わせる
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    const k = dailyKcal || "";
-    const d = density || "";
-    if (k) url.searchParams.set("kcal", k);
-    else url.searchParams.delete("kcal");
-    if (d) url.searchParams.set("d", d);
-    else url.searchParams.delete("d");
-    window.history.replaceState(null, "", url);
-  }, [dailyKcal, density]);
+    if (typeof window === 'undefined') return;
+    if (shareUrl && window.location.href !== shareUrl) {
+      window.history.replaceState(null, '', shareUrl);
+    }
+  }, [shareUrl]);
 
   // 計算（useMemoで最小化）
   const kcalNum = React.useMemo(() => normalizeNumberInput(dailyKcal), [dailyKcal]);
   const densityNum = React.useMemo(() => normalizeNumberInput(density), [density]);
-  const hasKcalInput = dailyKcal.trim() !== "";
-  const hasDensityInput = density.trim() !== "";
+  const hasKcalInput = React.useMemo(() => dailyKcal.trim() !== "", [dailyKcal]);
+  const hasDensityInput = React.useMemo(() => density.trim() !== "", [density]);
   const gramsRaw = React.useMemo(() => {
     if (kcalNum == null || densityNum == null) return null;
     if (!(kcalNum > 0) || !(densityNum > 0)) return null;
@@ -53,19 +48,30 @@ export default function CatFeedingCalculator() {
 
   const split = React.useMemo(() => (gramsRaw != null ? splitMorningNight(gramsRaw) : null), [gramsRaw]);
 
-  const kcalWarnText =
+  const kcalWarnText = React.useMemo(() => (
     hasKcalInput &&
     kcalNum != null &&
-    (kcalNum < RANGE.kcal.min || kcalNum > RANGE.kcal.max)
-      ? `目安の範囲（${RANGE.kcal.min}〜${RANGE.kcal.max}kcal/日）から外れています。結果は参考としてご利用ください。`
-      : "";
+    (kcalNum < FEEDING_RANGE.kcal.min || kcalNum > FEEDING_RANGE.kcal.max)
+      ? `目安の範囲（${FEEDING_RANGE.kcal.min}〜${FEEDING_RANGE.kcal.max}kcal/日）から外れています。結果は参考としてご利用ください。`
+      : ""
+  ), [hasKcalInput, kcalNum]);
 
-  const densityWarnText =
+  const densityWarnText = React.useMemo(() => (
     hasDensityInput &&
     densityNum != null &&
-    (densityNum < RANGE.density.min || densityNum > RANGE.density.max)
-      ? `目安の範囲（${RANGE.density.min}〜${RANGE.density.max}kcal/100g）から外れています。結果は参考としてご利用ください。`
-      : "";
+    (densityNum < FEEDING_RANGE.density.min || densityNum > FEEDING_RANGE.density.max)
+      ? `目安の範囲（${FEEDING_RANGE.density.min}〜${FEEDING_RANGE.density.max}kcal/100g）から外れています。結果は参考としてご利用ください。`
+      : ""
+  ), [hasDensityInput, densityNum]);
+
+  // 共有URL（メモ化）
+  const shareUrl = React.useMemo(() => {
+    if (typeof window === 'undefined') return '';
+    const url = new URL(window.location.origin + window.location.pathname);
+    if (dailyKcal) url.searchParams.set('kcal', dailyKcal);
+    if (density) url.searchParams.set('d', density);
+    return url.toString();
+  }, [dailyKcal, density]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
@@ -160,15 +166,7 @@ export default function CatFeedingCalculator() {
             {split && (
               <FeedingShareMenu
                 shareText={`うちの猫の給餌量は 1日 ${split.totalInt} g（朝 ${split.morning} g / 夜 ${split.night} g）でした🐾`}
-                shareUrl={(() => {
-                  if (typeof window === 'undefined') return undefined;
-                  const url = new URL(window.location.href);
-                  const k = dailyKcal || '';
-                  const d = density || '';
-                  if (k) url.searchParams.set('kcal', k); else url.searchParams.delete('kcal');
-                  if (d) url.searchParams.set('d', d); else url.searchParams.delete('d');
-                  return url.toString();
-                })()}
+                shareUrl={shareUrl}
               />
             )}
           </div>

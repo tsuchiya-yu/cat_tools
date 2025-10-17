@@ -170,6 +170,20 @@ export const CALORIE_UI_TEXT = {
   },
 } as const;
 
+// 共有UI（汎用）
+export const SHARE_UI_TEXT = {
+  BUTTON_LABEL: '共有メニューを開く',
+  MENU_LABEL: '共有メニュー',
+  MENU_ITEMS: {
+    SHARE: '共有する',
+    X_SHARE: 'Xでシェア',
+    COPY_LINK: 'リンクをコピー',
+  },
+  TOAST: {
+    SUCCESS: 'リンクをコピーしました',
+  },
+} as const;
+
 // トップページで表示するツール一覧
 export const TOOLS = [
   {

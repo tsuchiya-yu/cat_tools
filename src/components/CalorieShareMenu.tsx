@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { CALORIE_UI_TEXT } from '@/constants/text';
+import { CALORIE_UI_TEXT, SHARE_UI_TEXT } from '@/constants/text';
 import { IoShareOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 import { IoLinkOutline } from 'react-icons/io5';
@@ -94,7 +94,7 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
         className="share-btn absolute right-0 top-0 -translate-y-3/5 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        aria-label={CALORIE_UI_TEXT.SHARE.BUTTON_LABEL}
+        aria-label={SHARE_UI_TEXT.BUTTON_LABEL}
         onClick={(e) => {
           e.stopPropagation();
           setIsOpen(!isOpen);
@@ -109,7 +109,7 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
           id="shareMenu"
           className="share-menu absolute right-0 top-12 z-20 bg-white border border-gray-300 rounded-xl shadow-lg p-1.5 min-w-[220px]"
           role="menu"
-          aria-label={CALORIE_UI_TEXT.SHARE.MENU_LABEL}
+          aria-label={SHARE_UI_TEXT.MENU_LABEL}
         >
           {/* ネイティブ共有（対応ブラウザのみ） */}
           {typeof navigator !== 'undefined' && 'share' in navigator && (
@@ -118,7 +118,7 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
               onClick={handleShare}
             >
               <IoShareOutline className="w-4.5 h-4.5 flex-shrink-0" />
-              <span>{CALORIE_UI_TEXT.SHARE.MENU_ITEMS.SHARE}</span>
+              <span>{SHARE_UI_TEXT.MENU_ITEMS.SHARE}</span>
             </button>
           )}
 
@@ -131,7 +131,7 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
             onClick={handleTwitterShare}
           >
             <FaXTwitter className="w-4.5 h-4.5 flex-shrink-0" />
-            <span>{CALORIE_UI_TEXT.SHARE.MENU_ITEMS.X_SHARE}</span>
+            <span>{SHARE_UI_TEXT.MENU_ITEMS.X_SHARE}</span>
           </a>
 
           {/* リンクをコピー */}
@@ -140,7 +140,7 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
             onClick={handleCopyLink}
           >
             <IoLinkOutline className="w-4.5 h-4.5 flex-shrink-0" />
-            <span>{CALORIE_UI_TEXT.SHARE.MENU_ITEMS.COPY_LINK}</span>
+            <span>{SHARE_UI_TEXT.MENU_ITEMS.COPY_LINK}</span>
           </button>
         </div>
       )}
@@ -148,7 +148,7 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
       {/* トースト */}
       {showToast && (
         <div className="toast fixed left-1/2 bottom-6 -translate-x-1/2 bg-gray-900 text-white text-sm px-3.5 py-2.5 rounded-lg opacity-100 pointer-events-none transition-opacity duration-300">
-          {CALORIE_UI_TEXT.SHARE.TOAST.SUCCESS}
+          {SHARE_UI_TEXT.TOAST.SUCCESS}
         </div>
       )}
     </>
