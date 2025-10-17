@@ -56,6 +56,13 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
     };
   }, [isOpen]);
 
+  // showToastのライフサイクル管理
+  useEffect(() => {
+    if (!showToast) return;
+    const timerId = setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
+    return () => clearTimeout(timerId);
+  }, [showToast]);
+
   const handleShare = async () => {
     if ('share' in navigator) {
       try {
@@ -75,7 +82,6 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
     try {
       await navigator.clipboard.writeText(shareUrl ?? window.location.href);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
     } catch (error) {
       console.error('Failed to copy link:', error); // エラーログ出力
       // コピーに失敗した場合は何もしない

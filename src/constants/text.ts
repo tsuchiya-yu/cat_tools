@@ -224,6 +224,10 @@ export const FEEDING_UI_TEXT = {
   LINKS: {
     CALORIE_TOOL: 'こちら（カロリー計算ツール）',
   },
+  WARNINGS: {
+    KCAL_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/日）から外れています。結果は参考としてご利用ください。`,
+    DENSITY_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/100g）から外れています。結果は参考としてご利用ください。`,
+  },
 } as const;
 
 // カロリー計算用のFAQ

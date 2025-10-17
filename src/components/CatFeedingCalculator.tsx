@@ -46,7 +46,7 @@ export default function CatFeedingCalculator() {
     hasKcalInput &&
     kcalNum != null &&
     (kcalNum < FEEDING_RANGE.kcal.min || kcalNum > FEEDING_RANGE.kcal.max)
-      ? `目安の範囲（${FEEDING_RANGE.kcal.min}〜${FEEDING_RANGE.kcal.max}kcal/日）から外れています。結果は参考としてご利用ください。`
+      ? FEEDING_UI_TEXT.WARNINGS.KCAL_RANGE(FEEDING_RANGE.kcal.min, FEEDING_RANGE.kcal.max)
       : ""
   ), [hasKcalInput, kcalNum]);
 
@@ -54,7 +54,7 @@ export default function CatFeedingCalculator() {
     hasDensityInput &&
     densityNum != null &&
     (densityNum < FEEDING_RANGE.density.min || densityNum > FEEDING_RANGE.density.max)
-      ? `目安の範囲（${FEEDING_RANGE.density.min}〜${FEEDING_RANGE.density.max}kcal/100g）から外れています。結果は参考としてご利用ください。`
+      ? FEEDING_UI_TEXT.WARNINGS.DENSITY_RANGE(FEEDING_RANGE.density.min, FEEDING_RANGE.density.max)
       : ""
   ), [hasDensityInput, densityNum]);
 

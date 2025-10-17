@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { IoShareOutline, IoLinkOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
-import { SHARE_UI_TEXT } from '@/constants/text';
+import { SHARE_UI_TEXT, FEEDING_UI_TEXT } from '@/constants/text';
 
 interface FeedingShareMenuProps {
   shareText: string;
@@ -46,7 +46,7 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
     if ('share' in navigator) {
       try {
         await navigator.share({
-          title: '猫の給餌量計算',
+          title: FEEDING_UI_TEXT.HEADER.TITLE,
           text: shareText,
           url: shareUrl ?? window.location.href,
         });
@@ -61,12 +61,18 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
     try {
       await navigator.clipboard.writeText(shareUrl ?? window.location.href);
       setShowToast(true);
-      setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
     } catch (error) {
       console.error('Failed to copy link:', error);
     }
     setIsOpen(false);
   };
+
+  // showToastのライフサイクルを管理
+  useEffect(() => {
+    if (!showToast) return;
+    const timerId = setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
+    return () => clearTimeout(timerId);
+  }, [showToast]);
 
   return (
     <>

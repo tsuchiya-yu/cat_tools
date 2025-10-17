@@ -29,18 +29,6 @@ export default function CalorieInput({
 }: CalorieInputProps) {
   const showNeuteredToggle = lifeStage === 'adult';
 
-  const handleWeightKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Tab' && !e.shiftKey) {
-      // 次要素（ライフステージのセグメントボタン）へ確実にフォーカスを移す
-      // テストおよびキーボード操作の安定化目的（Breadcrumb等の影響を回避）
-      e.preventDefault();
-      const current = document.querySelector<HTMLButtonElement>(
-        `button[data-value="${lifeStage}"]`
-      );
-      current?.focus();
-    }
-  };
-
   return (
     <div className="surface border-none overflow-hidden border-b border-gray-200">
       <label htmlFor="weight" className="label text-lg font-bold text-gray-900 mb-4">
@@ -57,7 +45,6 @@ export default function CalorieInput({
             placeholder={CALORIE_UI_TEXT.INPUT.WEIGHT_PLACEHOLDER}
             value={weight}
             onChange={(e) => onWeightChange(e.target.value)}
-            onKeyDown={handleWeightKeyDown}
             className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
           />
         </div>
