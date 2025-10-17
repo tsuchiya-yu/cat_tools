@@ -31,7 +31,7 @@ export default function Breadcrumbs({
                 <Link
                   href={item.href}
                   className="text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
-                  tabIndex={tabbable ? undefined as unknown as number : -1}
+                  tabIndex={tabbable ? undefined : -1}
                 >
                   {item.label}
                 </Link>

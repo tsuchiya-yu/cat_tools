@@ -6,12 +6,7 @@ import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
-import { FEEDING_UI_TEXT } from "@/constants/text";
-
-const FEEDING_RANGE = {
-  kcal: { min: 50, max: 1000 },
-  density: { min: 50, max: 600 },
-};
+import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
 
 export default function CatFeedingCalculator() {
   const [dailyKcal, setDailyKcal] = React.useState<string>("");

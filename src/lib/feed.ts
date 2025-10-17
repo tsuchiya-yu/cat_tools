@@ -1,5 +1,5 @@
 export function normalizeNumberInput(s: string): number | undefined {
-  const t = String(s).replace(/,/g, '').trim();
+  const t = s.replace(/,/g, '').trim();
   if (t === '') return undefined; // 空文字は undefined
   const n = Number(t);
   return Number.isFinite(n) ? n : undefined;

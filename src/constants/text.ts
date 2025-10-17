@@ -207,6 +207,11 @@ export const TOOLS = [
 ] as const;
 
 // 給餌量計算用のUI文言
+export const FEEDING_RANGE = {
+  kcal: { min: 50, max: 1000 },
+  density: { min: 50, max: 600 },
+} as const;
+
 export const FEEDING_UI_TEXT = {
   HEADER: {
     EYECATCH: '必要カロリーから与える量を計算',
