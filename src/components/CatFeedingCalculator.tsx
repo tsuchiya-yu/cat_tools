@@ -35,8 +35,8 @@ export default function CatFeedingCalculator() {
   const hasKcalInput = React.useMemo(() => dailyKcal.trim() !== "", [dailyKcal]);
   const hasDensityInput = React.useMemo(() => density.trim() !== "", [density]);
   const gramsRaw = React.useMemo(() => {
-    if (kcalNum == null || densityNum == null) return null;
-    if (!(kcalNum > 0) || !(densityNum > 0)) return null;
+    if (kcalNum == null || densityNum == null) return undefined;
+    if (!(kcalNum > 0) || !(densityNum > 0)) return undefined;
     return calcGramsPerDay(kcalNum, densityNum);
   }, [kcalNum, densityNum]);
 
@@ -67,13 +67,17 @@ export default function CatFeedingCalculator() {
     return url.toString();
   }, [dailyKcal, density]);
 
-  // URL 同期（replaceState）: shareUrl に合わせる
+  // URL 同期（replaceState）: 依存関係を明確化（dailyKcal / density）
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
-    if (shareUrl && window.location.href !== shareUrl) {
-      window.history.replaceState(null, '', shareUrl);
+    const url = new URL(window.location.origin + window.location.pathname);
+    if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
+    if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
+    const next = url.toString();
+    if (window.location.href !== next) {
+      window.history.replaceState(null, '', next);
     }
-  }, [shareUrl]);
+  }, [dailyKcal, density]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">

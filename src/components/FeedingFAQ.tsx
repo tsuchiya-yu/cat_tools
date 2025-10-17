@@ -78,11 +78,9 @@ export default function FeedingFAQ() {
                 <path d="M6 9l6 6 6-6" />
               </svg>
             </summary>
-            {openItems.has(index) && (
-              <div className="text-gray-600 mt-2 leading-relaxed whitespace-pre-line">
-                {item.answer}
-              </div>
-            )}
+            <div className="text-gray-600 mt-2 leading-relaxed whitespace-pre-line">
+              {item.answer}
+            </div>
           </details>
         ))}
       </div>

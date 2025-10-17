@@ -12,8 +12,9 @@ interface CalorieShareMenuProps {
   shareUrl?: string;
 }
 
+const TOAST_DURATION_MS = 1600;
+
 export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShareMenuProps) {
-  const TOAST_DURATION_MS = 1600;
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 

@@ -1,15 +1,15 @@
-export function normalizeNumberInput(s: string): number | null {
+export function normalizeNumberInput(s: string): number | undefined {
   const t = String(s).replace(/,/g, '').trim();
-  if (t === '') return null; // 空文字は null
+  if (t === '') return undefined; // 空文字は undefined
   const n = Number(t);
-  return Number.isFinite(n) ? n : null;
+  return Number.isFinite(n) ? n : undefined;
 }
 
 export function calcGramsPerDay(
   dailyKcal: number,
   kcalPer100g: number
-): number | null {
-  if (!(dailyKcal > 0) || !(kcalPer100g > 0)) return null;
+): number | undefined {
+  if (!(dailyKcal > 0) || !(kcalPer100g > 0)) return undefined;
   return (dailyKcal / kcalPer100g) * 100;
 }
 

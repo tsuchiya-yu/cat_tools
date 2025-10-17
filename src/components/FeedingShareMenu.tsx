@@ -10,8 +10,9 @@ interface FeedingShareMenuProps {
   shareUrl?: string;
 }
 
+const TOAST_DURATION_MS = 1600;
+
 export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMenuProps) {
-  const TOAST_DURATION_MS = 1600;
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
