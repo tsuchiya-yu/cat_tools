@@ -6,9 +6,10 @@ test.describe('ナビゲーション', () => {
     await page.goto('/');
     await expect(page.locator('main h1')).toHaveText('ねこツールズ');
     const h2 = page.locator('main h2');
-    await expect(h2).toHaveCount(2);
+    await expect(h2).toHaveCount(3);
     await expect(h2.nth(0)).toHaveText('猫の年齢計算');
     await expect(h2.nth(1)).toHaveText('猫のカロリー計算');
+    await expect(h2.nth(2)).toHaveText('猫の給餌量計算');
 
     // 年齢計算カードのリンクで遷移できる
     await page.getByRole('link', { name: '猫の年齢計算ツールを開く' }).click();
