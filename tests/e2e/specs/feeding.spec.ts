@@ -75,8 +75,8 @@ test.describe('猫の給餌量計算 E2E', () => {
 
   test('リンク: カロリー計算ページへの導線が存在', async ({ page }) => {
     await page.goto(PAGE);
-    const link = page.locator('a[href="/calculate-cat-calorie"]');
+    // 入力セクションの導線リンクを検証（文言で特定）
+    const link = page.getByRole('link', { name: 'こちら（カロリー計算ツール）' });
     await expect(link).toBeVisible();
   });
 });
-
