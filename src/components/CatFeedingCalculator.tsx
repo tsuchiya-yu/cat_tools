@@ -105,7 +105,7 @@ export default function CatFeedingCalculator() {
                 className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
               />
               {/* 必要カロリーリンク（ここに移動） */}
-              <div className="text-xs text-gray-500">
+              <div id="kcalHelp" className="text-xs text-gray-500">
                 必要カロリーが分からない方は
                 <Link href="/calculate-cat-calorie" className="text-pink-600 font-bold ml-1">
                   {FEEDING_UI_TEXT.LINKS.CALORIE_TOOL}
