@@ -8,6 +8,50 @@ import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
 
+type FeedingInputGroupProps = {
+  id: string;
+  label: string;
+  placeholder: string;
+  value: string;
+  onChange: (next: string) => void;
+  help: React.ReactNode;
+  warnText: string;
+};
+
+function FeedingInputGroup({
+  id,
+  label,
+  placeholder,
+  value,
+  onChange,
+  help,
+  warnText,
+}: FeedingInputGroupProps) {
+  const helpId = `${id}Help`;
+  const warnId = `${id}Warn`;
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-base font-bold text-gray-900">{label}</label>
+      <input
+        id={id}
+        type="text"
+        inputMode="decimal"
+        placeholder={placeholder}
+        aria-describedby={`${helpId} ${warnId}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
+      />
+      <div id={helpId} className="text-xs text-gray-500">
+        {help}
+      </div>
+      <div id={warnId} className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
+        {warnText}
+      </div>
+    </div>
+  );
+}
+
 export default function CatFeedingCalculator() {
   const [dailyKcal, setDailyKcal] = React.useState<string>("");
   const [density, setDensity] = React.useState<string>("");
@@ -92,50 +136,33 @@ export default function CatFeedingCalculator() {
         <div className="surface border-none overflow-hidden border-b border-gray-200">
           <div className="row flex flex-col gap-4">
             {/* kcal */}
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="kcalInput" className="text-base font-bold text-gray-900">1日の必要カロリー（kcal）</label>
-              <input
-                id="kcalInput"
-                type="text"
-                inputMode="decimal"
-                placeholder="例：230"
-                aria-describedby="kcalHelp kcalWarn"
-                value={dailyKcal}
-                onChange={(e) => setDailyKcal(e.target.value)}
-                className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
-              />
-              {/* 必要カロリーリンク（ここに移動） */}
-              <div id="kcalHelp" className="text-xs text-gray-500">
-                必要カロリーが分からない方は
-                <Link href="/calculate-cat-calorie" className="text-pink-600 font-bold ml-1">
-                  {FEEDING_UI_TEXT.LINKS.CALORIE_TOOL}
-                </Link>
-              </div>
-              <div id="kcalWarn" className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
-                {kcalWarnText}
-              </div>
-            </div>
+            <FeedingInputGroup
+              id="kcalInput"
+              label="1日の必要カロリー（kcal）"
+              placeholder="例：230"
+              value={dailyKcal}
+              onChange={setDailyKcal}
+              help={
+                <>
+                  必要カロリーが分からない方は
+                  <Link href="/calculate-cat-calorie" className="text-pink-600 font-bold ml-1">
+                    {FEEDING_UI_TEXT.LINKS.CALORIE_TOOL}
+                  </Link>
+                </>
+              }
+              warnText={kcalWarnText}
+            />
 
             {/* 密度 */}
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="densityInput" className="text-base font-bold text-gray-900">フードのカロリー（kcal/100g）</label>
-              <input
-                id="densityInput"
-                type="text"
-                inputMode="decimal"
-                placeholder="例：390"
-                aria-describedby="densityHelp densityWarn"
-                value={density}
-                onChange={(e) => setDensity(e.target.value)}
-                className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
-              />
-              <div id="densityHelp" className="text-xs text-gray-500">
-                パッケージの「代謝エネルギー（kcal/100g）」を入力してください
-              </div>
-              <div id="densityWarn" className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
-                {densityWarnText}
-              </div>
-            </div>
+            <FeedingInputGroup
+              id="densityInput"
+              label="フードのカロリー（kcal/100g）"
+              placeholder="例：390"
+              value={density}
+              onChange={setDensity}
+              help="パッケージの「代謝エネルギー（kcal/100g）」を入力してください"
+              warnText={densityWarnText}
+            />
 
             {/* 画面中段の導線は上（kcal欄）に移動しました */}
           </div>

@@ -1,17 +1,8 @@
 "use client";
 
-import { useState } from 'react';
 import { FEEDING_FAQ_ITEMS } from '@/constants/text';
 
 export default function FeedingFAQ() {
-  const [openItems, setOpenItems] = useState<Set<number>>(new Set());
-
-  const toggleItem = (index: number) => {
-    const next = new Set(openItems);
-    if (next.has(index)) next.delete(index); else next.add(index);
-    setOpenItems(next);
-  };
-
   return (
     <section className="section mt-10 mb-8" aria-labelledby="faqTitle">
       <h2 id="faqTitle" className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
@@ -19,21 +10,11 @@ export default function FeedingFAQ() {
       </h2>
       <div>
         {FEEDING_FAQ_ITEMS.map((item, index) => (
-          <details
-            key={index}
-            className="border-none border-t border-gray-100 py-4"
-            open={openItems.has(index)}
-          >
-            <summary
-              className="list-none cursor-pointer flex items-center justify-between font-normal text-gray-900 hover:text-pink-600"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleItem(index);
-              }}
-            >
+          <details key={index} className="group border-none border-t border-gray-100 py-4">
+            <summary className="list-none cursor-pointer flex items-center justify-between font-normal text-gray-900 hover:text-pink-600">
               {item.question}
               <svg
-                className={`chev transition-transform duration-150 ease-out ${openItems.has(index) ? 'rotate-180' : ''}`}
+                className="chev transition-transform duration-150 ease-out group-open:rotate-180"
                 width="18"
                 height="18"
                 viewBox="0 0 24 24"
@@ -53,3 +34,4 @@ export default function FeedingFAQ() {
     </section>
   );
 }
+
