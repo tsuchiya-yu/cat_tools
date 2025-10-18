@@ -24,8 +24,8 @@ export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMe
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (!target.closest('.share-menu') && !target.closest('.share-btn')) {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest('.share-menu') && !event.target.closest('.share-btn')) {
         setIsOpen(false);
       }
     };
