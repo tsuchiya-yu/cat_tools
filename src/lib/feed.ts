@@ -21,6 +21,6 @@ export function splitMorningNight(totalGrams: number): {
 } {
   const totalInt = Math.round(totalGrams);
   const morning = Math.round(totalInt / 2);
-  const night = totalInt - morning; // 合計ズレは朝側で吸収
+  const night = totalInt - morning; // 合計との差分は夜側で吸収
   return { morning, night, totalInt };
 }
