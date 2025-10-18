@@ -233,7 +233,39 @@ export const FEEDING_UI_TEXT = {
     KCAL_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/日）から外れています。結果は参考としてご利用ください。`,
     DENSITY_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/100g）から外れています。結果は参考としてご利用ください。`,
   },
+  SHARE: {
+    TEXT: (total: number, morning: number, night: number) =>
+      `うちの猫の給餌量は 1日 ${total} g（朝 ${morning} g / 夜 ${night} g）でした🐾`,
+  },
 } as const;
+
+// 給餌FAQ（テキスト定数）
+export const FEEDING_FAQ_ITEMS = [
+  {
+    question: '必要カロリー（kcal/日）が分かりません。どうすればいい？',
+    answer: '「猫のカロリー計算」で体重などから1日の必要カロリーを求め、ここに入力してください。',
+  },
+  {
+    question: 'kcal/100g はどこで確認できますか？',
+    answer:
+      'パッケージやメーカーサイトの「代謝エネルギー：◯◯kcal/100g」を参照してください。\nウェットは「1袋あたり◯◯kcal」との表記があり、100g表記と混同しないよう注意してください。',
+  },
+  {
+    question: '朝・夜の分け方はどうなっている？',
+    answer:
+      '朝=合計の半分（四捨五入）、夜=合計−朝 とし、端数は朝側で吸収します。',
+  },
+  {
+    question: '結果はどれくらい正確？どう調整すればいい？',
+    answer:
+      '結果は目安です。\n体型・活動量で必要量は変わります。1〜2週間の変化を見て、与える量を5〜10%ずつ上下して調整してください。',
+  },
+  {
+    question: '入力を共有・保存できますか？',
+    answer:
+      'URLを共有・ブックマークすれば、いつでも結果を確認できます。',
+  },
+] as const;
 
 // カロリー計算用のFAQ
 export const CALORIE_FAQ_ITEMS = [

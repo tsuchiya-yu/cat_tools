@@ -162,7 +162,7 @@ export default function CatFeedingCalculator() {
             {/* 例と補足は下部FAQに移動 */}
             {split && (
               <FeedingShareMenu
-                shareText={`うちの猫の給餌量は 1日 ${split.totalInt} g（朝 ${split.morning} g / 夜 ${split.night} g）でした🐾`}
+                shareText={FEEDING_UI_TEXT.SHARE.TEXT(split.totalInt, split.morning, split.night)}
                 shareUrl={shareUrl}
               />
             )}

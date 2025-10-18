@@ -45,8 +45,12 @@ export default function CalorieInput({
             placeholder={CALORIE_UI_TEXT.INPUT.WEIGHT_PLACEHOLDER}
             value={weight}
             onChange={(e) => onWeightChange(e.target.value)}
+            aria-describedby="weightHelp error"
             className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
           />
+          <div id="weightHelp" className="text-xs text-gray-500 mt-1.5">
+            {CALORIE_UI_TEXT.INPUT.WEIGHT_HELP}
+          </div>
         </div>
 
         {/* ライフステージ */}
