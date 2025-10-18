@@ -16,6 +16,8 @@ type FeedingInputGroupProps = {
   onChange: (next: string) => void;
   help: React.ReactNode;
   warnText: string;
+  helpId?: string;
+  warnId?: string;
 };
 
 function FeedingInputGroup({
@@ -26,9 +28,11 @@ function FeedingInputGroup({
   onChange,
   help,
   warnText,
+  helpId,
+  warnId,
 }: FeedingInputGroupProps) {
-  const helpId = `${id}Help`;
-  const warnId = `${id}Warn`;
+  const resolvedHelpId = helpId ?? `${id}Help`;
+  const resolvedWarnId = warnId ?? `${id}Warn`;
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-base font-bold text-gray-900">{label}</label>
@@ -37,15 +41,15 @@ function FeedingInputGroup({
         type="text"
         inputMode="decimal"
         placeholder={placeholder}
-        aria-describedby={`${helpId} ${warnId}`}
+        aria-describedby={`${resolvedHelpId} ${resolvedWarnId}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
       />
-      <div id={helpId} className="text-xs text-gray-500">
+      <div id={resolvedHelpId} className="text-xs text-gray-500">
         {help}
       </div>
-      <div id={warnId} className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
+      <div id={resolvedWarnId} className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
         {warnText}
       </div>
     </div>
@@ -151,6 +155,8 @@ export default function CatFeedingCalculator() {
                 </>
               }
               warnText={kcalWarnText}
+              helpId="kcalHelp"
+              warnId="kcalWarn"
             />
 
             {/* 密度 */}
@@ -162,6 +168,8 @@ export default function CatFeedingCalculator() {
               onChange={setDensity}
               help="パッケージの「代謝エネルギー（kcal/100g）」を入力してください"
               warnText={densityWarnText}
+              helpId="densityHelp"
+              warnId="densityWarn"
             />
 
             {/* 画面中段の導線は上（kcal欄）に移動しました */}
