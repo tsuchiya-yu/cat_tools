@@ -96,7 +96,7 @@ export default function CatFeedingCalculator() {
               <label htmlFor="kcalInput" className="text-base font-bold text-gray-900">1日の必要カロリー（kcal）</label>
               <input
                 id="kcalInput"
-                type="number"
+                type="text"
                 inputMode="decimal"
                 placeholder="例：230"
                 aria-describedby="kcalHelp kcalWarn"
@@ -121,7 +121,7 @@ export default function CatFeedingCalculator() {
               <label htmlFor="densityInput" className="text-base font-bold text-gray-900">フードのカロリー（kcal/100g）</label>
               <input
                 id="densityInput"
-                type="number"
+                type="text"
                 inputMode="decimal"
                 placeholder="例：390"
                 aria-describedby="densityHelp densityWarn"
