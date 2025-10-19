@@ -1,9 +1,9 @@
-have_fun: true
+have_fun: false
 language: ja  # 日本語でのレビューコメントを指定
 code_review:
   disable: false
-  comment_severity_threshold: MEDIUM
-  max_review_comments: 10
+  comment_severity_threshold: HIGH
+  max_review_comments: 5
   auto_approve: false  # 自動承認は無効
   pull_request_opened:
     help: true
@@ -27,13 +27,10 @@ code_review:
     - ".vercel/**"
     - "*.config.*"
   focus_areas:
-    - accessibility
-    - performance
+    - correctness
     - security
-    - maintainability
-    - readability
     - type_safety
-    - best_practices
+    - error_handling
   review_scope:
     - code_quality
     - architecture
