@@ -170,6 +170,20 @@ export const CALORIE_UI_TEXT = {
   },
 } as const;
 
+// 共有UI（汎用）
+export const SHARE_UI_TEXT = {
+  BUTTON_LABEL: '共有メニューを開く',
+  MENU_LABEL: '共有メニュー',
+  MENU_ITEMS: {
+    SHARE: '共有する',
+    X_SHARE: 'Xでシェア',
+    COPY_LINK: 'リンクをコピー',
+  },
+  TOAST: {
+    SUCCESS: 'リンクをコピーしました',
+  },
+} as const;
+
 // トップページで表示するツール一覧
 export const TOOLS = [
   {
@@ -183,6 +197,73 @@ export const TOOLS = [
     ariaLabel: '猫のカロリー計算ツールを開く',
     title: '猫のカロリー計算',
     description: '体重などから1日の必要カロリーと参考幅を表示します。',
+  },
+  {
+    href: '/calculate-cat-feeding',
+    ariaLabel: '猫の給餌量計算ツールを開く',
+    title: '猫の給餌量計算',
+    description: '必要カロリーとkcal/100gから、1日量と朝夜の目安を表示します。',
+  },
+] as const;
+
+// 給餌量計算用のUI文言
+export const FEEDING_RANGE = {
+  kcal: { min: 50, max: 1000 },
+  density: { min: 50, max: 600 },
+} as const;
+
+export const FEEDING_UI_TEXT = {
+  HEADER: {
+    EYECATCH: '必要カロリーから与える量を計算',
+    TITLE: '猫の給餌量計算',
+    DESCRIPTION: '1日の必要カロリーと、フードのカロリー密度（kcal/100g）から、与える目安量を自動計算します。',
+  },
+  BREADCRUMBS: {
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
+    FEEDING_CALCULATOR: '猫の給餌量計算',
+  },
+  RESULT: {
+    TITLE: '1日に与える目安量',
+    NOTE: '※あくまで目安です。猫の体型や活動量に合わせて少しずつ調整してください。',
+  },
+  LINKS: {
+    CALORIE_TOOL: 'こちら（カロリー計算ツール）',
+  },
+  WARNINGS: {
+    KCAL_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/日）から外れています。結果は参考としてご利用ください。`,
+    DENSITY_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/100g）から外れています。結果は参考としてご利用ください。`,
+  },
+  SHARE: {
+    TEXT: (total: number, morning: number, night: number) =>
+      `うちの猫の給餌量は 1日 ${total} g（朝 ${morning} g / 夜 ${night} g）でした🐾`,
+  },
+} as const;
+
+// 給餌FAQ（テキスト定数）
+export const FEEDING_FAQ_ITEMS = [
+  {
+    question: '必要カロリー（kcal/日）が分かりません。どうすればいい？',
+    answer: '「猫のカロリー計算」で体重などから1日の必要カロリーを求め、ここに入力してください。',
+  },
+  {
+    question: 'kcal/100g はどこで確認できますか？',
+    answer:
+      'パッケージやメーカーサイトの「代謝エネルギー：◯◯kcal/100g」を参照してください。\nウェットは「1袋あたり◯◯kcal」との表記があり、100g表記と混同しないよう注意してください。',
+  },
+  {
+    question: '朝・夜の分け方はどうなっている？',
+    answer:
+      '朝=合計の半分（四捨五入）、夜=合計−朝 とし、端数は朝側で吸収します。',
+  },
+  {
+    question: '結果はどれくらい正確？どう調整すればいい？',
+    answer:
+      '結果は目安です。\n体型・活動量で必要量は変わります。1〜2週間の変化を見て、与える量を5〜10%ずつ上下して調整してください。',
+  },
+  {
+    question: '入力を共有・保存できますか？',
+    answer:
+      'URLを共有・ブックマークすれば、いつでも結果を確認できます。',
   },
 ] as const;
 

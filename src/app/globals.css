@@ -102,11 +102,11 @@ h1 {
 
 /* 入力（上下並び） */
 .surface {
-  padding: var(--s-3);
+  padding: var(--s-3) 0;           /* 上下のみ余白、左右は0 */
   border: none;
   border-radius: 0;               /* 枠と角丸をやめる */
   border-bottom: 1px solid var(--border);      /* 下線だけ */
-  overflow: hidden;
+  overflow: visible;              /* フォーカスリング等の見切れ防止 */
 }
 
 .row {
@@ -121,7 +121,7 @@ input[type="date"] {
   height: 64px;
   padding: 0 var(--s-3);
   border: 2px solid #F0C7D8;
-  border-radius: var(--r-xl);
+  border-radius: var(--r-sm);     /* 角丸をさらに控えめに（8px） */
   font-size: 18px;
   color: var(--text);
   background: #fff;

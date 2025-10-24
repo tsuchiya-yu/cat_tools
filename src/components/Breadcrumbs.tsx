@@ -10,12 +10,14 @@ type BreadcrumbsProps = {
   items: BreadcrumbItem[];
   className?: string;
   ariaLabel?: string;
+  tabbable?: boolean; // false の場合はリンクをタブ移動対象にしない
 };
 
 export default function Breadcrumbs({
   items,
   className = '',
   ariaLabel = 'breadcrumb',
+  tabbable = true,
 }: BreadcrumbsProps) {
   if (!items || items.length === 0) return null;
 
@@ -29,6 +31,7 @@ export default function Breadcrumbs({
                 <Link
                   href={item.href}
                   className="text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
+                  tabIndex={tabbable ? undefined : -1}
                 >
                   {item.label}
                 </Link>

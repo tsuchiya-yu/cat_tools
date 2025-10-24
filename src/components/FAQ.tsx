@@ -25,7 +25,7 @@ export default function FAQ() {
         {FAQ_ITEMS.map((item, index) => (
           <details
             key={index}
-            className="border-none border-t border-gray-100 py-4.5"
+            className="border-none border-t border-gray-100 py-4"
             open={openItems.has(index)}
           >
             <summary

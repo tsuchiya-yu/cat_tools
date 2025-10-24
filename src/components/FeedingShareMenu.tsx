@@ -1,78 +1,57 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { CALORIE_UI_TEXT, SHARE_UI_TEXT } from '@/constants/text';
-import { IoShareOutline } from 'react-icons/io5';
+import { useEffect, useMemo, useState } from 'react';
+import { IoShareOutline, IoLinkOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
-import { IoLinkOutline } from 'react-icons/io5';
+import { SHARE_UI_TEXT, FEEDING_UI_TEXT } from '@/constants/text';
 
-interface CalorieShareMenuProps {
-  kcal: string;
-  range: string;
+interface FeedingShareMenuProps {
+  shareText: string;
   shareUrl?: string;
 }
 
 const TOAST_DURATION_MS = 1600;
 
-export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShareMenuProps) {
+export default function FeedingShareMenu({ shareText, shareUrl }: FeedingShareMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
 
-  const shareText = useMemo(() => {
-    return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(kcal, range);
-  }, [kcal, range]);
-
   const twitterUrl = useMemo(() => {
     const currentUrl = shareUrl ?? (typeof window !== 'undefined' ? window.location.href : '');
-    const params = new URLSearchParams({
-      url: currentUrl,
-      text: shareText,
-    });
+    const params = new URLSearchParams({ url: currentUrl, text: shareText });
     return `https://x.com/intent/post?${params.toString()}`;
   }, [shareUrl, shareText]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Element;
-      if (!target.closest('.share-menu') && !target.closest('.share-btn')) {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest('.share-menu') && !event.target.closest('.share-btn')) {
         setIsOpen(false);
       }
     };
-
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsOpen(false);
-      }
+      if (event.key === 'Escape') setIsOpen(false);
     };
-
     if (isOpen) {
       document.addEventListener('click', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
     }
-
     return () => {
       document.removeEventListener('click', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen]);
 
-  // showToastのライフサイクル管理
-  useEffect(() => {
-    if (!showToast) return;
-    const timerId = setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
-    return () => clearTimeout(timerId);
-  }, [showToast]);
-
   const handleShare = async () => {
     if ('share' in navigator) {
       try {
         await navigator.share({
-          title: '猫のカロリー計算',
+          title: FEEDING_UI_TEXT.HEADER.TITLE,
           text: shareText,
           url: shareUrl ?? window.location.href,
         });
       } catch {
-        // ユーザーがキャンセルした場合など、エラーは無視
+        // キャンセル等は握りつぶす
       }
     }
     setIsOpen(false);
@@ -83,19 +62,20 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
       await navigator.clipboard.writeText(shareUrl ?? window.location.href);
       setShowToast(true);
     } catch (error) {
-      console.error('Failed to copy link:', error); // エラーログ出力
-      // コピーに失敗した場合は何もしない
+      console.error('Failed to copy link:', error);
     }
     setIsOpen(false);
   };
 
-  const handleTwitterShare = () => {
-    setIsOpen(false);
-  };
+  // showToastのライフサイクルを管理
+  useEffect(() => {
+    if (!showToast) return;
+    const timerId = setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
+    return () => clearTimeout(timerId);
+  }, [showToast]);
 
   return (
     <>
-      {/* 共有ボタン */}
       <button
         id="shareBtn"
         className="share-btn absolute right-0 top-0 -translate-y-3/5 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
@@ -110,7 +90,6 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
         <IoShareOutline className="w-5 h-5 text-gray-500" />
       </button>
 
-      {/* 共有メニュー */}
       {isOpen && (
         <div
           id="shareMenu"
@@ -118,7 +97,6 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
           role="menu"
           aria-label={SHARE_UI_TEXT.MENU_LABEL}
         >
-          {/* ネイティブ共有（対応ブラウザのみ） */}
           {typeof navigator !== 'undefined' && 'share' in navigator && (
             <button
               className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 no-underline cursor-pointer hover:bg-gray-50"
@@ -128,20 +106,16 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
               <span>{SHARE_UI_TEXT.MENU_ITEMS.SHARE}</span>
             </button>
           )}
-
-          {/* X（Twitter）でシェア */}
           <a
             href={twitterUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 no-underline cursor-pointer hover:bg-gray-50"
-            onClick={handleTwitterShare}
+            onClick={() => setIsOpen(false)}
           >
             <FaXTwitter className="w-4.5 h-4.5 flex-shrink-0" />
             <span>{SHARE_UI_TEXT.MENU_ITEMS.X_SHARE}</span>
           </a>
-
-          {/* リンクをコピー */}
           <button
             className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 no-underline cursor-pointer hover:bg-gray-50"
             onClick={handleCopyLink}
@@ -152,7 +126,6 @@ export default function CalorieShareMenu({ kcal, range, shareUrl }: CalorieShare
         </div>
       )}
 
-      {/* トースト */}
       {showToast && (
         <div className="toast fixed left-1/2 bottom-6 -translate-x-1/2 bg-gray-900 text-white text-sm px-3.5 py-2.5 rounded-lg opacity-100 pointer-events-none transition-opacity duration-300">
           {SHARE_UI_TEXT.TOAST.SUCCESS}
