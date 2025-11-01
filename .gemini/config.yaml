@@ -2,8 +2,8 @@ have_fun: false
 language: ja  # 日本語でのレビューコメントを指定
 code_review:
   disable: false
-  comment_severity_threshold: HIGH
-  max_review_comments: 5
+  comment_severity_threshold: CRITICAL
+  max_review_comments: 2
   auto_approve: false  # 自動承認は無効
   pull_request_opened:
     help: true
@@ -11,8 +11,8 @@ code_review:
     code_review: true
     generate_summary: true  # PR概要の自動生成を有効
   pull_request_updated:
-    code_review: true
-    incremental_review: true  # 差分のみレビュー
+    code_review: false
+    incremental_review: false  # 差分のみレビュー
   ignore_paths:
     - "coverage/**"
     - "node_modules/**"
