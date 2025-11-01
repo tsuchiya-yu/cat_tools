@@ -63,33 +63,22 @@ export default function CatFeedingCalculator() {
   const [isInitialized, setIsInitialized] = React.useState(false);
   const pathname = usePathname();
 
-  // 初期化：URLクエリから復元（完了までURL同期を待つ）
+  // 初期化＆popstate：URLに合わせて state を復元
   React.useEffect(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const kcalQ = params.get("kcal");
-    const densityQ = params.get("d");
-    if (kcalQ !== null) {
-      setDailyKcal(kcalQ);
-    }
-    if (densityQ !== null) {
-      setDensity(densityQ);
-    }
-    setIsInitialized(true);
-  }, []);
 
-  // popstate対応：戻る/進むでURLが変わった場合も state を同期
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const handlePopState = () => {
+    const syncStateFromURL = () => {
       const params = new URLSearchParams(window.location.search);
       setDailyKcal(params.get("kcal") ?? "");
       setDensity(params.get("d") ?? "");
     };
 
-    window.addEventListener('popstate', handlePopState);
+    syncStateFromURL();
+    setIsInitialized(true);
+
+    window.addEventListener('popstate', syncStateFromURL);
     return () => {
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('popstate', syncStateFromURL);
     };
   }, []);
 
