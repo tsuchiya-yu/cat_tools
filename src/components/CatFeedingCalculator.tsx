@@ -79,9 +79,10 @@ export default function CatFeedingCalculator() {
 
   const updateQueryParam = React.useCallback(
     (key: string, value: string) => {
-      if (typeof window === "undefined" || !pathname) return;
+      if (!pathname) return;
 
-      const params = new URLSearchParams(window.location.search);
+      const currentQuery = searchParams.toString();
+      const params = new URLSearchParams(currentQuery);
       if (value) {
         params.set(key, value);
       } else {
@@ -89,10 +90,11 @@ export default function CatFeedingCalculator() {
       }
       const nextQuery = params.toString();
       const nextPath = nextQuery ? `${pathname}?${nextQuery}` : pathname;
-      if (nextPath === pathname + window.location.search) return;
+      const currentPath = currentQuery ? `${pathname}?${currentQuery}` : pathname;
+      if (nextPath === currentPath) return;
       router.replace(nextPath, { scroll: false });
     },
-    [pathname, router],
+    [pathname, router, searchParams],
   );
 
   const handleDailyKcalChange = React.useCallback(
