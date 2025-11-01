@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type FeedingInputGroupProps = {
   id: string;
@@ -57,20 +58,63 @@ function FeedingInputGroup({
 }
 
 export default function CatFeedingCalculator() {
-  const [dailyKcal, setDailyKcal] = React.useState<string>("");
-  const [density, setDensity] = React.useState<string>("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  // 初期化：URLクエリから復元
+  const dailyKcalFromURL = searchParams.get("kcal") ?? "";
+  const densityFromURL = searchParams.get("d") ?? "";
+
+  const [dailyKcal, setDailyKcal] = React.useState<string>(dailyKcalFromURL);
+  const [density, setDensity] = React.useState<string>(densityFromURL);
+
+  // URL変更（戻る/進む等）に合わせて state を同期
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const p = new URLSearchParams(window.location.search);
-    const kcalQ = p.get("kcal");
-    const dQ = p.get("d");
-    if (kcalQ) setDailyKcal(kcalQ);
-    if (dQ) setDensity(dQ);
-  }, []);
+    setDailyKcal(dailyKcalFromURL);
+    setDensity(densityFromURL);
+  }, [dailyKcalFromURL, densityFromURL]);
 
-  // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
+  const buildPathWithQuery = React.useCallback(
+    (kcalValue: string, densityValue: string) => {
+      if (!pathname) return '';
+      const params = new URLSearchParams();
+      if (kcalValue) params.set('kcal', kcalValue);
+      if (densityValue) params.set('d', densityValue);
+      const queryString = params.toString();
+      return queryString ? `${pathname}?${queryString}` : pathname;
+    },
+    [pathname],
+  );
+
+  const pathWithQuery = React.useMemo(
+    () => buildPathWithQuery(dailyKcal, density),
+    [buildPathWithQuery, dailyKcal, density],
+  );
+
+  const syncUrl = React.useCallback(
+    (nextDailyKcal: string, nextDensity: string) => {
+      const nextPath = buildPathWithQuery(nextDailyKcal, nextDensity);
+      if (!nextPath || nextPath === pathWithQuery) return;
+      router.replace(nextPath, { scroll: false });
+    },
+    [buildPathWithQuery, pathWithQuery, router],
+  );
+
+  const handleDailyKcalChange = React.useCallback(
+    (value: string) => {
+      setDailyKcal(value);
+      syncUrl(value, density);
+    },
+    [syncUrl, density],
+  );
+
+  const handleDensityChange = React.useCallback(
+    (value: string) => {
+      setDensity(value);
+      syncUrl(dailyKcal, value);
+    },
+    [syncUrl, dailyKcal],
+  );
 
   // 計算（useMemoで最小化）
   const kcalNum = React.useMemo(() => normalizeNumberInput(dailyKcal), [dailyKcal]);
@@ -103,20 +147,9 @@ export default function CatFeedingCalculator() {
 
   // 共有URL（メモ化）
   const shareUrl = React.useMemo(() => {
-    if (typeof window === 'undefined') return '';
-    const url = new URL(window.location.origin + window.location.pathname);
-    if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
-    if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
-    return url.toString();
-  }, [dailyKcal, density]);
-
-  // URL 同期（replaceState）: shareUrl に統一
-  React.useEffect(() => {
-    if (typeof window === 'undefined') return;
-    if (shareUrl && window.location.href !== shareUrl) {
-      window.history.replaceState(null, '', shareUrl);
-    }
-  }, [shareUrl]);
+    if (!pathWithQuery || typeof window === 'undefined') return '';
+    return `${window.location.origin}${pathWithQuery}`;
+  }, [pathWithQuery]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
@@ -145,7 +178,7 @@ export default function CatFeedingCalculator() {
               label="1日の必要カロリー（kcal）"
               placeholder="例：230"
               value={dailyKcal}
-              onChange={setDailyKcal}
+              onChange={handleDailyKcalChange}
               help={
                 <>
                   必要カロリーが分からない方は
@@ -165,7 +198,7 @@ export default function CatFeedingCalculator() {
               label="フードのカロリー（kcal/100g）"
               placeholder="例：390"
               value={density}
-              onChange={setDensity}
+              onChange={handleDensityChange}
               help="パッケージの「代謝エネルギー（kcal/100g）」を入力してください"
               warnText={densityWarnText}
               helpId="densityHelp"
