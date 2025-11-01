@@ -70,12 +70,9 @@ export default function CatFeedingCalculator() {
 
   // URL変更（戻る/進む等）に合わせて state を同期
   React.useEffect(() => {
-    setDailyKcal((current) => (current === dailyKcalFromURL ? current : dailyKcalFromURL));
-  }, [dailyKcalFromURL]);
-
-  React.useEffect(() => {
-    setDensity((current) => (current === densityFromURL ? current : densityFromURL));
-  }, [densityFromURL]);
+    setDailyKcal(dailyKcalFromURL);
+    setDensity(densityFromURL);
+  }, [dailyKcalFromURL, densityFromURL]);
 
   const updateQueryParam = React.useCallback(
     (key: string, value: string) => {
