@@ -7,6 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
+import { usePathname } from "next/navigation";
 
 type FeedingInputGroupProps = {
   id: string;
@@ -59,6 +60,7 @@ function FeedingInputGroup({
 export default function CatFeedingCalculator() {
   const [dailyKcal, setDailyKcal] = React.useState<string>("");
   const [density, setDensity] = React.useState<string>("");
+  const pathname = usePathname();
 
   // 初期化：URLクエリから復元
   React.useEffect(() => {
@@ -104,11 +106,12 @@ export default function CatFeedingCalculator() {
   // 共有URL（メモ化）
   const shareUrl = React.useMemo(() => {
     if (typeof window === 'undefined') return '';
-    const url = new URL(window.location.origin + window.location.pathname);
+    const currentPath = pathname || window.location.pathname;
+    const url = new URL(currentPath, window.location.origin);
     if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
     if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
     return url.toString();
-  }, [dailyKcal, density]);
+  }, [dailyKcal, density, pathname]);
 
   // URL 同期（replaceState）: shareUrl に統一
   React.useEffect(() => {
