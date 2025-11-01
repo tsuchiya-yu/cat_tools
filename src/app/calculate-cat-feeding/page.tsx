@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import CatFeedingCalculator from "@/components/CatFeedingCalculator";
 
 export const metadata = {
@@ -7,6 +8,9 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <CatFeedingCalculator />;
+  return (
+    <Suspense fallback={null}>
+      <CatFeedingCalculator />
+    </Suspense>
+  );
 }
-

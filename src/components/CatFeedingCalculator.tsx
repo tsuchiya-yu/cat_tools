@@ -7,7 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 type FeedingInputGroupProps = {
   id: string;
@@ -58,29 +58,19 @@ function FeedingInputGroup({
 }
 
 export default function CatFeedingCalculator() {
-  const [dailyKcal, setDailyKcal] = React.useState<string>("");
-  const [density, setDensity] = React.useState<string>("");
-  const [isInitialized, setIsInitialized] = React.useState(false);
+  const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const searchParamsString = React.useMemo(() => searchParams.toString(), [searchParams]);
+  const [dailyKcal, setDailyKcal] = React.useState<string>(() => searchParams.get("kcal") ?? "");
+  const [density, setDensity] = React.useState<string>(() => searchParams.get("d") ?? "");
 
-  // 初期化＆popstate：URLに合わせて state を復元
+  // URL変更（戻る/進む等）に合わせて state を同期
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const syncStateFromURL = () => {
-      const params = new URLSearchParams(window.location.search);
-      setDailyKcal(params.get("kcal") ?? "");
-      setDensity(params.get("d") ?? "");
-    };
-
-    syncStateFromURL();
-    setIsInitialized(true);
-
-    window.addEventListener('popstate', syncStateFromURL);
-    return () => {
-      window.removeEventListener('popstate', syncStateFromURL);
-    };
-  }, []);
+    const params = new URLSearchParams(searchParamsString);
+    setDailyKcal(params.get("kcal") ?? "");
+    setDensity(params.get("d") ?? "");
+  }, [searchParamsString]);
 
   // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
 
@@ -113,22 +103,30 @@ export default function CatFeedingCalculator() {
       : ""
   ), [hasDensityInput, densityNum]);
 
+  const pathWithQuery = React.useMemo(() => {
+    if (!pathname) return '';
+    const params = new URLSearchParams();
+    if (dailyKcal) params.set('kcal', dailyKcal);
+    if (density) params.set('d', density);
+    const queryString = params.toString();
+    return queryString ? `${pathname}?${queryString}` : pathname;
+  }, [pathname, dailyKcal, density]);
+
   // 共有URL（メモ化）
   const shareUrl = React.useMemo(() => {
-    if (typeof window === 'undefined' || !pathname) return '';
-    const url = new URL(pathname, window.location.origin);
-    if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
-    if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
-    return url.toString();
-  }, [dailyKcal, density, pathname]);
+    if (!pathWithQuery) return '';
+    if (typeof window === 'undefined') return pathWithQuery;
+    return `${window.location.origin}${pathWithQuery}`;
+  }, [pathWithQuery]);
 
-  // URL 同期（replaceState）: shareUrl に統一
+  // state 変更を Next.js ルーターへ反映
   React.useEffect(() => {
-    if (typeof window === 'undefined' || !isInitialized) return;
-    if (shareUrl && window.location.href !== shareUrl) {
-      window.history.replaceState(null, '', shareUrl);
-    }
-  }, [shareUrl, isInitialized]);
+    if (!pathWithQuery) return;
+    const currentQuery = searchParamsString;
+    const currentPathWithQuery = currentQuery ? `${pathname}?${currentQuery}` : pathname;
+    if (currentPathWithQuery === pathWithQuery) return;
+    router.replace(pathWithQuery, { scroll: false });
+  }, [pathWithQuery, router, pathname, searchParamsString]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
