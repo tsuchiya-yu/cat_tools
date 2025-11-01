@@ -78,6 +78,21 @@ export default function CatFeedingCalculator() {
     setIsInitialized(true);
   }, []);
 
+  // popstate対応：戻る/進むでURLが変わった場合も state を同期
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      setDailyKcal(params.get("kcal") ?? "");
+      setDensity(params.get("d") ?? "");
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
+
   // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
 
   // 計算（useMemoで最小化）
