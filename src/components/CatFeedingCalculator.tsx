@@ -105,9 +105,8 @@ export default function CatFeedingCalculator() {
 
   // 共有URL（メモ化）
   const shareUrl = React.useMemo(() => {
-    if (typeof window === 'undefined') return '';
-    const currentPath = pathname || window.location.pathname;
-    const url = new URL(currentPath, window.location.origin);
+    if (typeof window === 'undefined' || !pathname) return '';
+    const url = new URL(pathname, window.location.origin);
     if (dailyKcal) url.searchParams.set('kcal', dailyKcal); else url.searchParams.delete('kcal');
     if (density) url.searchParams.set('d', density); else url.searchParams.delete('d');
     return url.toString();
