@@ -7,7 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 type FeedingInputGroupProps = {
   id: string;
@@ -58,10 +58,25 @@ function FeedingInputGroup({
 }
 
 export default function CatFeedingCalculator() {
-  const searchParams = useSearchParams();
-  const [dailyKcal, setDailyKcal] = React.useState<string>(() => searchParams.get("kcal") ?? "");
-  const [density, setDensity] = React.useState<string>(() => searchParams.get("d") ?? "");
+  const [dailyKcal, setDailyKcal] = React.useState<string>("");
+  const [density, setDensity] = React.useState<string>("");
+  const [isInitialized, setIsInitialized] = React.useState(false);
   const pathname = usePathname();
+
+  // 初期化：URLクエリから復元（完了までURL同期を待つ）
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const kcalQ = params.get("kcal");
+    const densityQ = params.get("d");
+    if (kcalQ !== null) {
+      setDailyKcal(kcalQ);
+    }
+    if (densityQ !== null) {
+      setDensity(densityQ);
+    }
+    setIsInitialized(true);
+  }, []);
 
   // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
 
@@ -105,11 +120,11 @@ export default function CatFeedingCalculator() {
 
   // URL 同期（replaceState）: shareUrl に統一
   React.useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined' || !isInitialized) return;
     if (shareUrl && window.location.href !== shareUrl) {
       window.history.replaceState(null, '', shareUrl);
     }
-  }, [shareUrl]);
+  }, [shareUrl, isInitialized]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
