@@ -7,7 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import FeedingShareMenu from "@/components/FeedingShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 type FeedingInputGroupProps = {
   id: string;
@@ -58,19 +58,10 @@ function FeedingInputGroup({
 }
 
 export default function CatFeedingCalculator() {
-  const [dailyKcal, setDailyKcal] = React.useState<string>("");
-  const [density, setDensity] = React.useState<string>("");
+  const searchParams = useSearchParams();
+  const [dailyKcal, setDailyKcal] = React.useState<string>(() => searchParams.get("kcal") ?? "");
+  const [density, setDensity] = React.useState<string>(() => searchParams.get("d") ?? "");
   const pathname = usePathname();
-
-  // 初期化：URLクエリから復元
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const p = new URLSearchParams(window.location.search);
-    const kcalQ = p.get("kcal");
-    const dQ = p.get("d");
-    if (kcalQ) setDailyKcal(kcalQ);
-    if (dQ) setDensity(dQ);
-  }, []);
 
   // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
 
