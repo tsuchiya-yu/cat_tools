@@ -74,40 +74,46 @@ export default function CatFeedingCalculator() {
     setDensity(densityFromURL);
   }, [dailyKcalFromURL, densityFromURL]);
 
-  const updateQueryParam = React.useCallback(
-    (key: string, value: string) => {
-      if (!pathname) return;
+  const buildPathWithQuery = React.useCallback(
+    (kcalValue: string, densityValue: string) => {
+      if (!pathname) return '';
+      const params = new URLSearchParams();
+      if (kcalValue) params.set('kcal', kcalValue);
+      if (densityValue) params.set('d', densityValue);
+      const queryString = params.toString();
+      return queryString ? `${pathname}?${queryString}` : pathname;
+    },
+    [pathname],
+  );
 
-      const currentQuery = searchParams.toString();
-      const params = new URLSearchParams(currentQuery);
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-      const nextQuery = params.toString();
-      const nextPath = nextQuery ? `${pathname}?${nextQuery}` : pathname;
-      const currentPath = currentQuery ? `${pathname}?${currentQuery}` : pathname;
-      if (nextPath === currentPath) return;
+  const pathWithQuery = React.useMemo(
+    () => buildPathWithQuery(dailyKcal, density),
+    [buildPathWithQuery, dailyKcal, density],
+  );
+
+  const syncUrl = React.useCallback(
+    (nextDailyKcal: string, nextDensity: string) => {
+      const nextPath = buildPathWithQuery(nextDailyKcal, nextDensity);
+      if (!nextPath || nextPath === pathWithQuery) return;
       router.replace(nextPath, { scroll: false });
     },
-    [pathname, router, searchParams],
+    [buildPathWithQuery, pathWithQuery, router],
   );
 
   const handleDailyKcalChange = React.useCallback(
     (value: string) => {
       setDailyKcal(value);
-      updateQueryParam("kcal", value);
+      syncUrl(value, density);
     },
-    [updateQueryParam],
+    [syncUrl, density],
   );
 
   const handleDensityChange = React.useCallback(
     (value: string) => {
       setDensity(value);
-      updateQueryParam("d", value);
+      syncUrl(dailyKcal, value);
     },
-    [updateQueryParam],
+    [syncUrl, dailyKcal],
   );
 
   // 計算（useMemoで最小化）
@@ -138,15 +144,6 @@ export default function CatFeedingCalculator() {
       ? FEEDING_UI_TEXT.WARNINGS.DENSITY_RANGE(FEEDING_RANGE.density.min, FEEDING_RANGE.density.max)
       : ""
   ), [hasDensityInput, densityNum]);
-
-  const pathWithQuery = React.useMemo(() => {
-    if (!pathname) return '';
-    const params = new URLSearchParams();
-    if (dailyKcal) params.set('kcal', dailyKcal);
-    if (density) params.set('d', density);
-    const queryString = params.toString();
-    return queryString ? `${pathname}?${queryString}` : pathname;
-  }, [pathname, dailyKcal, density]);
 
   // 共有URL（メモ化）
   const shareUrl = React.useMemo(() => {
