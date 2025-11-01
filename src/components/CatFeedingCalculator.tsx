@@ -68,8 +68,11 @@ export default function CatFeedingCalculator() {
   // URL変更（戻る/進む等）に合わせて state を同期
   React.useEffect(() => {
     const params = new URLSearchParams(searchParamsString);
-    setDailyKcal(params.get("kcal") ?? "");
-    setDensity(params.get("d") ?? "");
+    const nextKcal = params.get("kcal") ?? "";
+    const nextDensity = params.get("d") ?? "";
+
+    setDailyKcal((current) => (current === nextKcal ? current : nextKcal));
+    setDensity((current) => (current === nextDensity ? current : nextDensity));
   }, [searchParamsString]);
 
   // URL 同期（replaceState）: shareUrl に合わせる（宣言は shareUrl 定義後に配置）
@@ -114,8 +117,7 @@ export default function CatFeedingCalculator() {
 
   // 共有URL（メモ化）
   const shareUrl = React.useMemo(() => {
-    if (!pathWithQuery) return '';
-    if (typeof window === 'undefined') return pathWithQuery;
+    if (!pathWithQuery || typeof window === 'undefined') return '';
     return `${window.location.origin}${pathWithQuery}`;
   }, [pathWithQuery]);
 
