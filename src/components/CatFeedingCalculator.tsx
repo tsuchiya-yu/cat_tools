@@ -61,14 +61,27 @@ export default function CatFeedingCalculator() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const searchParamsString = React.useMemo(() => searchParams.toString(), [searchParams]);
-  const dailyKcal = React.useMemo(() => searchParams.get("kcal") ?? "", [searchParams]);
-  const density = React.useMemo(() => searchParams.get("d") ?? "", [searchParams]);
+
+  const dailyKcalFromURL = searchParams.get("kcal") ?? "";
+  const densityFromURL = searchParams.get("d") ?? "";
+
+  const [dailyKcal, setDailyKcal] = React.useState<string>(dailyKcalFromURL);
+  const [density, setDensity] = React.useState<string>(densityFromURL);
+
+  // URL変更（戻る/進む等）に合わせて state を同期
+  React.useEffect(() => {
+    setDailyKcal((current) => (current === dailyKcalFromURL ? current : dailyKcalFromURL));
+  }, [dailyKcalFromURL]);
+
+  React.useEffect(() => {
+    setDensity((current) => (current === densityFromURL ? current : densityFromURL));
+  }, [densityFromURL]);
 
   const updateQueryParam = React.useCallback(
     (key: string, value: string) => {
-      if (!pathname) return;
-      const params = new URLSearchParams(searchParamsString);
+      if (typeof window === "undefined" || !pathname) return;
+
+      const params = new URLSearchParams(window.location.search);
       if (value) {
         params.set(key, value);
       } else {
@@ -76,15 +89,15 @@ export default function CatFeedingCalculator() {
       }
       const nextQuery = params.toString();
       const nextPath = nextQuery ? `${pathname}?${nextQuery}` : pathname;
-      const currentPath = searchParamsString ? `${pathname}?${searchParamsString}` : pathname;
-      if (nextPath === currentPath) return;
+      if (nextPath === pathname + window.location.search) return;
       router.replace(nextPath, { scroll: false });
     },
-    [pathname, router, searchParamsString],
+    [pathname, router],
   );
 
   const handleDailyKcalChange = React.useCallback(
     (value: string) => {
+      setDailyKcal(value);
       updateQueryParam("kcal", value);
     },
     [updateQueryParam],
@@ -92,6 +105,7 @@ export default function CatFeedingCalculator() {
 
   const handleDensityChange = React.useCallback(
     (value: string) => {
+      setDensity(value);
       updateQueryParam("d", value);
     },
     [updateQueryParam],
