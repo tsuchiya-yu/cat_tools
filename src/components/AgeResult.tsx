@@ -6,20 +6,22 @@ import ShareMenu from './ShareMenu';
 import { UI_TEXT } from '@/constants/text';
 
 interface AgeResultProps {
-  result: CatAgeResult;
+  result: CatAgeResult | null;
   isVisible: boolean;
 }
 
 export default function AgeResult({ result, isVisible }: AgeResultProps) {
   const shareText = useMemo(() => {
+    if (!result) return '';
+
     const baseUrl =
       typeof window !== 'undefined'
         ? `${window.location.protocol}//${window.location.host}${window.location.pathname}`
         : 'https://cat-tools.catnote.tokyo/calculate-cat-age';
     return UI_TEXT.SHARE.SHARE_TEXT(result.humanAgeYears, result.humanAgeMonths, baseUrl);
-  }, [result.humanAgeYears, result.humanAgeMonths]);
+  }, [result]);
 
-  if (!isVisible) return null;
+  if (!isVisible || !result) return null;
 
   return (
     <section className="section" aria-live="polite">

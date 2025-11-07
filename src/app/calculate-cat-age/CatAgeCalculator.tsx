@@ -93,7 +93,7 @@ export default function CatAgeCalculator() {
 
         {/* Result Section */}
         <AgeResult 
-          result={result!} 
+          result={result} 
           isVisible={!!result} 
         />
 

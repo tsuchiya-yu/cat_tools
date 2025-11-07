@@ -15,7 +15,7 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
   const shareText = useMemo(() => {
     if (!result) return '';
     return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(result.kcal.toString(), result.range);
-  }, [result?.kcal, result?.range]);
+  }, [result]);
 
   if (!isVisible || !result) return null;
 
