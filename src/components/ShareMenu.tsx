@@ -122,6 +122,18 @@ export default function ShareMenu({
     if (isOpen) {
       document.addEventListener('click', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
+      const handleFocus = (event: FocusEvent) => {
+        if (!(event.target instanceof Element)) return;
+        if (!event.target.closest('.share-menu') && !event.target.closest('.share-btn')) {
+          toggleShare(false);
+        }
+      };
+      document.addEventListener('focusin', handleFocus);
+      return () => {
+        document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('keydown', handleEscape);
+        document.removeEventListener('focusin', handleFocus);
+      };
     }
 
     return () => {

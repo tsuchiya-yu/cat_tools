@@ -33,12 +33,24 @@ export default function CatAgeCalculator() {
     }
   }, []);
 
+  const syncBrowserUrl = (dateValue: string | null) => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (dateValue) {
+      url.searchParams.set('dob', dateValue);
+    } else {
+      url.searchParams.delete('dob');
+    }
+    window.history.replaceState(null, '', url.toString());
+  };
+
   const handleCalculate = (dateValue: string) => {
     setError('');
     
     if (!dateValue) {
       setError(UI_TEXT.INPUT.ERROR.REQUIRED);
       setResult(null);
+      syncBrowserUrl(null);
       return;
     }
 
@@ -48,20 +60,18 @@ export default function CatAgeCalculator() {
     if (birthDateObj > today) {
       setError(UI_TEXT.INPUT.ERROR.FUTURE_DATE);
       setResult(null);
+      syncBrowserUrl(null);
       return;
     }
 
     try {
       const calculatedResult = calculateCatAge(dateValue);
       setResult(calculatedResult);
-      
-      // URL を更新
-      const url = new URL(window.location.href);
-      url.searchParams.set('dob', dateValue);
-      window.history.replaceState(null, '', url.toString());
+      syncBrowserUrl(dateValue);
     } catch {
       setError(UI_TEXT.INPUT.ERROR.CALCULATION_ERROR);
       setResult(null);
+      syncBrowserUrl(null);
     }
   };
 
@@ -70,21 +80,7 @@ export default function CatAgeCalculator() {
     handleCalculate(value);
   };
 
-  const [shareUrl, setShareUrl] = useState(buildShareUrl(birthDate));
-
-  useEffect(() => {
-    if (typeof window === 'undefined') {
-      setShareUrl(buildShareUrl(birthDate));
-      return;
-    }
-    const url = new URL(window.location.href);
-    if (birthDate) {
-      url.searchParams.set('dob', birthDate);
-    } else {
-      url.searchParams.delete('dob');
-    }
-    setShareUrl(url.toString());
-  }, [birthDate]);
+  const shareUrl = useMemo(() => buildShareUrl(birthDate), [birthDate]);
 
   const shareBaseUrl = useMemo(() => {
     if (!shareUrl) return `${DEFAULT_BASE_URL}/calculate-cat-age`;
