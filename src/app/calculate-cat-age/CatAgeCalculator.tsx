@@ -65,9 +65,15 @@ export default function CatAgeCalculator() {
 
   const shareUrl = useMemo(() => {
     if (typeof window !== 'undefined') {
-      return window.location.href;
+      const url = new URL(window.location.href);
+      url.searchParams.set('dob', birthDate || '');
+      return url.toString();
     }
-    return `${DEFAULT_BASE_URL}/calculate-cat-age`;
+    const fallbackUrl = new URL(`${DEFAULT_BASE_URL}/calculate-cat-age`);
+    if (birthDate) {
+      fallbackUrl.searchParams.set('dob', birthDate);
+    }
+    return fallbackUrl.toString();
   }, [birthDate]);
 
   const shareBaseUrl = useMemo(() => {
