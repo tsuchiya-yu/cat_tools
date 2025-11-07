@@ -12,12 +12,12 @@ interface CalorieResultProps {
 }
 
 export default function CalorieResult({ result, isVisible, shareUrl }: CalorieResultProps) {
-  if (!isVisible || !result) return null;
+  const shareText = useMemo(() => {
+    if (!result) return '';
+    return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(result.kcal.toString(), result.range);
+  }, [result?.kcal, result?.range]);
 
-  const shareText = useMemo(
-    () => CALORIE_UI_TEXT.SHARE.SHARE_TEXT(result.kcal.toString(), result.range),
-    [result.kcal, result.range],
-  );
+  if (!isVisible || !result) return null;
 
   return (
     <section className="section mt-10" aria-live="polite">
