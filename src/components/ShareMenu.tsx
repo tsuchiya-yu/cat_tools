@@ -96,7 +96,8 @@ export default function ShareMenu({
       }
       await navigator.clipboard.writeText(target);
       setToastMessage(SHARE_UI_TEXT.TOAST.SUCCESS);
-    } catch {
+    } catch (error) {
+      console.error('Failed to copy link:', error);
       setToastMessage(SHARE_UI_TEXT.TOAST.ERROR);
     } finally {
       setShowToast(true);
