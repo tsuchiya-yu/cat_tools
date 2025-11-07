@@ -22,6 +22,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/calculate-cat-feeding`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
     // 他のツールページがあれば追加
   ];
 }
