@@ -33,11 +33,18 @@ export default function ShareMenu({
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [resolvedShareUrl, setResolvedShareUrl] = useState(shareUrl ?? '');
 
-  const resolvedShareUrl = useMemo(() => {
-    if (shareUrl) return shareUrl;
-    if (typeof window === 'undefined') return '';
-    return window.location.href;
+  useEffect(() => {
+    if (shareUrl) {
+      setResolvedShareUrl(shareUrl);
+      return;
+    }
+    if (typeof window !== 'undefined') {
+      setResolvedShareUrl(window.location.href);
+    } else {
+      setResolvedShareUrl('');
+    }
   }, [shareUrl]);
 
   const resolvedShareTitle = shareTitle ?? 'ねこツールズ';

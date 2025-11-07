@@ -10,6 +10,13 @@ import { UI_TEXT } from '@/constants/text';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://cat-tools.catnote.tokyo';
+const buildShareUrl = (birthDate: string) => {
+  const url = new URL(`${DEFAULT_BASE_URL}/calculate-cat-age`);
+  if (birthDate) {
+    url.searchParams.set('dob', birthDate);
+  }
+  return url.toString();
+};
 
 export default function CatAgeCalculator() {
   const [birthDate, setBirthDate] = useState('');
@@ -63,17 +70,20 @@ export default function CatAgeCalculator() {
     handleCalculate(value);
   };
 
-  const shareUrl = useMemo(() => {
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.set('dob', birthDate || '');
-      return url.toString();
+  const [shareUrl, setShareUrl] = useState(buildShareUrl(birthDate));
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      setShareUrl(buildShareUrl(birthDate));
+      return;
     }
-    const fallbackUrl = new URL(`${DEFAULT_BASE_URL}/calculate-cat-age`);
+    const url = new URL(window.location.href);
     if (birthDate) {
-      fallbackUrl.searchParams.set('dob', birthDate);
+      url.searchParams.set('dob', birthDate);
+    } else {
+      url.searchParams.delete('dob');
     }
-    return fallbackUrl.toString();
+    setShareUrl(url.toString());
   }, [birthDate]);
 
   const shareBaseUrl = useMemo(() => {
