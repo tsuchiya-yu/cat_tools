@@ -181,6 +181,7 @@ export const SHARE_UI_TEXT = {
   },
   TOAST: {
     SUCCESS: 'リンクをコピーしました',
+    ERROR: 'コピーに失敗しました',
   },
 } as const;
 

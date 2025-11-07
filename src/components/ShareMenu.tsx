@@ -1,75 +1,122 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { UI_TEXT } from '@/constants/text';
-import { IoShareOutline } from 'react-icons/io5';
+import { SHARE_UI_TEXT } from '@/constants/text';
+import { IoShareOutline, IoLinkOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
-import { IoLinkOutline } from 'react-icons/io5';
 
 interface ShareMenuProps {
-  humanAgeYears: number;
-  humanAgeMonths: number;
+  shareText: string;
+  shareUrl?: string;
+  shareTitle?: string;
+  buttonClassName?: string;
+  menuClassName?: string;
+  buttonId?: string;
+  menuId?: string;
 }
 
-export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuProps) {
+const TOAST_DURATION_MS = 1600;
+const BUTTON_BASE_CLASS =
+  'share-btn w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400';
+const MENU_BASE_CLASS =
+  'share-menu absolute right-0 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 min-w-[200px]';
+
+export default function ShareMenu({
+  shareText,
+  shareUrl,
+  shareTitle,
+  buttonClassName,
+  menuClassName,
+  buttonId,
+  menuId,
+}: ShareMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
 
-  const shareText = useMemo(() => {
-    const baseUrl = `${window.location.protocol}//${window.location.host}${window.location.pathname}`;
-    return UI_TEXT.SHARE.SHARE_TEXT(humanAgeYears, humanAgeMonths, baseUrl);
-  }, [humanAgeYears, humanAgeMonths]);
+  const resolvedShareUrl = useMemo(() => {
+    if (shareUrl) return shareUrl;
+    if (typeof window === 'undefined') return '';
+    return window.location.href;
+  }, [shareUrl]);
+
+  const resolvedShareTitle = shareTitle ?? 'ねこツールズ';
 
   const toggleShare = useCallback((open?: boolean) => {
     setIsOpen((prev) => (open !== undefined ? open : !prev));
   }, []);
 
-  const showToastMessage = (message: string) => {
-    setToastMessage(message);
-    setShowToast(true);
-    setTimeout(() => setShowToast(false), 1600);
-  };
-
-  const handleShare = async () => {
-    const url = window.location.href;
-
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: UI_TEXT.HEADER.TITLE, text: shareText, url });
-      } catch {
-        // ユーザーがキャンセルした場合など
-      }
-    }
-    toggleShare(false);
-  };
-
-  const handleXShare = () => {
+  const xShareUrl = useMemo(() => {
     const params = new URLSearchParams({ text: shareText });
-    window.open(`https://x.com/intent/post?${params.toString()}`, '_blank', 'noopener');
-    toggleShare(false);
-  };
-
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      showToastMessage(UI_TEXT.SHARE.TOAST.SUCCESS);
-    } catch {
-      showToastMessage(UI_TEXT.SHARE.TOAST.ERROR);
+    if (resolvedShareUrl) {
+      params.set('url', resolvedShareUrl);
     }
-    toggleShare(false);
-  };
+    return `https://x.com/intent/post?${params.toString()}`;
+  }, [shareText, resolvedShareUrl]);
+
+  const handleShare = useCallback(async () => {
+    if (typeof navigator === 'undefined' || !('share' in navigator)) {
+      toggleShare(false);
+      return;
+    }
+
+    try {
+      await navigator.share({
+        title: resolvedShareTitle,
+        text: shareText,
+        url: resolvedShareUrl || undefined,
+      });
+    } catch {
+      // ignore cancellation
+    } finally {
+      toggleShare(false);
+    }
+  }, [resolvedShareTitle, shareText, resolvedShareUrl, toggleShare]);
+
+  const handleCopyLink = useCallback(async () => {
+    const target = resolvedShareUrl;
+
+    if (!target) {
+      setToastMessage(SHARE_UI_TEXT.TOAST.ERROR);
+      setShowToast(true);
+      toggleShare(false);
+      return;
+    }
+
+    try {
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(target);
+      } else if (typeof document !== 'undefined') {
+        const textarea = document.createElement('textarea');
+        textarea.value = target;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      } else {
+        throw new Error('Clipboard not available');
+      }
+      setToastMessage(SHARE_UI_TEXT.TOAST.SUCCESS);
+    } catch {
+      setToastMessage(SHARE_UI_TEXT.TOAST.ERROR);
+    } finally {
+      setShowToast(true);
+      toggleShare(false);
+    }
+  }, [resolvedShareUrl, toggleShare]);
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (!target.closest('.share-menu') && !target.closest('.share-btn')) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (!(event.target instanceof Element)) return;
+      if (!event.target.closest('.share-menu') && !event.target.closest('.share-btn')) {
         toggleShare(false);
       }
     };
 
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
         toggleShare(false);
       }
     };
@@ -85,47 +132,68 @@ export default function ShareMenu({ humanAgeYears, humanAgeMonths }: ShareMenuPr
     };
   }, [isOpen, toggleShare]);
 
+  useEffect(() => {
+    if (!showToast) return;
+    const timerId = window.setTimeout(() => setShowToast(false), TOAST_DURATION_MS);
+    return () => window.clearTimeout(timerId);
+  }, [showToast]);
+
+  const buttonClasses = [BUTTON_BASE_CLASS, buttonClassName].filter(Boolean).join(' ');
+  const menuClasses = [MENU_BASE_CLASS, menuClassName].filter(Boolean).join(' ');
+
   return (
     <>
       <button
-        className="share-btn absolute right-0 top-8 -translate-y-1/2 w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400"
-        onClick={(e) => {
-          e.stopPropagation();
+        type="button"
+        id={buttonId}
+        className={buttonClasses}
+        onClick={(event) => {
+          event.stopPropagation();
           toggleShare();
         }}
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        aria-label={UI_TEXT.SHARE.BUTTON_LABEL}
+        aria-label={SHARE_UI_TEXT.BUTTON_LABEL}
       >
         <IoShareOutline className="w-5 h-5 text-gray-600" aria-hidden="true" />
       </button>
 
       {isOpen && (
-        <div className="share-menu absolute right-0 top-8 -translate-y-1/10 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 min-w-[200px]" role="menu" aria-label={UI_TEXT.SHARE.MENU_LABEL}>
-          {'share' in navigator && (
+        <div
+          id={menuId}
+          className={menuClasses}
+          role="menu"
+          aria-label={SHARE_UI_TEXT.MENU_LABEL}
+        >
+          {typeof navigator !== 'undefined' && 'share' in navigator && (
             <button
-              className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
+              type="button"
+              className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
               onClick={handleShare}
             >
               <IoShareOutline className="w-[18px] h-[18px]" aria-hidden="true" />
-              <span>{UI_TEXT.SHARE.MENU_ITEMS.SHARE}</span>
+              <span>{SHARE_UI_TEXT.MENU_ITEMS.SHARE}</span>
             </button>
           )}
 
-          <button
-            className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
-            onClick={handleXShare}
+          <a
+            href={xShareUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
+            onClick={() => toggleShare(false)}
           >
             <FaXTwitter className="w-[18px] h-[18px]" aria-hidden="true" />
-            <span>{UI_TEXT.SHARE.MENU_ITEMS.X_SHARE}</span>
-          </button>
+            <span>{SHARE_UI_TEXT.MENU_ITEMS.X_SHARE}</span>
+          </a>
 
           <button
-            className="share-item flex items-center gap-2.5 w-full p-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
+            type="button"
+            className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
             onClick={handleCopyLink}
           >
             <IoLinkOutline className="w-[18px] h-[18px]" aria-hidden="true" />
-            <span>{UI_TEXT.SHARE.MENU_ITEMS.COPY_LINK}</span>
+            <span>{SHARE_UI_TEXT.MENU_ITEMS.COPY_LINK}</span>
           </button>
         </div>
       )}

@@ -1,7 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import { CatAgeResult } from '@/types';
 import ShareMenu from './ShareMenu';
+import { UI_TEXT } from '@/constants/text';
 
 interface AgeResultProps {
   result: CatAgeResult;
@@ -9,6 +11,14 @@ interface AgeResultProps {
 }
 
 export default function AgeResult({ result, isVisible }: AgeResultProps) {
+  const shareText = useMemo(() => {
+    const baseUrl =
+      typeof window !== 'undefined'
+        ? `${window.location.protocol}//${window.location.host}${window.location.pathname}`
+        : 'https://cat-tools.catnote.tokyo/calculate-cat-age';
+    return UI_TEXT.SHARE.SHARE_TEXT(result.humanAgeYears, result.humanAgeMonths, baseUrl);
+  }, [result.humanAgeYears, result.humanAgeMonths]);
+
   if (!isVisible) return null;
 
   return (
@@ -31,9 +41,11 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
           </span>
         </div>
 
-        <ShareMenu 
-          humanAgeYears={result.humanAgeYears}
-          humanAgeMonths={result.humanAgeMonths}
+        <ShareMenu
+          shareText={shareText}
+          shareTitle={UI_TEXT.HEADER.TITLE}
+          buttonClassName="absolute right-0 top-8 -translate-y-1/2"
+          menuClassName="top-8 -translate-y-1/10 min-w-[200px]"
         />
 
         {/* モバイルでは縦並び、PCでは横並び */}
