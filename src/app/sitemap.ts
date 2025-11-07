@@ -1,9 +1,8 @@
 import { MetadataRoute } from 'next';
-import { formatISO } from 'date-fns';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://cat-tools.catnote.tokyo';
-  const lastModified = formatISO(new Date());
+  const lastModified = '2025-11-08';
   
   return [
     {
