@@ -84,20 +84,10 @@ export default function ShareMenu({
     }
 
     try {
-      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(target);
-      } else if (typeof document !== 'undefined') {
-        const textarea = document.createElement('textarea');
-        textarea.value = target;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      } else {
-        throw new Error('Clipboard not available');
+      if (typeof navigator === 'undefined' || !navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API not available');
       }
+      await navigator.clipboard.writeText(target);
       setToastMessage(SHARE_UI_TEXT.TOAST.SUCCESS);
     } catch {
       setToastMessage(SHARE_UI_TEXT.TOAST.ERROR);
