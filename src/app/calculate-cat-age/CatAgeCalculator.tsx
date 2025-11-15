@@ -61,6 +61,13 @@ export default function CatAgeCalculator() {
 
     const birthDateObj = new Date(dateValue);
     const today = new Date();
+
+    if (isNaN(birthDateObj.getTime())) {
+      setError(UI_TEXT.INPUT.ERROR.INVALID_DATE);
+      setResult(null);
+      syncBrowserUrl(null);
+      return;
+    }
     
     if (birthDateObj > today) {
       setError(UI_TEXT.INPUT.ERROR.FUTURE_DATE);
