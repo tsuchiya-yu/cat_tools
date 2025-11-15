@@ -1,8 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import { CatCalorieResult } from '@/types';
 import { CALORIE_UI_TEXT } from '@/constants/text';
-import CalorieShareMenu from './CalorieShareMenu';
+import ShareMenu from './ShareMenu';
 
 interface CalorieResultProps {
   result: CatCalorieResult | null;
@@ -11,6 +12,11 @@ interface CalorieResultProps {
 }
 
 export default function CalorieResult({ result, isVisible, shareUrl }: CalorieResultProps) {
+  const shareText = useMemo(() => {
+    if (!result) return '';
+    return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(result.kcal.toString(), result.range);
+  }, [result]);
+
   if (!isVisible || !result) return null;
 
   return (
@@ -32,10 +38,14 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
         </div>
 
         {/* 共有ボタン */}
-        <CalorieShareMenu 
-          kcal={result.kcal.toString()}
-          range={result.range}
+        <ShareMenu
+          shareText={shareText}
           shareUrl={shareUrl}
+          shareTitle={CALORIE_UI_TEXT.HEADER.TITLE}
+          buttonId="shareBtn"
+          menuId="shareMenu"
+          buttonClassName="absolute right-0 top-0 -translate-y-3/5"
+          menuClassName="top-12 border-gray-300 min-w-[220px]"
         />
 
         {/* モバイルでは縦並び、PCでは横並び */}

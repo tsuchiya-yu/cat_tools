@@ -2,14 +2,24 @@
 
 import { CatAgeResult } from '@/types';
 import ShareMenu from './ShareMenu';
+import { UI_TEXT } from '@/constants/text';
 
 interface AgeResultProps {
-  result: CatAgeResult;
+  result: CatAgeResult | null;
   isVisible: boolean;
+  shareText: string;
+  shareUrl?: string;
+  shareTitle?: string;
 }
 
-export default function AgeResult({ result, isVisible }: AgeResultProps) {
-  if (!isVisible) return null;
+export default function AgeResult({
+  result,
+  isVisible,
+  shareText,
+  shareUrl,
+  shareTitle,
+}: AgeResultProps) {
+  if (!isVisible || !result) return null;
 
   return (
     <section className="section" aria-live="polite">
@@ -31,9 +41,12 @@ export default function AgeResult({ result, isVisible }: AgeResultProps) {
           </span>
         </div>
 
-        <ShareMenu 
-          humanAgeYears={result.humanAgeYears}
-          humanAgeMonths={result.humanAgeMonths}
+        <ShareMenu
+          shareText={shareText}
+          shareUrl={shareUrl}
+          shareTitle={shareTitle ?? UI_TEXT.HEADER.TITLE}
+          buttonClassName="absolute right-0 top-8 -translate-y-1/2"
+          menuClassName="top-8 -translate-y-1/10 min-w-[200px]"
         />
 
         {/* モバイルでは縦並び、PCでは横並び */}
