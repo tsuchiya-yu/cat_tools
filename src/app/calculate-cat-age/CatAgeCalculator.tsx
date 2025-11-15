@@ -83,13 +83,13 @@ export default function CatAgeCalculator() {
   const shareUrl = useMemo(() => buildShareUrl(birthDate), [birthDate]);
 
   const shareBaseUrl = useMemo(() => {
-    if (!shareUrl) return `${DEFAULT_BASE_URL}/calculate-cat-age`;
     try {
       const url = new URL(shareUrl);
       url.search = '';
       url.hash = '';
       return url.toString();
     } catch {
+      // shareUrlが予期せず不正な形式だった場合に備え、そのまま返す
       return shareUrl;
     }
   }, [shareUrl]);

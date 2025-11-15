@@ -110,7 +110,7 @@ export default function ShareMenu({
       return;
     }
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleInteractionOutside = (event: MouseEvent | FocusEvent) => {
       if (!(event.target instanceof Element)) return;
       if (!event.target.closest('.share-menu') && !event.target.closest('.share-btn')) {
         toggleShare(false);
@@ -123,21 +123,14 @@ export default function ShareMenu({
       }
     };
 
-    const handleFocus = (event: FocusEvent) => {
-      if (!(event.target instanceof Element)) return;
-      if (!event.target.closest('.share-menu') && !event.target.closest('.share-btn')) {
-        toggleShare(false);
-      }
-    };
-
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleInteractionOutside);
     document.addEventListener('keydown', handleEscape);
-    document.addEventListener('focusin', handleFocus);
+    document.addEventListener('focusin', handleInteractionOutside);
 
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleInteractionOutside);
       document.removeEventListener('keydown', handleEscape);
-      document.removeEventListener('focusin', handleFocus);
+      document.removeEventListener('focusin', handleInteractionOutside);
     };
   }, [isOpen, toggleShare]);
 
