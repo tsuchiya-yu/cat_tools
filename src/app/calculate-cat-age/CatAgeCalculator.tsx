@@ -11,11 +11,16 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 
 const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://cat-tools.catnote.tokyo';
 const buildShareUrl = (birthDate: string) => {
-  const url = new URL(`${DEFAULT_BASE_URL}/calculate-cat-age`);
-  if (birthDate) {
-    url.searchParams.set('dob', birthDate);
+  try {
+    const url = new URL(`${DEFAULT_BASE_URL}/calculate-cat-age`);
+    if (birthDate) {
+      url.searchParams.set('dob', birthDate);
+    }
+    return url.toString();
+  } catch (e) {
+    console.error('Failed to build share URL due to invalid base URL:', e);
+    return '';
   }
-  return url.toString();
 };
 
 export default function CatAgeCalculator() {
