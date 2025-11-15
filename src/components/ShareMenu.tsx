@@ -33,19 +33,13 @@ export default function ShareMenu({
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const [resolvedShareUrl, setResolvedShareUrl] = useState(shareUrl ?? '');
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    if (shareUrl) {
-      setResolvedShareUrl(shareUrl);
-      return;
-    }
-    if (typeof window !== 'undefined') {
-      setResolvedShareUrl(window.location.href);
-    } else {
-      setResolvedShareUrl('');
-    }
-  }, [shareUrl]);
+    setIsClient(true);
+  }, []);
+
+  const resolvedShareUrl = shareUrl ?? (isClient ? window.location.href : '');
 
   const resolvedShareTitle = shareTitle ?? 'ねこツールズ';
 
@@ -160,7 +154,7 @@ export default function ShareMenu({
         <IoShareOutline className="w-5 h-5 text-gray-600" aria-hidden="true" />
       </button>
 
-      {isOpen && (
+      {isOpen && isClient && (
         <div
           id={menuId}
           className={menuClasses}
