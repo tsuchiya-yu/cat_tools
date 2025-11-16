@@ -5,7 +5,7 @@ import { calcGramsPerDay, normalizeNumberInput, splitMorningNight } from "@/lib/
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
-import FeedingShareMenu from "@/components/FeedingShareMenu";
+import ShareMenu from "@/components/ShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
@@ -229,9 +229,14 @@ export default function CatFeedingCalculator() {
 
             {/* 例と補足は下部FAQに移動 */}
             {split && (
-              <FeedingShareMenu
+              <ShareMenu
                 shareText={FEEDING_UI_TEXT.SHARE.TEXT(split.totalInt, split.morning, split.night)}
                 shareUrl={shareUrl}
+                shareTitle={FEEDING_UI_TEXT.HEADER.TITLE}
+                buttonId="shareBtn"
+                menuId="shareMenu"
+                buttonClassName="absolute right-0 top-0 -translate-y-3/5"
+                menuClassName="top-12 border-gray-300 min-w-[220px]"
               />
             )}
           </div>

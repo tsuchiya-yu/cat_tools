@@ -33,6 +33,7 @@ export const UI_TEXT = {
     PLACEHOLDER: '2023-04-01',
     ERROR: {
       REQUIRED: '誕生日を入力してください。',
+      INVALID_DATE: '無効な日付です。',
       FUTURE_DATE: '未来日は指定できません。',
       CALCULATION_ERROR: '計算中にエラーが発生しました。',
     },
@@ -181,6 +182,7 @@ export const SHARE_UI_TEXT = {
   },
   TOAST: {
     SUCCESS: 'リンクをコピーしました',
+    ERROR: 'コピーに失敗しました',
   },
 } as const;
 

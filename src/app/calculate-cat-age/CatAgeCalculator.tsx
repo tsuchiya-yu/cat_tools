@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { calculateCatAge } from '@/lib/catAge';
 import { CatAgeResult } from '@/types';
 import DateInput from '@/components/DateInput';
@@ -8,6 +8,20 @@ import AgeResult from '@/components/AgeResult';
 import FAQ from '@/components/FAQ';
 import { UI_TEXT } from '@/constants/text';
 import Breadcrumbs from '@/components/Breadcrumbs';
+
+const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://cat-tools.catnote.tokyo';
+const buildShareUrl = (birthDate: string) => {
+  try {
+    const url = new URL(`${DEFAULT_BASE_URL}/calculate-cat-age`);
+    if (birthDate) {
+      url.searchParams.set('dob', birthDate);
+    }
+    return url.toString();
+  } catch (e) {
+    console.error('Failed to build share URL due to invalid base URL:', e);
+    return '';
+  }
+};
 
 export default function CatAgeCalculator() {
   const [birthDate, setBirthDate] = useState('');
@@ -24,35 +38,52 @@ export default function CatAgeCalculator() {
     }
   }, []);
 
+  const syncBrowserUrl = (dateValue: string | null) => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (dateValue) {
+      url.searchParams.set('dob', dateValue);
+    } else {
+      url.searchParams.delete('dob');
+    }
+    window.history.replaceState(null, '', url.toString());
+  };
+
   const handleCalculate = (dateValue: string) => {
     setError('');
     
     if (!dateValue) {
       setError(UI_TEXT.INPUT.ERROR.REQUIRED);
       setResult(null);
+      syncBrowserUrl(null);
       return;
     }
 
     const birthDateObj = new Date(dateValue);
     const today = new Date();
+
+    if (isNaN(birthDateObj.getTime())) {
+      setError(UI_TEXT.INPUT.ERROR.INVALID_DATE);
+      setResult(null);
+      syncBrowserUrl(null);
+      return;
+    }
     
     if (birthDateObj > today) {
       setError(UI_TEXT.INPUT.ERROR.FUTURE_DATE);
       setResult(null);
+      syncBrowserUrl(null);
       return;
     }
 
     try {
       const calculatedResult = calculateCatAge(dateValue);
       setResult(calculatedResult);
-      
-      // URL を更新
-      const url = new URL(window.location.href);
-      url.searchParams.set('dob', dateValue);
-      window.history.replaceState(null, '', url.toString());
+      syncBrowserUrl(dateValue);
     } catch {
       setError(UI_TEXT.INPUT.ERROR.CALCULATION_ERROR);
       setResult(null);
+      syncBrowserUrl(null);
     }
   };
 
@@ -60,6 +91,25 @@ export default function CatAgeCalculator() {
     setBirthDate(value);
     handleCalculate(value);
   };
+
+  const shareUrl = useMemo(() => buildShareUrl(birthDate), [birthDate]);
+
+  const shareBaseUrl = useMemo(() => {
+    try {
+      const url = new URL(shareUrl);
+      url.search = '';
+      url.hash = '';
+      return url.toString();
+    } catch {
+      // shareUrlが予期せず不正な形式だった場合に備え、そのまま返す
+      return shareUrl;
+    }
+  }, [shareUrl]);
+
+  const shareText = useMemo(() => {
+    if (!result) return '';
+    return UI_TEXT.SHARE.SHARE_TEXT(result.humanAgeYears, result.humanAgeMonths, shareBaseUrl);
+  }, [result, shareBaseUrl]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
@@ -93,8 +143,10 @@ export default function CatAgeCalculator() {
 
         {/* Result Section */}
         <AgeResult 
-          result={result!} 
-          isVisible={!!result} 
+          result={result} 
+          isVisible={!!result}
+          shareText={shareText}
+          shareUrl={shareUrl}
         />
 
         {/* FAQ Section */}
