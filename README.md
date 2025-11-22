@@ -1,89 +1,100 @@
-# 猫の年齢計算ツール
+# ねこツールズ（Cat Tools）
 
-Next.js + TypeScriptで作成された猫の年齢を人間年齢に換算するWebアプリケーションです。
+猫に関する便利な計算ツールをまとめた Web アプリです。Next.js 15 + React 19 + TypeScript で実装しています。
 
 ## 機能
 
-- 猫の誕生日から人間年齢を計算
-- ライフステージの表示
-- 次の誕生日までの日数表示
-- 結果の共有機能（URL、X、クリップボード）
-- レスポンシブデザイン
-- SEO対応
+- 猫の年齢計算（誕生日から人間年齢・ライフステージ・次の誕生日までを表示）
+- 猫のカロリー計算（体重・条件から 1 日の必要カロリーと目安幅を算出）
+- 猫の給餌量計算（必要 kcal とフード密度から 1 日量と朝/夜の目安を算出）
+- 共有機能（URL・X・クリップボード）
+- SEO 最適化（OGP、構造化データ、メタ情報）
+- レスポンシブ対応、アクセシビリティ配慮
+
+対応ルート:
+- `/` トップ（ツール一覧）
+- `/calculate-cat-age` 猫の年齢計算
+- `/calculate-cat-calorie` 猫のカロリー計算
+- `/calculate-cat-feeding` 猫の給餌量計算
 
 ## 技術スタック
 
-- Next.js 15
-- TypeScript
-- Tailwind CSS
-- React Hooks
+- Next.js `15.x`（App Router、Turbopack）
+- React `19.x`
+- TypeScript `5.x`
+- Tailwind CSS `4.x`
+- MUI `@mui/material` `7.x` + Emotion
+- date-fns `4.x`
+- テスト: Jest + Testing Library、Playwright
+- Lint: ESLint 9（`eslint-config-next`）
 
-## 開発
+## 必要環境
 
-### 環境設定
+- Node.js 22 LTS 以上を推奨
+  - 依存ライブラリで最新の正規表現機能などを使用しているため、古い Node では動作しません
+- npm v10 以上
 
-1. 依存関係のインストール：
-```bash
-npm install
-```
+（Node の切替には `nodebrew` または `nvm` の利用を推奨）
 
-2. 環境変数の設定：
-`.env.local`ファイルを作成し、Google Analytics 4の測定IDを設定してください：
-```bash
-cp .env.local.example .env.local
-```
+## セットアップ
 
-`.env.local`を編集して、GA4の測定IDを設定：
-```
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-```
+1. 依存関係のインストール
+   - `npm install`
+2. 環境変数の設定（GA4 任意）
+   - `cp .env.local.example .env.local`
+   - `.env.local` に `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX` を設定（任意）
+3. 開発サーバー起動
+   - `npm run dev`
+   - http://localhost:3000 を開く
+4. E2E テスト準備（任意）
+   - 初回のみ Playwright のブラウザをインストール: `npx playwright install`
 
-3. 開発サーバーの起動：
-```bash
-npm run dev
-```
+## スクリプト
 
-### Google Analytics 4 (GA4) の設定
+- `npm run dev`: 開発サーバー（Turbopack）
+- `npm run build`: 本番ビルド（Turbopack）
+- `npm run start`: 本番サーバー起動
+- `npm run lint`: ESLint 実行
+- `npm run test`: 単体テスト（Jest）
+- `npm run test:watch`: ウォッチモード
+- `npm run test:coverage`: カバレッジ取得
+- `npm run test:e2e`: E2E テスト（Playwright）
+- `npm run test:e2e:ui`: Playwright UI モード
+- `npm run test:e2e:headed`: ヘッドあり実行
+- `npm run test:e2e:debug`: デバッグモードで実行
 
-1. [Google Analytics](https://analytics.google.com/)でプロパティを作成
-2. 測定IDをコピー（`G-XXXXXXXXXX`の形式）
-3. `.env.local`ファイルに測定IDを設定
-4. プロダクション環境では、Vercelの環境変数として設定
+E2E 詳細は `README-playwright.md` を参照してください。
 
-GA4の機能：
-- ページビューの自動追跡
-- クライアントサイドナビゲーションの追跡
-- カスタムイベント追跡（`/src/lib/gtag.ts`のevent関数を使用）
+## Google Analytics 4 (任意)
+
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` を `.env.local` に設定すると、ページビューとイベントを計測できます。
+- 実装: `src/components/Analytics.tsx` と `src/lib/gtag.ts`
+- 本番は Vercel の環境変数として設定してください。
+
+## ディレクトリ構成（抜粋）
+
+- `src/app` … App Router ルート、`/calculate-cat-*` 各ページ
+- `src/components` … UI コンポーネント（計算フォーム、共有、FAQ など）
+- `src/constants` … 画面文言、メタ情報、ツール一覧
+- `src/lib` … 計算ロジック・ユーティリティ（GA、給餌量など）
+- `tests` … Playwright E2E / Jest テスト
 
 ## デプロイ
 
-Vercelでホスティング予定
+- Vercel を想定
+- ビルドコマンド: `npm run build`
+- 実行コマンド: `npm run start`
+- 主要環境変数: `NEXT_PUBLIC_GA_MEASUREMENT_ID`（任意）
 
-## Issue/PR 運用メモ
+## Issue / PR 運用
 
-このリポジトリでは、Issue/PRテンプレートを使用して効率的な開発を行っています。
+- Issue テンプレートを用意しています
+  - 不具合: `bug:`、機能追加: `feat:`、改善: `improve:`
+- PR 作成時は関連 Issue を `Close #123` / `Ref #456` でリンク
+- 動作確認チェックリストとスクリーンショットの添付を推奨
 
-### Issue作成時
-- **不具合報告**: `bug:` プレフィックスで具体的な再現手順を記載
-- **機能追加**: `feat:` プレフィックスでユーザーストーリーと受け入れ基準を明記
-- **改善提案**: `improve:` プレフィックスでUX/SEO/パフォーマンス等の改善を提案
+## ライセンス / 注意事項
 
-### PR作成時
-- 関連Issueを `Close #123` または `Ref #456` で明記
-- 動作確認チェックリストを必ず実施
-- スクリーンショットがあると理解が早まります
+- 本リポジトリの情報は一般的な参考情報です。愛猫の健康状態やアレルギーなどを考慮し、最終判断はかかりつけの獣医師にご相談ください。
 
-## Gemini Code Assist
-
-このプロジェクトではGemini Code Assistを使用した自動コードレビューを導入しています。
-
-### 自動レビューの動作
-- PR作成時に自動的にコードレビューが実行されます
-- 日本語でのレビューコメントが提供されます
-- アクセシビリティ、パフォーマンス、セキュリティ等に重点を置いたレビューを行います
-
-### 設定ファイル
-- `.gemini/config.yaml`: Gemini Code Assistの基本設定
-- `.gemini/styleguide.md`: プロジェクト固有のコーディングガイドライン
-
-質問や相談は [Discussions](https://github.com/tsuchiya-yu/cat_tools/discussions) をご利用ください。
+質問や相談は Discussions をご利用ください。
