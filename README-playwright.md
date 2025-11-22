@@ -5,7 +5,7 @@
 ## 📋 テスト概要
 
 ### 対象ページ
-- **URL**: `BASE_URL`環境変数で設定（例: `https://cat-tools.catnote.tokyo/calculate-cat-calorie`）
+- **URL**: `playwright.config.ts` の `baseURL` を使用（デフォルト: `http://localhost:3000`）。外部環境を対象にする場合のみ `BASE_URL` で上書き可能。
 - **種類**: 単一ページの静的HTML（JavaScript動作）
 
 ### テスト範囲
@@ -27,14 +27,14 @@ npm install -D @playwright/test
 npx playwright install
 ```
 
-### 2. 環境変数の設定
+### 2. 環境変数の設定（必要な場合のみ）
+
+ローカル実行では設定不要です（`playwright.config.ts` の `webServer` が自動で `http://127.0.0.1:3000` を起動します）。
+
+外部環境（例: 本番URL）を対象にする場合のみ、下記のように `BASE_URL` を上書きできます。
 
 ```bash
-# ローカル開発環境
-export BASE_URL=http://localhost:5173
-
-# 本番環境
-export BASE_URL=https://cat-tools.catnote.tokyo/calculate-cat-calorie
+export BASE_URL=https://cat-tools.catnote.tokyo
 ```
 
 ## 🧪 テスト実行
@@ -58,11 +58,11 @@ npx playwright test --debug
 ### 環境別実行
 
 ```bash
-# ローカル環境
-BASE_URL=http://localhost:5173 npx playwright test
+# ローカル環境（推奨）: 設定不要。devサーバーは自動起動されます。
+npx playwright test
 
-# 本番環境
-BASE_URL=https://cat-tools.catnote.tokyo/calculate-cat-calorie npx playwright test
+# 外部環境に対して実行したい場合のみ
+BASE_URL=https://cat-tools.catnote.tokyo npx playwright test
 ```
 
 ### プロジェクト別実行
@@ -110,7 +110,8 @@ playwright.config.ts               # Playwright設定
 
 ### playwright.config.ts
 - **testDir**: `./tests/e2e/specs`（既存構成に統一）
-- **baseURL**: `process.env.BASE_URL ?? 'http://localhost:5173'`
+- **baseURL**: `process.env.BASE_URL ?? 'http://localhost:3000'`
+- **webServer**: `npm run dev -- --port 3000` を起動し、`http://127.0.0.1:3000` へ接続（ローカルでは手動設定不要）
 - **プロジェクト**: desktop-chromium, mobile-chromium
 - **リトライ**: CI環境で2回、ローカルで0回
 - **レポーター**: HTML形式
