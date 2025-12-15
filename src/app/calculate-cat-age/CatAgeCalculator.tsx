@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { calculateCatAge } from '@/lib/catAge';
 import { CatAgeResult } from '@/types';
 import DateInput from '@/components/DateInput';
@@ -28,17 +28,7 @@ export default function CatAgeCalculator() {
   const [result, setResult] = useState<CatAgeResult | null>(null);
   const [error, setError] = useState('');
 
-  // URL パラメータから初期値を設定
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const dobParam = params.get('dob');
-    if (dobParam) {
-      setBirthDate(dobParam);
-      handleCalculate(dobParam);
-    }
-  }, []);
-
-  const syncBrowserUrl = (dateValue: string | null) => {
+  const syncBrowserUrl = useCallback((dateValue: string | null) => {
     if (typeof window === 'undefined') return;
     const url = new URL(window.location.href);
     if (dateValue) {
@@ -47,9 +37,9 @@ export default function CatAgeCalculator() {
       url.searchParams.delete('dob');
     }
     window.history.replaceState(null, '', url.toString());
-  };
+  }, []);
 
-  const handleCalculate = (dateValue: string) => {
+  const handleCalculate = useCallback((dateValue: string) => {
     setError('');
     
     if (!dateValue) {
@@ -85,7 +75,17 @@ export default function CatAgeCalculator() {
       setResult(null);
       syncBrowserUrl(null);
     }
-  };
+  }, [syncBrowserUrl]);
+
+  // URL パラメータから初期値を設定
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const dobParam = params.get('dob');
+    if (dobParam) {
+      setBirthDate(dobParam);
+      handleCalculate(dobParam);
+    }
+  }, [handleCalculate]);
 
   const handleDateChange = (value: string) => {
     setBirthDate(value);
