@@ -295,10 +295,8 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
         await copyBtn.click();
         
         // エラーメッセージまたはフォールバック処理の確認
-        const errorMsg = page.locator(':has-text("コピーに失敗")');
-        if (await errorMsg.isVisible()) {
-          await expect(errorMsg).toBeVisible();
-        }
+        const toast = page.locator('[role="status"]').filter({ hasText: 'コピーに失敗しました' });
+        await expect(toast).toBeVisible();
       }
     });
 

@@ -111,7 +111,7 @@ playwright.config.ts               # Playwright設定
 ### playwright.config.ts
 - **testDir**: `./tests/e2e/specs`（既存構成に統一）
 - **baseURL**: `process.env.BASE_URL ?? 'http://localhost:3000'`
-- **webServer**: `npm run dev -- --port 3000` を起動し、`http://127.0.0.1:3000` へ接続（ローカルでは手動設定不要）
+- **webServer**: `npm run dev -- --hostname 127.0.0.1 --port 3000` を起動し、`http://127.0.0.1:3000` へ接続（ローカルでは手動設定不要）
 - **プロジェクト**: desktop-chromium, mobile-chromium
 - **リトライ**: CI環境で2回、ローカルで0回
 - **レポーター**: HTML形式

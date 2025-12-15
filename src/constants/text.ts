@@ -11,6 +11,18 @@ export const META = {
   },
 } as const;
 
+export const CAT_FOOD_SAFETY_META = {
+  TITLE: '猫の食べ物安全性チェック｜食材名から安全度を判定',
+  DESCRIPTION: '玉ねぎやチョコレートなど、猫に与えても大丈夫かを200種類のデータから検索できます。危険度の理由や症状、注意点もまとめました。',
+  KEYWORDS: '猫, 食べ物, 安全性, 危険, 注意, 食材',
+  OG: {
+    TITLE: '猫の食べ物安全性チェック',
+    DESCRIPTION: '食材名を入れるだけで、猫にとって安全かどうかを判定します。',
+    URL: 'https://cat-tools.catnote.tokyo/cat-food-safety',
+    SITE_NAME: 'ねこツールズ',
+  },
+} as const;
+
 // UI文言
 export const COMMON_TEXT = {
   BREADCRUMBS: {
@@ -75,6 +87,41 @@ ${baseUrl}
       SUCCESS: 'リンクをコピーしました',
       ERROR: 'コピーに失敗しました',
     },
+  },
+} as const;
+
+export const CAT_FOOD_SAFETY_TEXT = {
+  HEADER: {
+    EYECATCH: '食材名から安全性をチェック',
+    TITLE: '猫の食べ物安全性チェック',
+    DESCRIPTION: '人が口にする食材でも、猫には危険なものがあります。200種類のデータから安全度と注意点を確認できます。',
+  },
+  BREADCRUMBS: {
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
+    CAT_FOOD_SAFETY: '猫の食べ物安全性チェック',
+  },
+  INPUT: {
+    LABEL: '食材名',
+    PLACEHOLDER: '例: 玉ねぎ、チョコレート、ぶどう',
+    BUTTON: '安全性を調べる',
+    ERROR: {
+      REQUIRED: '食材名を入力してください。',
+      TOO_LONG: (max: number) => `食材名は${max}文字以内で入力してください。`,
+    },
+  },
+  RESULT: {
+    TITLE: '判定結果',
+    HIT_COUNT: (count: number) => `${count}件ヒットしました`,
+    NO_RESULTS: (keyword: string) => `「${keyword}」に該当するデータは見つかりませんでした。`,
+    EMPTY: '検索すると結果が表示されます。',
+    STATUS_LABEL: '安全性',
+    DESCRIPTION_LABEL: '理由・症状',
+    NOTES_LABEL: '注意点・補足',
+  },
+  SHARE: {
+    DEFAULT_TEXT: (baseUrl: string) => `猫の食べ物安全性チェックを使っています🐾\n${baseUrl}`,
+    FORMAT_TEXT: (keyword: string, lines: string[], baseUrl: string) =>
+      `「${keyword}」の安全性チェック結果\n${lines.join('\n')}\n\n${baseUrl}\n\n#猫 #猫の健康 #ねこツールズ`,
   },
 } as const;
 
@@ -188,6 +235,12 @@ export const SHARE_UI_TEXT = {
 
 // トップページで表示するツール一覧
 export const TOOLS = [
+  {
+    href: '/cat-food-safety',
+    ariaLabel: '猫の食べ物安全性チェックを開く',
+    title: '猫の食べ物安全性チェック',
+    description: '食材名から猫にとって安全かどうか、危険な理由や注意点を確認できます。',
+  },
   {
     href: '/calculate-cat-age',
     ariaLabel: '猫の年齢計算ツールを開く',
