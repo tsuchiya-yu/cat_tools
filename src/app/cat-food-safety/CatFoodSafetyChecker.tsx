@@ -90,19 +90,26 @@ export default function CatFoodSafetyChecker() {
     const response = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
       cache: 'no-store',
     });
+
+    if (!response.ok) {
+      try {
+        const errorPayload = (await response.json()) as unknown;
+        if (isCatFoodSearchResponse(errorPayload) && errorPayload.error) {
+          throw new Error(errorPayload.error);
+        }
+      } catch {
+        // ignore parse errors, fall through to generic error
+      }
+      throw new Error(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
+    }
+
     const json: unknown = await response.json();
 
     if (!isCatFoodSearchResponse(json)) {
       throw new Error(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
     }
 
-    const payload = json;
-
-    if (!response.ok) {
-      throw new Error(payload?.error ?? CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
-    }
-
-    return payload.results;
+    return json.results;
   }, []);
 
   const syncBrowserUrl = useCallback(
