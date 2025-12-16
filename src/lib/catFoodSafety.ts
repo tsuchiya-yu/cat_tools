@@ -9,8 +9,8 @@ type NormalizedFood = CatFoodItem & {
 const KATAKANA_START = 0x30a1;
 const KATAKANA_END = 0x30f6;
 const KATAKANA_TO_HIRAGANA_OFFSET = 0x60;
-const SPLIT_PATTERN = /[・,，、／/＆&\s]+/g;
-const REMOVE_PATTERN = /[\s\u3000・,，、／/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
+const SPLIT_PATTERN = /[・,，、／\/＆&\s]+/g;
+const REMOVE_PATTERN = /[\s\u3000・,，、／\/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
 
 const VALID_STATUSES: ReadonlyArray<CatFoodSafetyStatus> = ['安全', '注意', '危険'];
 
@@ -36,20 +36,25 @@ async function loadDataset(): Promise<NormalizedFood[]> {
 
   if (!datasetPromise) {
     datasetPromise = (async () => {
-      const filePath = path.join(process.cwd(), 'public', 'data', 'cat_foods.json');
-      const fileContent = await readFile(filePath, 'utf-8');
-      const rawFoods: unknown = JSON.parse(fileContent);
+      try {
+        const filePath = path.join(process.cwd(), 'public', 'data', 'cat_foods.json');
+        const fileContent = await readFile(filePath, 'utf-8');
+        const rawFoods: unknown = JSON.parse(fileContent);
 
-      if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
-        throw new Error('Invalid data structure detected in cat_foods.json');
+        if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
+          throw new Error('Invalid data structure detected in cat_foods.json');
+        }
+
+        const normalized = (rawFoods as CatFoodItem[]).map((food) => ({
+          ...food,
+          normalizedNames: buildNormalizedNames(food.name),
+        }));
+        catFoodDataset = normalized;
+        return normalized;
+      } catch (error) {
+        datasetPromise = undefined;
+        throw error;
       }
-
-      const normalized = (rawFoods as CatFoodItem[]).map((food) => ({
-        ...food,
-        normalizedNames: buildNormalizedNames(food.name),
-      }));
-      catFoodDataset = normalized;
-      return normalized;
     })();
   }
 
