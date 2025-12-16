@@ -28,10 +28,36 @@ const STATUS_STYLES: Record<CatFoodSafetyStatus, { badge: string; border: string
   },
 };
 
+const VALID_STATUSES: ReadonlyArray<CatFoodSafetyStatus> = ['安全', '注意', '危険'];
+
 const createItemShareText = (item: CatFoodItem) => {
   const excerpt = item.description.slice(0, ITEM_SHARE_DESCRIPTION_LENGTH);
   const ellipsis = item.description.length > ITEM_SHARE_DESCRIPTION_LENGTH ? '…' : '';
   return `${item.name}（${item.status}）: ${excerpt}${ellipsis}`;
+};
+
+const isCatFoodItem = (value: unknown): value is CatFoodItem => {
+  if (!value || typeof value !== 'object') return false;
+  const record = value as Record<string, unknown>;
+  return (
+    typeof record.name === 'string' &&
+    typeof record.description === 'string' &&
+    typeof record.notes === 'string' &&
+    typeof record.status === 'string' &&
+    VALID_STATUSES.includes(record.status as CatFoodSafetyStatus)
+  );
+};
+
+const isCatFoodSearchResponse = (value: unknown): value is CatFoodSearchResponse => {
+  if (!value || typeof value !== 'object') return false;
+  const record = value as Record<string, unknown>;
+  if (!Array.isArray(record.results)) {
+    return false;
+  }
+  if (record.error !== undefined && typeof record.error !== 'string') {
+    return false;
+  }
+  return record.results.every(isCatFoodItem);
 };
 
 export default function CatFoodSafetyChecker() {
@@ -64,19 +90,19 @@ export default function CatFoodSafetyChecker() {
     const response = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
       cache: 'no-store',
     });
-    let payload: CatFoodSearchResponse;
+    const json: unknown = await response.json();
 
-    try {
-      payload = (await response.json()) as CatFoodSearchResponse;
-    } catch {
+    if (!isCatFoodSearchResponse(json)) {
       throw new Error(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
     }
+
+    const payload = json;
 
     if (!response.ok) {
       throw new Error(payload?.error ?? CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
     }
 
-    return payload?.results ?? [];
+    return payload.results;
   }, []);
 
   const syncBrowserUrl = useCallback(
