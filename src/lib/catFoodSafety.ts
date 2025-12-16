@@ -1,106 +1,30 @@
-import { readFile } from 'node:fs/promises';
-import path from 'node:path';
-
 import type { CatFoodItem } from '@/types';
 import { isCatFoodItem } from '@/lib/catFoodValidation';
+import rawCatFoods from '../../public/data/cat_foods.json';
+import {
+  createNormalizedFoods,
+  searchNormalizedFoods,
+  stripNormalizedFood,
+  type NormalizedCatFood,
+} from '@/lib/catFoodSearch';
 
-type NormalizedFood = CatFoodItem & {
-  normalizedNames: string[];
-};
+let catFoodDataset: NormalizedCatFood[] | undefined;
 
-const KATAKANA_START = 0x30a1;
-const KATAKANA_END = 0x30f6;
-const KATAKANA_TO_HIRAGANA_OFFSET = 0x60;
-const SPLIT_PATTERN = /[・,，、／\/＆&\s]+/g;
-const REMOVE_PATTERN = /[\s\u3000・,，、／\/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
-
-let catFoodDataset: NormalizedFood[] | undefined;
-let datasetPromise: Promise<NormalizedFood[]> | undefined;
-
-async function loadDataset(): Promise<NormalizedFood[]> {
-  if (catFoodDataset) {
-    return catFoodDataset;
+function loadDataset(): NormalizedCatFood[] {
+  if (!catFoodDataset) {
+    const rawFoods: unknown = rawCatFoods;
+    if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
+      throw new Error('Invalid data structure detected in cat_foods.json');
+    }
+    catFoodDataset = createNormalizedFoods(rawFoods as CatFoodItem[]);
   }
-
-  if (!datasetPromise) {
-    datasetPromise = (async () => {
-      try {
-        const filePath = path.join(process.cwd(), 'public', 'data', 'cat_foods.json');
-        const fileContent = await readFile(filePath, 'utf-8');
-        const rawFoods: unknown = JSON.parse(fileContent);
-
-        if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
-          throw new Error('Invalid data structure detected in cat_foods.json');
-        }
-
-        const normalized = (rawFoods as CatFoodItem[]).map((food) => ({
-          ...food,
-          normalizedNames: buildNormalizedNames(food.name),
-        }));
-
-        catFoodDataset = normalized;
-        return normalized;
-      } catch (error) {
-        datasetPromise = undefined;
-        throw error;
-      }
-    })();
-  }
-
-  return datasetPromise;
+  return catFoodDataset;
 }
 
-function stripNormalized(food: NormalizedFood): CatFoodItem {
-  return {
-    name: food.name,
-    status: food.status,
-    description: food.description,
-    notes: food.notes,
-  };
+export function searchCatFood(name: string) {
+  return searchNormalizedFoods(loadDataset(), name);
 }
 
-function katakanaToHiragana(value: string) {
-  return value.replace(/[\u30a1-\u30f6]/g, (char) => {
-    const code = char.charCodeAt(0);
-    if (code < KATAKANA_START || code > KATAKANA_END) return char;
-    return String.fromCharCode(code - KATAKANA_TO_HIRAGANA_OFFSET);
-  });
-}
-
-function normalizeValue(value: string) {
-  return katakanaToHiragana(
-    value
-      .trim()
-      .normalize('NFKC')
-      .toLowerCase()
-  ).replace(REMOVE_PATTERN, '');
-}
-
-function buildNormalizedNames(name: string) {
-  const normalizedFull = normalizeValue(name);
-  const segments = name
-    .split(SPLIT_PATTERN)
-    .map((segment) => normalizeValue(segment))
-    .filter(Boolean);
-
-  return Array.from(new Set([normalizedFull, ...segments]));
-}
-
-export async function searchCatFood(name: string) {
-  const dataset = await loadDataset();
-  const normalizedQuery = normalizeValue(name);
-  if (!normalizedQuery) {
-    return [];
-  }
-
-  const matches = dataset.filter((food) =>
-    food.normalizedNames.some((value) => value.includes(normalizedQuery))
-  );
-
-  return matches.map(stripNormalized);
-}
-
-export async function getAllCatFoods(): Promise<CatFoodItem[]> {
-  const dataset = await loadDataset();
-  return dataset.map(stripNormalized);
+export function getAllCatFoods(): CatFoodItem[] {
+  return loadDataset().map(stripNormalizedFood);
 }

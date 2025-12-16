@@ -6,13 +6,17 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 import { CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
 import ShareMenu from '@/components/ShareMenu';
 import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
-import { isCatFoodSearchResponse } from '@/lib/catFoodValidation';
+import { isCatFoodItem } from '@/lib/catFoodValidation';
+import {
+  createNormalizedFoods,
+  searchNormalizedFoods,
+  type NormalizedCatFood,
+} from '@/lib/catFoodSearch';
 
 const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://cat-tools.catnote.tokyo';
 const MAX_QUERY_LENGTH = 40;
 const MAX_SUGGESTIONS = 6;
 const ITEM_SHARE_DESCRIPTION_LENGTH = 50;
-const API_ENDPOINT = '/api/cat-food-safety';
 
 const STATUS_STYLES: Record<CatFoodSafetyStatus, { badge: string; border: string }> = {
   安全: {
@@ -45,9 +49,9 @@ export default function CatFoodSafetyChecker() {
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [normalizedFoods, setNormalizedFoods] = useState<NormalizedCatFood[] | null>(null);
+  const [isDatasetLoading, setIsDatasetLoading] = useState(true);
   const pendingQueryRef = useRef<string | undefined>(undefined);
-  const suggestionRequestIdRef = useRef(0);
 
   const resetSearchState = useCallback(() => {
     setQuery('');
@@ -55,37 +59,6 @@ export default function CatFoodSafetyChecker() {
     setError('');
     setHasSearched(false);
     setSuggestions([]);
-  }, []);
-
-  const fetchCatFoods = useCallback(async (value: string, limit?: number) => {
-    const params = new URLSearchParams({ food: value });
-    if (typeof limit === 'number') {
-      params.set('limit', String(limit));
-    }
-
-    const response = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      try {
-        const errorPayload = (await response.json()) as unknown;
-        if (isCatFoodSearchResponse(errorPayload) && errorPayload.error) {
-          throw new Error(errorPayload.error);
-        }
-      } catch {
-        // ignore parse errors, fall through to generic error
-      }
-      throw new Error(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
-    }
-
-    const json: unknown = await response.json();
-
-    if (!isCatFoodSearchResponse(json)) {
-      throw new Error(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
-    }
-
-    return json.results;
   }, []);
 
   const syncBrowserUrl = useCallback(
@@ -105,7 +78,7 @@ export default function CatFoodSafetyChecker() {
   );
 
   const performSearch = useCallback(
-    async (keyword: string, options: { syncUrl?: boolean } = {}) => {
+    (keyword: string, options: { syncUrl?: boolean } = {}) => {
       const trimmed = keyword.trim();
 
       if (!trimmed) {
@@ -130,34 +103,28 @@ export default function CatFoodSafetyChecker() {
         return;
       }
 
-      setHasSearched(true);
-      setIsSearching(true);
-      try {
-        const matches = await fetchCatFoods(trimmed);
-        setResults(matches);
-        setError(matches.length ? '' : CAT_FOOD_SAFETY_TEXT.RESULT.NO_RESULTS(trimmed));
-        setSuggestions([]);
-        if (options.syncUrl !== false) {
-          syncBrowserUrl(trimmed);
-        }
-      } catch (err) {
-        console.error('Failed to fetch cat food data:', err);
+      if (!normalizedFoods) {
         setResults([]);
-        const message = err instanceof Error && err.message ? err.message : CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR;
-        setError(message);
         setSuggestions([]);
-        if (options.syncUrl !== false) {
-          syncBrowserUrl(trimmed);
-        }
-      } finally {
-        setIsSearching(false);
+        setHasSearched(false);
+        setError(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
+        return;
+      }
+
+      setHasSearched(true);
+      const matches = searchNormalizedFoods(normalizedFoods, trimmed);
+      setResults(matches);
+      setError(matches.length ? '' : CAT_FOOD_SAFETY_TEXT.RESULT.NO_RESULTS(trimmed));
+      setSuggestions([]);
+      if (options.syncUrl !== false) {
+        syncBrowserUrl(trimmed);
       }
     },
-    [fetchCatFoods, syncBrowserUrl]
+    [normalizedFoods, syncBrowserUrl]
   );
 
   const updateSuggestions = useCallback(
-    async (value: string) => {
+    (value: string) => {
       const trimmed = value.trim();
       if (!trimmed) {
         setSuggestions([]);
@@ -169,22 +136,53 @@ export default function CatFoodSafetyChecker() {
         return;
       }
 
-      const requestId = ++suggestionRequestIdRef.current;
-      try {
-        const matches = await fetchCatFoods(trimmed, MAX_SUGGESTIONS);
-        if (suggestionRequestIdRef.current === requestId) {
-          setSuggestions(matches);
-        }
-      } catch {
-        if (suggestionRequestIdRef.current === requestId) {
-          setSuggestions([]);
-        }
+      if (!normalizedFoods) {
+        setSuggestions([]);
+        return;
       }
+
+      const matches = searchNormalizedFoods(normalizedFoods, trimmed).slice(0, MAX_SUGGESTIONS);
+      setSuggestions(matches);
     },
-    [fetchCatFoods]
+    [normalizedFoods]
   );
 
   const foodParam = searchParams?.get('food') ?? undefined;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadFoods = async () => {
+      try {
+        const response = await fetch('/data/cat_foods.json', { cache: 'force-cache' });
+        if (!response.ok) {
+          throw new Error('Failed to load cat food dataset');
+        }
+        const json: unknown = await response.json();
+        if (!Array.isArray(json) || json.some((item) => !isCatFoodItem(item))) {
+          throw new Error('Invalid data structure detected in cat_foods.json');
+        }
+        if (!cancelled) {
+          setNormalizedFoods(createNormalizedFoods(json as CatFoodItem[]));
+        }
+      } catch (err) {
+        console.error('Failed to load cat food dataset:', err);
+        if (!cancelled) {
+          setError(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsDatasetLoading(false);
+        }
+      }
+    };
+
+    void loadFoods();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (pendingQueryRef.current !== undefined && pendingQueryRef.current === foodParam) {
@@ -198,12 +196,16 @@ export default function CatFoodSafetyChecker() {
     }
 
     setQuery(foodParam);
-    void performSearch(foodParam, { syncUrl: false });
-  }, [foodParam, performSearch, resetSearchState]);
+    if (!normalizedFoods) {
+      return;
+    }
+
+    performSearch(foodParam, { syncUrl: false });
+  }, [foodParam, performSearch, resetSearchState, normalizedFoods]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    void performSearch(query);
+    performSearch(query);
   };
 
   const onChange = (value: string) => {
@@ -218,14 +220,14 @@ export default function CatFoodSafetyChecker() {
     }
 
     setError('');
-    void updateSuggestions(value);
+    updateSuggestions(value);
   };
 
   const handleSuggestionSelect = useCallback(
     (name: string) => {
       setQuery(name);
       setSuggestions([]);
-      void performSearch(name);
+      performSearch(name);
     },
     [performSearch]
   );
@@ -318,7 +320,7 @@ export default function CatFoodSafetyChecker() {
             </div>
             <button
               type="submit"
-              disabled={isSearching}
+              disabled={isDatasetLoading || !normalizedFoods}
               className="rounded-xl bg-pink-600 text-white px-6 py-3 font-semibold hover:bg-pink-500 disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-600"
             >
               {CAT_FOOD_SAFETY_TEXT.INPUT.BUTTON}
