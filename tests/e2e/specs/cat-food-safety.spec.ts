@@ -6,8 +6,11 @@ test.describe('猫の食べ物安全性チェック', () => {
 
     await expect(page.getByRole('heading', { name: '猫の食べ物安全性チェック' })).toBeVisible();
 
+    const searchButton = page.getByRole('button', { name: '安全性を調べる' });
+    await expect(searchButton).toBeEnabled();
+
     await page.getByLabel('食材名').fill('玉ねぎ');
-    await page.getByRole('button', { name: '安全性を調べる' }).click();
+    await searchButton.click();
 
     const firstResult = page.locator('article').first();
     await expect(firstResult.getByRole('heading', { name: '玉ねぎ', exact: true })).toBeVisible();
@@ -17,9 +20,12 @@ test.describe('猫の食べ物安全性チェック', () => {
   test('データにない食材では未検出メッセージを表示する', async ({ page }) => {
     await page.goto('/cat-food-safety');
 
+    const searchButton = page.getByRole('button', { name: '安全性を調べる' });
+    await expect(searchButton).toBeEnabled();
+
     const keyword = 'テスト用食材';
     await page.getByLabel('食材名').fill(keyword);
-    await page.getByRole('button', { name: '安全性を調べる' }).click();
+    await searchButton.click();
 
     await expect(page.getByText(`「${keyword}」に該当するデータは見つかりませんでした。`)).toBeVisible();
   });

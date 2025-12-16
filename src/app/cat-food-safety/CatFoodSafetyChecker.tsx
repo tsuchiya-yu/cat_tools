@@ -1,12 +1,11 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useId, useRef, useState } from 'react';
+import { FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
 import ShareMenu from '@/components/ShareMenu';
 import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
-import { isCatFoodItem } from '@/lib/catFoodValidation';
 import {
   createNormalizedFoods,
   searchNormalizedFoods,
@@ -39,8 +38,11 @@ const createItemShareText = (item: CatFoodItem) => {
   return `${item.name}（${item.status}）: ${excerpt}${ellipsis}`;
 };
 
+type CatFoodSafetyCheckerProps = {
+  allFoods: CatFoodItem[];
+};
 
-export default function CatFoodSafetyChecker() {
+export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const suggestionsListId = useId();
@@ -49,9 +51,8 @@ export default function CatFoodSafetyChecker() {
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
-  const [normalizedFoods, setNormalizedFoods] = useState<NormalizedCatFood[] | null>(null);
-  const [isDatasetLoading, setIsDatasetLoading] = useState(true);
   const pendingQueryRef = useRef<string | undefined>(undefined);
+  const normalizedFoods = useMemo<NormalizedCatFood[]>(() => createNormalizedFoods(allFoods), [allFoods]);
 
   const resetSearchState = useCallback(() => {
     setQuery('');
@@ -103,14 +104,6 @@ export default function CatFoodSafetyChecker() {
         return;
       }
 
-      if (!normalizedFoods) {
-        setResults([]);
-        setSuggestions([]);
-        setHasSearched(false);
-        setError(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
-        return;
-      }
-
       setHasSearched(true);
       const matches = searchNormalizedFoods(normalizedFoods, trimmed);
       setResults(matches);
@@ -136,11 +129,6 @@ export default function CatFoodSafetyChecker() {
         return;
       }
 
-      if (!normalizedFoods) {
-        setSuggestions([]);
-        return;
-      }
-
       const matches = searchNormalizedFoods(normalizedFoods, trimmed).slice(0, MAX_SUGGESTIONS);
       setSuggestions(matches);
     },
@@ -148,41 +136,6 @@ export default function CatFoodSafetyChecker() {
   );
 
   const foodParam = searchParams?.get('food') ?? undefined;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadFoods = async () => {
-      try {
-        const response = await fetch('/data/cat_foods.json', { cache: 'force-cache' });
-        if (!response.ok) {
-          throw new Error('Failed to load cat food dataset');
-        }
-        const json: unknown = await response.json();
-        if (!Array.isArray(json) || json.some((item) => !isCatFoodItem(item))) {
-          throw new Error('Invalid data structure detected in cat_foods.json');
-        }
-        if (!cancelled) {
-          setNormalizedFoods(createNormalizedFoods(json as CatFoodItem[]));
-        }
-      } catch (err) {
-        console.error('Failed to load cat food dataset:', err);
-        if (!cancelled) {
-          setError(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
-        }
-      } finally {
-        if (!cancelled) {
-          setIsDatasetLoading(false);
-        }
-      }
-    };
-
-    void loadFoods();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     if (pendingQueryRef.current !== undefined && pendingQueryRef.current === foodParam) {
@@ -196,12 +149,8 @@ export default function CatFoodSafetyChecker() {
     }
 
     setQuery(foodParam);
-    if (!normalizedFoods) {
-      return;
-    }
-
     performSearch(foodParam, { syncUrl: false });
-  }, [foodParam, performSearch, resetSearchState, normalizedFoods]);
+  }, [foodParam, performSearch, resetSearchState]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -290,7 +239,7 @@ export default function CatFoodSafetyChecker() {
                 <ul
                   id={suggestionsListId}
                   role="listbox"
-                  className="absolute left-0 right-0 z-20 mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
+                  className="mt-1 max-h-60 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg md:absolute md:left-0 md:right-0 md:z-20"
                 >
                   {suggestions.map((item) => {
                     const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.注意;
@@ -320,7 +269,6 @@ export default function CatFoodSafetyChecker() {
             </div>
             <button
               type="submit"
-              disabled={isDatasetLoading || !normalizedFoods}
               className="rounded-xl bg-pink-600 text-white px-6 py-3 font-semibold hover:bg-pink-500 disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-600"
             >
               {CAT_FOOD_SAFETY_TEXT.INPUT.BUTTON}

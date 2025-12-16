@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import CatFoodSafetyChecker from './CatFoodSafetyChecker';
 import { CAT_FOOD_SAFETY_META } from '@/constants/text';
+import type { CatFoodItem } from '@/types';
+import rawCatFoods from '../../../public/data/cat_foods.json';
 
 export const metadata: Metadata = {
   title: CAT_FOOD_SAFETY_META.TITLE,
@@ -35,9 +37,10 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
+  const allFoods = rawCatFoods as CatFoodItem[];
   return (
     <Suspense fallback={<div className="container max-w-3xl mx-auto px-6 py-12 text-sm text-gray-500">読み込み中です…</div>}>
-      <CatFoodSafetyChecker />
+      <CatFoodSafetyChecker allFoods={allFoods} />
     </Suspense>
   );
 }
