@@ -44,7 +44,7 @@ export default function CatFoodSafetyChecker() {
   const [hasSearched, setHasSearched] = useState(false);
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const pendingQueryRef = useRef<string | null>(null);
+  const pendingQueryRef = useRef<string | undefined>(undefined);
   const suggestionRequestIdRef = useRef(0);
 
   const resetSearchState = useCallback(() => {
@@ -64,12 +64,12 @@ export default function CatFoodSafetyChecker() {
     const response = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
       cache: 'no-store',
     });
-    let payload: CatFoodSearchResponse | null = null;
+    let payload: CatFoodSearchResponse;
 
     try {
       payload = (await response.json()) as CatFoodSearchResponse;
     } catch {
-      payload = null;
+      throw new Error(CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
     }
 
     if (!response.ok) {
@@ -80,7 +80,7 @@ export default function CatFoodSafetyChecker() {
   }, []);
 
   const syncBrowserUrl = useCallback(
-    (value: string | null) => {
+    (value?: string) => {
       if (typeof window === 'undefined') return;
       const url = new URL(window.location.href);
       if (value) {
@@ -88,7 +88,7 @@ export default function CatFoodSafetyChecker() {
         pendingQueryRef.current = value;
       } else {
         url.searchParams.delete('food');
-        pendingQueryRef.current = '';
+        pendingQueryRef.current = undefined;
       }
       router.replace(`${url.pathname}${url.search}${url.hash}`);
     },
@@ -105,7 +105,7 @@ export default function CatFoodSafetyChecker() {
         setSuggestions([]);
         setHasSearched(false);
         if (options.syncUrl !== false) {
-          syncBrowserUrl(null);
+          syncBrowserUrl(undefined);
         }
         return;
       }
@@ -116,7 +116,7 @@ export default function CatFoodSafetyChecker() {
         setSuggestions([]);
         setHasSearched(false);
         if (options.syncUrl !== false) {
-          syncBrowserUrl(null);
+          syncBrowserUrl(undefined);
         }
         return;
       }
@@ -175,11 +175,11 @@ export default function CatFoodSafetyChecker() {
     [fetchCatFoods]
   );
 
-  const foodParam = searchParams?.get('food') ?? '';
+  const foodParam = searchParams?.get('food') ?? undefined;
 
   useEffect(() => {
-    if (pendingQueryRef.current !== null && pendingQueryRef.current === foodParam) {
-      pendingQueryRef.current = null;
+    if (pendingQueryRef.current !== undefined && pendingQueryRef.current === foodParam) {
+      pendingQueryRef.current = undefined;
       return;
     }
 
@@ -203,7 +203,7 @@ export default function CatFoodSafetyChecker() {
       setError('');
       setResults([]);
       setHasSearched(false);
-      syncBrowserUrl(null);
+      syncBrowserUrl(undefined);
       setSuggestions([]);
       return;
     }

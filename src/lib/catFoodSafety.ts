@@ -12,8 +12,8 @@ const KATAKANA_TO_HIRAGANA_OFFSET = 0x60;
 const SPLIT_PATTERN = /[・,，、／/＆&\s]+/g;
 const REMOVE_PATTERN = /[\s\u3000・,，、／/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
 
-let catFoodDataset: NormalizedFood[] | null = null;
-let datasetPromise: Promise<NormalizedFood[]> | null = null;
+let catFoodDataset: NormalizedFood[] | undefined;
+let datasetPromise: Promise<NormalizedFood[]> | undefined;
 
 async function loadDataset(): Promise<NormalizedFood[]> {
   if (catFoodDataset) {
