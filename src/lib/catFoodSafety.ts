@@ -1,5 +1,6 @@
+import { readFile } from 'fs/promises';
+import path from 'path';
 import type { CatFoodItem } from '@/types';
-import rawCatFoods from '@/../public/data/cat_foods.json';
 
 type NormalizedFood = CatFoodItem & {
   normalizedNames: string[];
@@ -11,10 +12,30 @@ const KATAKANA_TO_HIRAGANA_OFFSET = 0x60;
 const SPLIT_PATTERN = /[・,，、／/＆&\s]+/g;
 const REMOVE_PATTERN = /[\s\u3000・,，、／/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
 
-const catFoodDataset: NormalizedFood[] = (rawCatFoods as CatFoodItem[]).map((food) => ({
-  ...food,
-  normalizedNames: buildNormalizedNames(food.name),
-}));
+let catFoodDataset: NormalizedFood[] | null = null;
+let datasetPromise: Promise<NormalizedFood[]> | null = null;
+
+async function loadDataset(): Promise<NormalizedFood[]> {
+  if (catFoodDataset) {
+    return catFoodDataset;
+  }
+
+  if (!datasetPromise) {
+    datasetPromise = (async () => {
+      const filePath = path.join(process.cwd(), 'public', 'data', 'cat_foods.json');
+      const fileContent = await readFile(filePath, 'utf-8');
+      const rawFoods = JSON.parse(fileContent) as CatFoodItem[];
+      const normalized = rawFoods.map((food) => ({
+        ...food,
+        normalizedNames: buildNormalizedNames(food.name),
+      }));
+      catFoodDataset = normalized;
+      return normalized;
+    })();
+  }
+
+  return datasetPromise;
+}
 
 function stripNormalized(food: NormalizedFood): CatFoodItem {
   return {
@@ -52,19 +73,21 @@ function buildNormalizedNames(name: string) {
   return Array.from(new Set([normalizedFull, ...segments]));
 }
 
-export function searchCatFood(name: string) {
+export async function searchCatFood(name: string) {
+  const dataset = await loadDataset();
   const normalizedQuery = normalizeValue(name);
   if (!normalizedQuery) {
     return [];
   }
 
-  const matches = catFoodDataset.filter((food) =>
+  const matches = dataset.filter((food) =>
     food.normalizedNames.some((value) => value.includes(normalizedQuery))
   );
 
   return matches.map(stripNormalized);
 }
 
-export function getAllCatFoods(): CatFoodItem[] {
-  return catFoodDataset.map(stripNormalized);
+export async function getAllCatFoods(): Promise<CatFoodItem[]> {
+  const dataset = await loadDataset();
+  return dataset.map(stripNormalized);
 }

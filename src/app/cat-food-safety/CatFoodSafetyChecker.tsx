@@ -1,17 +1,17 @@
 'use client';
 
-import { FormEvent, useCallback, useEffect, useId, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { FormEvent, useCallback, useEffect, useId, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
-import { searchCatFood } from '@/lib/catFoodSafety';
 import ShareMenu from '@/components/ShareMenu';
-import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
+import type { CatFoodItem, CatFoodSafetyStatus, CatFoodSearchResponse } from '@/types';
 
 const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://cat-tools.catnote.tokyo';
 const MAX_QUERY_LENGTH = 40;
 const MAX_SUGGESTIONS = 6;
 const ITEM_SHARE_DESCRIPTION_LENGTH = 50;
+const API_ENDPOINT = '/api/cat-food-safety';
 
 const STATUS_STYLES: Record<CatFoodSafetyStatus, { badge: string; border: string }> = {
   安全: {
@@ -36,59 +36,77 @@ const createItemShareText = (item: CatFoodItem) => {
 
 export default function CatFoodSafetyChecker() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const suggestionsListId = useId();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<CatFoodItem[]>([]);
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
-  const [initialized, setInitialized] = useState(false);
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const pendingQueryRef = useRef<string | null>(null);
+  const suggestionRequestIdRef = useRef(0);
 
-  const updateSuggestions = useCallback((value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      setSuggestions([]);
-      return;
-    }
-
-    const matches = searchCatFood(trimmed).slice(0, MAX_SUGGESTIONS);
-    setSuggestions(matches);
+  const resetSearchState = useCallback(() => {
+    setQuery('');
+    setResults([]);
+    setError('');
+    setHasSearched(false);
+    setSuggestions([]);
   }, []);
 
-  const syncBrowserUrl = useCallback((value: string | null) => {
-    if (typeof window === 'undefined') return;
-    const url = new URL(window.location.href);
-    if (value) {
-      url.searchParams.set('food', value);
-    } else {
-      url.searchParams.delete('food');
+  const fetchCatFoods = useCallback(async (value: string, limit?: number) => {
+    const params = new URLSearchParams({ food: value });
+    if (typeof limit === 'number') {
+      params.set('limit', String(limit));
     }
-    window.history.replaceState(null, '', url.toString());
+
+    const response = await fetch(`${API_ENDPOINT}?${params.toString()}`, {
+      cache: 'no-store',
+    });
+    let payload: CatFoodSearchResponse | null = null;
+
+    try {
+      payload = (await response.json()) as CatFoodSearchResponse;
+    } catch {
+      payload = null;
+    }
+
+    if (!response.ok) {
+      throw new Error(payload?.error ?? CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR);
+    }
+
+    return payload?.results ?? [];
   }, []);
 
-  useEffect(() => {
-    if (initialized) return;
-    const initial = searchParams?.get('food');
-    if (initial) {
-      setQuery(initial);
-      const initialResults = searchCatFood(initial);
-      setResults(initialResults);
-      setHasSearched(true);
-      setError(initialResults.length ? '' : CAT_FOOD_SAFETY_TEXT.RESULT.NO_RESULTS(initial));
-    }
-    setInitialized(true);
-  }, [searchParams, initialized]);
+  const syncBrowserUrl = useCallback(
+    (value: string | null) => {
+      if (typeof window === 'undefined') return;
+      const url = new URL(window.location.href);
+      if (value) {
+        url.searchParams.set('food', value);
+        pendingQueryRef.current = value;
+      } else {
+        url.searchParams.delete('food');
+        pendingQueryRef.current = '';
+      }
+      router.replace(`${url.pathname}${url.search}${url.hash}`);
+    },
+    [router]
+  );
 
-  const handleSearch = useCallback(
-    (keyword: string) => {
+  const performSearch = useCallback(
+    async (keyword: string, options: { syncUrl?: boolean } = {}) => {
       const trimmed = keyword.trim();
-      setHasSearched(true);
 
       if (!trimmed) {
         setError(CAT_FOOD_SAFETY_TEXT.INPUT.ERROR.REQUIRED);
         setResults([]);
         setSuggestions([]);
-        syncBrowserUrl(null);
+        setHasSearched(false);
+        if (options.syncUrl !== false) {
+          syncBrowserUrl(null);
+        }
         return;
       }
 
@@ -96,22 +114,87 @@ export default function CatFoodSafetyChecker() {
         setError(CAT_FOOD_SAFETY_TEXT.INPUT.ERROR.TOO_LONG(MAX_QUERY_LENGTH));
         setResults([]);
         setSuggestions([]);
-        syncBrowserUrl(null);
+        setHasSearched(false);
+        if (options.syncUrl !== false) {
+          syncBrowserUrl(null);
+        }
         return;
       }
 
-      const matches = searchCatFood(trimmed);
-      setResults(matches);
-      setError(matches.length ? '' : CAT_FOOD_SAFETY_TEXT.RESULT.NO_RESULTS(trimmed));
-      setSuggestions([]);
-      syncBrowserUrl(trimmed);
+      setHasSearched(true);
+      setIsSearching(true);
+      try {
+        const matches = await fetchCatFoods(trimmed);
+        setResults(matches);
+        setError(matches.length ? '' : CAT_FOOD_SAFETY_TEXT.RESULT.NO_RESULTS(trimmed));
+        setSuggestions([]);
+        if (options.syncUrl !== false) {
+          syncBrowserUrl(trimmed);
+        }
+      } catch (err) {
+        console.error('Failed to fetch cat food data:', err);
+        setResults([]);
+        const message = err instanceof Error && err.message ? err.message : CAT_FOOD_SAFETY_TEXT.RESULT.FETCH_ERROR;
+        setError(message);
+        setSuggestions([]);
+        if (options.syncUrl !== false) {
+          syncBrowserUrl(trimmed);
+        }
+      } finally {
+        setIsSearching(false);
+      }
     },
-    [syncBrowserUrl]
+    [fetchCatFoods, syncBrowserUrl]
   );
+
+  const updateSuggestions = useCallback(
+    async (value: string) => {
+      const trimmed = value.trim();
+      if (!trimmed) {
+        setSuggestions([]);
+        return;
+      }
+
+      if (trimmed.length > MAX_QUERY_LENGTH) {
+        setSuggestions([]);
+        return;
+      }
+
+      const requestId = ++suggestionRequestIdRef.current;
+      try {
+        const matches = await fetchCatFoods(trimmed, MAX_SUGGESTIONS);
+        if (suggestionRequestIdRef.current === requestId) {
+          setSuggestions(matches);
+        }
+      } catch {
+        if (suggestionRequestIdRef.current === requestId) {
+          setSuggestions([]);
+        }
+      }
+    },
+    [fetchCatFoods]
+  );
+
+  const foodParam = searchParams?.get('food') ?? '';
+
+  useEffect(() => {
+    if (pendingQueryRef.current !== null && pendingQueryRef.current === foodParam) {
+      pendingQueryRef.current = null;
+      return;
+    }
+
+    if (!foodParam) {
+      resetSearchState();
+      return;
+    }
+
+    setQuery(foodParam);
+    void performSearch(foodParam, { syncUrl: false });
+  }, [foodParam, performSearch, resetSearchState]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    handleSearch(query);
+    void performSearch(query);
   };
 
   const onChange = (value: string) => {
@@ -121,20 +204,21 @@ export default function CatFoodSafetyChecker() {
       setResults([]);
       setHasSearched(false);
       syncBrowserUrl(null);
-      updateSuggestions('');
+      setSuggestions([]);
       return;
     }
 
     setError('');
-    updateSuggestions(value);
+    void updateSuggestions(value);
   };
 
   const handleSuggestionSelect = useCallback(
     (name: string) => {
       setQuery(name);
-      handleSearch(name);
+      setSuggestions([]);
+      void performSearch(name);
     },
-    [handleSearch]
+    [performSearch]
   );
 
   return (
@@ -225,7 +309,8 @@ export default function CatFoodSafetyChecker() {
             </div>
             <button
               type="submit"
-              className="rounded-xl bg-pink-600 text-white px-6 py-3 font-semibold hover:bg-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-600"
+              disabled={isSearching}
+              className="rounded-xl bg-pink-600 text-white px-6 py-3 font-semibold hover:bg-pink-500 disabled:opacity-60 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-600"
             >
               {CAT_FOOD_SAFETY_TEXT.INPUT.BUTTON}
             </button>
@@ -285,7 +370,7 @@ export default function CatFoodSafetyChecker() {
                     <dd className="whitespace-pre-wrap leading-relaxed mt-1">{item.notes}</dd>
                   </div>
                 </dl>
-                <div className="mt-4 flex items-center justify-end  pt-4">
+                <div className="mt-4 flex items-center justify-end border-t border-gray-100 pt-4">
                   <div className="relative">
                     <ShareMenu
                       shareText={itemShareText}

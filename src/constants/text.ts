@@ -116,6 +116,7 @@ export const CAT_FOOD_SAFETY_TEXT = {
     HIT_COUNT: (count: number) => `${count}件ヒットしました`,
     NO_RESULTS: (keyword: string) => `「${keyword}」に該当するデータは見つかりませんでした。`,
     EMPTY: '検索すると結果が表示されます。',
+    FETCH_ERROR: '検索結果の取得に失敗しました。時間をおいて再度お試しください。',
     STATUS_LABEL: '安全性',
     DESCRIPTION_LABEL: '理由・症状',
     NOTES_LABEL: '注意点・補足',

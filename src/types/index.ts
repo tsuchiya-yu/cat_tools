@@ -48,3 +48,8 @@ export interface CatFoodItem {
   description: string;
   notes: string;
 }
+
+export interface CatFoodSearchResponse {
+  results: CatFoodItem[];
+  error?: string;
+}

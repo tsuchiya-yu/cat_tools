@@ -23,4 +23,16 @@ test.describe('猫の食べ物安全性チェック', () => {
 
     await expect(page.getByText(`「${keyword}」に該当するデータは見つかりませんでした。`)).toBeVisible();
   });
+
+  test('URLのfoodクエリに応じて結果が同期される', async ({ page }) => {
+    await page.goto('/cat-food-safety?food=玉ねぎ');
+    const firstResult = page.locator('article').first();
+    await expect(firstResult.getByRole('heading', { name: '玉ねぎ', exact: true })).toBeVisible();
+
+    await page.goto('/cat-food-safety?food=コーヒー');
+    await expect(page.locator('article').first().getByText(/コーヒー/)).toBeVisible();
+
+    await page.goBack();
+    await expect(firstResult.getByRole('heading', { name: '玉ねぎ', exact: true })).toBeVisible();
+  });
 });
