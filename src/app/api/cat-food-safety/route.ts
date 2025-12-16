@@ -5,7 +5,10 @@ import type { CatFoodSearchResponse } from '@/types';
 const ERROR_MESSAGES = {
   REQUIRED: '食材名を入力してください。',
   GENERAL: '検索処理でエラーが発生しました。',
+  TOO_LONG: '食材名は40文字以内で入力してください。',
 } as const;
+
+const MAX_KEYWORD_LENGTH = 40;
 
 export const runtime = 'nodejs';
 
@@ -19,6 +22,13 @@ export async function GET(request: Request) {
     if (!keyword) {
       return NextResponse.json<CatFoodSearchResponse>(
         { results: [], error: ERROR_MESSAGES.REQUIRED },
+        { status: 400 }
+      );
+    }
+
+    if (keyword.length > MAX_KEYWORD_LENGTH) {
+      return NextResponse.json<CatFoodSearchResponse>(
+        { results: [], error: ERROR_MESSAGES.TOO_LONG },
         { status: 400 }
       );
     }
