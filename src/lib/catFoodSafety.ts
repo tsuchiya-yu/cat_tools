@@ -41,7 +41,6 @@ async function loadDataset(): Promise<NormalizedFood[]> {
         catFoodDataset = normalized;
         return normalized;
       } catch (error) {
-        datasetPromise = undefined;
         throw error;
       }
     })();
