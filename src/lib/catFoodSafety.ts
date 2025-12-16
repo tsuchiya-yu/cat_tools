@@ -1,5 +1,3 @@
-import { readFile } from 'fs/promises';
-import path from 'path';
 import type { CatFoodItem } from '@/types';
 import { isCatFoodItem } from '@/lib/catFoodValidation';
 
@@ -14,38 +12,29 @@ const SPLIT_PATTERN = /[・,，、／\/＆&\s]+/g;
 const REMOVE_PATTERN = /[\s\u3000・,，、／\/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
 
 let catFoodDataset: NormalizedFood[] | undefined;
-let datasetPromise: Promise<NormalizedFood[]> | undefined;
 
 async function loadDataset(): Promise<NormalizedFood[]> {
   if (catFoodDataset) {
     return catFoodDataset;
   }
 
-  if (!datasetPromise) {
-    datasetPromise = (async () => {
-      try {
-        const filePath = path.join(process.cwd(), 'public', 'data', 'cat_foods.json');
-        const fileContent = await readFile(filePath, 'utf-8');
-        const rawFoods: unknown = JSON.parse(fileContent);
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:3000';
+  const response = await fetch(`${baseUrl}/data/cat_foods.json`, { cache: 'force-cache' });
+  if (!response.ok) {
+    throw new Error('Failed to load cat food dataset');
+  }
+  const rawFoods: unknown = await response.json();
 
-        if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
-          throw new Error('Invalid data structure detected in cat_foods.json');
-        }
-
-        const normalized = (rawFoods as CatFoodItem[]).map((food) => ({
-          ...food,
-          normalizedNames: buildNormalizedNames(food.name),
-        }));
-        catFoodDataset = normalized;
-        return normalized;
-      } catch (error) {
-        datasetPromise = undefined;
-        throw error;
-      }
-    })();
+  if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
+    throw new Error('Invalid data structure detected in cat_foods.json');
   }
 
-  return datasetPromise;
+  const normalized = (rawFoods as CatFoodItem[]).map((food) => ({
+    ...food,
+    normalizedNames: buildNormalizedNames(food.name),
+  }));
+  catFoodDataset = normalized;
+  return normalized;
 }
 
 function stripNormalized(food: NormalizedFood): CatFoodItem {
