@@ -30,7 +30,7 @@ test.describe('猫の食べ物安全性チェック', () => {
     await expect(firstResult.getByRole('heading', { name: '玉ねぎ', exact: true })).toBeVisible();
 
     await page.goto('/cat-food-safety?food=コーヒー');
-    await expect(page.locator('article').first().getByText(/コーヒー/)).toBeVisible();
+    await expect(page.locator('article').first().getByRole('heading', { name: 'コーヒー・紅茶・緑茶', exact: true })).toBeVisible();
 
     await page.goBack();
     await expect(firstResult.getByRole('heading', { name: '玉ねぎ', exact: true })).toBeVisible();
