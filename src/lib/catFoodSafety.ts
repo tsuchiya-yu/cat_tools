@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
-import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
+import type { CatFoodItem } from '@/types';
+import { isCatFoodItem } from '@/lib/catFoodValidation';
 
 type NormalizedFood = CatFoodItem & {
   normalizedNames: string[];
@@ -11,20 +12,6 @@ const KATAKANA_END = 0x30f6;
 const KATAKANA_TO_HIRAGANA_OFFSET = 0x60;
 const SPLIT_PATTERN = /[・,，、／\/＆&\s]+/g;
 const REMOVE_PATTERN = /[\s\u3000・,，、／\/＆&\-\(\)（）「」『』【】［］\[\]{}<>＜＞]/g;
-
-const VALID_STATUSES: ReadonlyArray<CatFoodSafetyStatus> = ['安全', '注意', '危険'];
-
-function isCatFoodItem(value: unknown): value is CatFoodItem {
-  if (!value || typeof value !== 'object') return false;
-  const record = value as Record<string, unknown>;
-  return (
-    typeof record.name === 'string' &&
-    typeof record.description === 'string' &&
-    typeof record.notes === 'string' &&
-    typeof record.status === 'string' &&
-    VALID_STATUSES.includes(record.status as CatFoodSafetyStatus)
-  );
-}
 
 let catFoodDataset: NormalizedFood[] | undefined;
 let datasetPromise: Promise<NormalizedFood[]> | undefined;
@@ -82,8 +69,8 @@ function normalizeValue(value: string) {
   return katakanaToHiragana(
     value
       .trim()
-      .toLowerCase()
       .normalize('NFKC')
+      .toLowerCase()
   ).replace(REMOVE_PATTERN, '');
 }
 

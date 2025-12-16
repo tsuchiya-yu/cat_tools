@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
 import ShareMenu from '@/components/ShareMenu';
-import type { CatFoodItem, CatFoodSafetyStatus, CatFoodSearchResponse } from '@/types';
+import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
+import { isCatFoodSearchResponse } from '@/lib/catFoodValidation';
 
 const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://cat-tools.catnote.tokyo';
 const MAX_QUERY_LENGTH = 40;
@@ -28,37 +29,12 @@ const STATUS_STYLES: Record<CatFoodSafetyStatus, { badge: string; border: string
   },
 };
 
-const VALID_STATUSES: ReadonlyArray<CatFoodSafetyStatus> = ['安全', '注意', '危険'];
-
 const createItemShareText = (item: CatFoodItem) => {
   const excerpt = item.description.slice(0, ITEM_SHARE_DESCRIPTION_LENGTH);
   const ellipsis = item.description.length > ITEM_SHARE_DESCRIPTION_LENGTH ? '…' : '';
   return `${item.name}（${item.status}）: ${excerpt}${ellipsis}`;
 };
 
-const isCatFoodItem = (value: unknown): value is CatFoodItem => {
-  if (!value || typeof value !== 'object') return false;
-  const record = value as Record<string, unknown>;
-  return (
-    typeof record.name === 'string' &&
-    typeof record.description === 'string' &&
-    typeof record.notes === 'string' &&
-    typeof record.status === 'string' &&
-    VALID_STATUSES.includes(record.status as CatFoodSafetyStatus)
-  );
-};
-
-const isCatFoodSearchResponse = (value: unknown): value is CatFoodSearchResponse => {
-  if (!value || typeof value !== 'object') return false;
-  const record = value as Record<string, unknown>;
-  if (!Array.isArray(record.results)) {
-    return false;
-  }
-  if (record.error !== undefined && typeof record.error !== 'string') {
-    return false;
-  }
-  return record.results.every(isCatFoodItem);
-};
 
 export default function CatFoodSafetyChecker() {
   const searchParams = useSearchParams();
