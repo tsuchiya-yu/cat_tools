@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import CatFoodSafetyChecker from './CatFoodSafetyChecker';
 import { CAT_FOOD_SAFETY_META } from '@/constants/text';
 
@@ -34,5 +35,9 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <CatFoodSafetyChecker />;
+  return (
+    <Suspense fallback={<div className="container max-w-3xl mx-auto px-6 py-12 text-sm text-gray-500">読み込み中です…</div>}>
+      <CatFoodSafetyChecker />
+    </Suspense>
+  );
 }
