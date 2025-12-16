@@ -95,6 +95,8 @@ export const CAT_FOOD_SAFETY_TEXT = {
     EYECATCH: '食材名から安全性をチェック',
     TITLE: '猫の食べ物安全性チェック',
     DESCRIPTION: '人が口にする食材でも、猫には危険なものがあります。200種類のデータから安全度と注意点を確認できます。',
+    NOTE:
+      '※掲載内容は参考情報です。品種や年齢、持病によっても異なるため、正確な情報を知りたい場合は獣医師に相談してください。',
   },
   BREADCRUMBS: {
     HOME: COMMON_TEXT.BREADCRUMBS.HOME,
