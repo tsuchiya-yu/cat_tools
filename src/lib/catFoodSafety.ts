@@ -1,30 +1,36 @@
 import type { CatFoodItem } from '@/types';
 import { isCatFoodItem } from '@/lib/catFoodValidation';
 import rawCatFoods from '../../public/data/cat_foods.json';
-import {
-  createNormalizedFoods,
-  searchNormalizedFoods,
-  stripNormalizedFood,
-  type NormalizedCatFood,
-} from '@/lib/catFoodSearch';
+import { createNormalizedFoods, searchNormalizedFoods, type NormalizedCatFood } from '@/lib/catFoodSearch';
 
-let catFoodDataset: NormalizedCatFood[] | undefined;
+let validatedCatFoods: CatFoodItem[] | undefined;
+let normalizedCatFoods: NormalizedCatFood[] | undefined;
 
-function loadDataset(): NormalizedCatFood[] {
-  if (!catFoodDataset) {
-    const rawFoods: unknown = rawCatFoods;
-    if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
-      throw new Error('Invalid data structure detected in cat_foods.json');
-    }
-    catFoodDataset = createNormalizedFoods(rawFoods as CatFoodItem[]);
+function getValidatedFoods(): CatFoodItem[] {
+  if (validatedCatFoods) {
+    return validatedCatFoods;
   }
-  return catFoodDataset;
+
+  const rawFoods: unknown = rawCatFoods;
+  if (!Array.isArray(rawFoods) || rawFoods.some((food) => !isCatFoodItem(food))) {
+    throw new Error('Invalid data structure detected in cat_foods.json');
+  }
+
+  validatedCatFoods = rawFoods as CatFoodItem[];
+  return validatedCatFoods;
+}
+
+function getNormalizedFoods(): NormalizedCatFood[] {
+  if (!normalizedCatFoods) {
+    normalizedCatFoods = createNormalizedFoods(getValidatedFoods());
+  }
+  return normalizedCatFoods;
 }
 
 export function searchCatFood(name: string) {
-  return searchNormalizedFoods(loadDataset(), name);
+  return searchNormalizedFoods(getNormalizedFoods(), name);
 }
 
 export function getAllCatFoods(): CatFoodItem[] {
-  return loadDataset().map(stripNormalizedFood);
+  return getValidatedFoods();
 }
