@@ -39,3 +39,17 @@ export interface CatCalorieRawResult {
   factor: CalorieFactorResult;
   note: string;
 }
+
+export type CatFoodSafetyStatus = '安全' | '注意' | '危険';
+
+export interface CatFoodItem {
+  name: string;
+  status: CatFoodSafetyStatus;
+  description: string;
+  notes: string;
+}
+
+export interface CatFoodSearchResponse {
+  results: CatFoodItem[];
+  error?: string;
+}

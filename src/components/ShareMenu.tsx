@@ -198,7 +198,10 @@ export default function ShareMenu({
       )}
 
       {showToast && (
-        <div className="fixed left-1/2 bottom-6 -translate-x-1/2 bg-gray-900 text-white text-sm py-2.5 px-3.5 rounded-lg opacity-100 pointer-events-none transition-opacity duration-200">
+        <div
+          role="status"
+          className="fixed left-1/2 bottom-6 -translate-x-1/2 bg-gray-900 text-white text-sm py-2.5 px-3.5 rounded-lg opacity-100 pointer-events-none transition-opacity duration-200"
+        >
           {toastMessage}
         </div>
       )}
