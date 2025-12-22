@@ -4,6 +4,7 @@
  * @type {Tool[]}
  */
 const tools = require('./src/constants/tools.json');
+const { defaultSitemapTransformer } = require('next-sitemap/dist/cjs/utils/defaults.js');
 
 const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -22,15 +23,16 @@ module.exports = {
   priority: 0.7,
   autoLastmod: true,
   transform: async (config, path) => {
-    const priority = path === '/' ? 1 : toolPaths.has(path) ? 0.8 : config.priority;
+    const defaultEntry = await defaultSitemapTransformer(config, path);
+    if (!defaultEntry) {
+      return defaultEntry;
+    }
+
+    const priority = path === '/' ? 1 : toolPaths.has(path) ? 0.8 : defaultEntry.priority;
 
     return {
-      loc: path,
-      lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
-      changefreq: config.changefreq,
+      ...defaultEntry,
       priority,
-      alternateRefs: config.alternateRefs ?? [],
-      trailingSlash: config.trailingSlash,
     };
   },
 };
