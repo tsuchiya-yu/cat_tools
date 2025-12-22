@@ -20,9 +20,9 @@ if (!BASE_URL) {
   throw new Error('SITE_URL is not set. Please configure SITE_URL or NEXT_PUBLIC_BASE_URL.');
 }
 
-const siteUrl = BASE_URL.startsWith('http')
-  ? BASE_URL
-  : `https://${BASE_URL.replace(/^\/\//, '')}`;
+const siteUrl = (
+  BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
+).replace(/\/$/, '');
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 
 /** @type {import('next-sitemap').IConfig} */
@@ -40,6 +40,7 @@ module.exports = {
       loc: routePath,
       changefreq: config.changefreq,
       priority,
+      lastmod: config.lastmod,
       alternateRefs: config.alternateRefs ?? [],
       trailingSlash: config.trailingSlash,
     };
