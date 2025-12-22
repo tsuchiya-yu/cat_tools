@@ -239,7 +239,7 @@ export const SHARE_UI_TEXT = {
 } as const;
 
 // トップページで表示するツール一覧
-export const TOOLS = tools as const;
+export const TOOLS = tools;
 
 // 給餌量計算用のUI文言
 export const FEEDING_RANGE = {
