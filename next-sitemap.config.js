@@ -1,5 +1,8 @@
-const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-const siteUrl = /^https?:\/\//.test(baseUrl) ? baseUrl : `https://${baseUrl}`;
+const tools = require('./src/constants/tools.json');
+
+const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://cat-tools.catnote.tokyo';
+const siteUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl.replace(/^\/\//, '')}`;
+const toolPaths = new Set(tools.map((tool) => tool.href));
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -9,21 +12,13 @@ module.exports = {
   priority: 0.7,
   autoLastmod: true,
   transform: async (config, path) => {
-    const overrides = {
-      '/': { priority: 1 },
-      '/calculate-cat-age': { priority: 0.8 },
-      '/calculate-cat-calorie': { priority: 0.8 },
-      '/calculate-cat-feeding': { priority: 0.8 },
-      '/cat-food-safety': { priority: 0.8 },
-    };
-
-    const override = overrides[path];
+    const priority = path === '/' ? 1 : toolPaths.has(path) ? 0.8 : config.priority;
 
     return {
       loc: path,
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       changefreq: config.changefreq,
-      priority: override?.priority ?? config.priority,
+      priority,
       alternateRefs: config.alternateRefs ?? [],
       trailingSlash: config.trailingSlash,
     };
