@@ -1,24 +1,4 @@
-const TOOLS = (() => {
-  const tools = require('./src/constants/tools.json');
-
-  if (
-    !Array.isArray(tools) ||
-    !tools.every(
-      (tool) =>
-        tool &&
-        typeof tool.href === 'string' &&
-        typeof tool.ariaLabel === 'string' &&
-        typeof tool.title === 'string' &&
-        typeof tool.description === 'string'
-    )
-  ) {
-    throw new Error(
-      'Invalid structure in src/constants/tools.json. It must be an array of objects with href, ariaLabel, title, and description string properties.'
-    );
-  }
-
-  return tools;
-})();
+const TOOLS = require('./src/constants/tools.json');
 
 const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
 
