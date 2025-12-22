@@ -1,5 +1,12 @@
 import tools from './tools.json';
 
+type ToolItem = {
+  readonly href: string;
+  readonly ariaLabel: string;
+  readonly title: string;
+  readonly description: string;
+};
+
 // メタデータ
 export const META = {
   TITLE: '猫の年齢計算｜誕生日から人間年齢に換算【無料ツール】',
@@ -239,7 +246,7 @@ export const SHARE_UI_TEXT = {
 } as const;
 
 // トップページで表示するツール一覧
-export const TOOLS = tools;
+export const TOOLS = tools as ReadonlyArray<ToolItem>;
 
 // 給餌量計算用のUI文言
 export const FEEDING_RANGE = {
