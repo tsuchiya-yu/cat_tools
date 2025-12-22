@@ -240,7 +240,7 @@ export const SHARE_UI_TEXT = {
 } as const;
 
 // トップページで表示するツール一覧
-export const TOOLS = tools as ReadonlyArray<ToolItem>;
+export const TOOLS: readonly ToolItem[] = tools;
 
 // 給餌量計算用のUI文言
 export const FEEDING_RANGE = {

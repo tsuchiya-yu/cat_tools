@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { execFileSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
-
 /** @type {import('./src/types/tool').Tool[]} */
 const tools = require('./src/constants/tools.json');
 
@@ -14,33 +10,11 @@ if (!baseUrl) {
 
 const siteUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl.replace(/^\/\//, '')}`;
 const toolPaths = new Set(tools.map((tool) => tool.href));
-const buildTimestamp = new Date().toISOString();
-
-const getLastmodForPath = (routePath) => {
-  const normalizedPath = routePath !== '/' && routePath.endsWith('/') ? routePath.slice(0, -1) : routePath;
-  const pagePath = normalizedPath === '/' ? 'src/app/page.tsx' : `src/app${normalizedPath}/page.tsx`;
-  const absolutePath = path.resolve(__dirname, pagePath);
-
-  if (!fs.existsSync(absolutePath)) {
-    return buildTimestamp;
-  }
-
-  try {
-    const gitLog = execFileSync('git', ['log', '-1', '--format=%cI', '--', absolutePath], {
-      stdio: ['ignore', 'pipe', 'ignore'],
-    })
-      .toString()
-      .trim();
-
-    return gitLog || buildTimestamp;
-  } catch {
-    return buildTimestamp;
-  }
-};
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
   siteUrl,
+  appDir: true,
   generateRobotsTxt: true,
   changefreq: 'monthly',
   priority: 0.7,
@@ -50,7 +24,7 @@ module.exports = {
 
     return {
       loc: routePath,
-      lastmod: config.autoLastmod ? getLastmodForPath(routePath) : undefined,
+      lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       changefreq: config.changefreq,
       priority,
       alternateRefs: config.alternateRefs ?? [],
