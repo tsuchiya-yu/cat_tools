@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 const TOOLS = (() => {
   const tools = require('./src/constants/tools.json');
 
@@ -24,6 +23,9 @@ const siteUrl = (
   BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
 ).replace(/\/$/, '');
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
+const HOME_PAGE_PRIORITY = 1;
+const TOOL_PAGE_PRIORITY = 0.8;
+const { defaultSitemapTransformer } = require('next-sitemap/dist/cjs/utils/defaults.js');
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -34,15 +36,17 @@ module.exports = {
   priority: 0.7,
   autoLastmod: true,
   transform: async (config, routePath) => {
-    const priority = routePath === '/' ? 1 : TOOL_PATHS.has(routePath) ? 0.8 : config.priority;
+    const priority =
+      routePath === '/'
+        ? HOME_PAGE_PRIORITY
+        : TOOL_PATHS.has(routePath)
+          ? TOOL_PAGE_PRIORITY
+          : config.priority;
+    const sitemapField = await defaultSitemapTransformer(config, routePath);
 
     return {
-      loc: routePath,
-      changefreq: config.changefreq,
+      ...sitemapField,
       priority,
-      lastmod: config.lastmod,
-      alternateRefs: config.alternateRefs ?? [],
-      trailingSlash: config.trailingSlash,
     };
   },
 };
