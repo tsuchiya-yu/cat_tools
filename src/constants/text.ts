@@ -1,11 +1,5 @@
 import tools from './tools.json';
-
-type ToolItem = {
-  readonly href: string;
-  readonly ariaLabel: string;
-  readonly title: string;
-  readonly description: string;
-};
+import type { Tool as ToolItem } from '../types/tool';
 
 // メタデータ
 export const META = {

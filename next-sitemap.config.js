@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-/**
- * @typedef {{ href: string; ariaLabel: string; title: string; description: string; }} Tool
- * @type {Tool[]}
- */
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+/** @type {import('./src/types/tool').Tool[]} */
 const tools = require('./src/constants/tools.json');
-const { defaultSitemapTransformer } = require('next-sitemap/dist/cjs/utils/defaults.js');
 
 const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -14,6 +14,29 @@ if (!baseUrl) {
 
 const siteUrl = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl.replace(/^\/\//, '')}`;
 const toolPaths = new Set(tools.map((tool) => tool.href));
+const buildTimestamp = new Date().toISOString();
+
+const getLastmodForPath = (routePath) => {
+  const normalizedPath = routePath !== '/' && routePath.endsWith('/') ? routePath.slice(0, -1) : routePath;
+  const pagePath = normalizedPath === '/' ? 'src/app/page.tsx' : `src/app${normalizedPath}/page.tsx`;
+  const absolutePath = path.resolve(__dirname, pagePath);
+
+  if (!fs.existsSync(absolutePath)) {
+    return buildTimestamp;
+  }
+
+  try {
+    const gitLog = execSync(`git log -1 --format=%cI -- "${absolutePath}"`, {
+      stdio: ['ignore', 'pipe', 'ignore'],
+    })
+      .toString()
+      .trim();
+
+    return gitLog || buildTimestamp;
+  } catch {
+    return buildTimestamp;
+  }
+};
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -22,17 +45,16 @@ module.exports = {
   changefreq: 'monthly',
   priority: 0.7,
   autoLastmod: true,
-  transform: async (config, path) => {
-    const defaultEntry = await defaultSitemapTransformer(config, path);
-    if (!defaultEntry) {
-      return defaultEntry;
-    }
-
-    const priority = path === '/' ? 1 : toolPaths.has(path) ? 0.8 : defaultEntry.priority;
+  transform: async (config, routePath) => {
+    const priority = routePath === '/' ? 1 : toolPaths.has(routePath) ? 0.8 : config.priority;
 
     return {
-      ...defaultEntry,
+      loc: routePath,
+      lastmod: config.autoLastmod ? getLastmodForPath(routePath) : undefined,
+      changefreq: config.changefreq,
       priority,
+      alternateRefs: config.alternateRefs ?? [],
+      trailingSlash: config.trailingSlash,
     };
   },
 };
