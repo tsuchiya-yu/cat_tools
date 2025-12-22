@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
@@ -26,7 +26,7 @@ const getLastmodForPath = (routePath) => {
   }
 
   try {
-    const gitLog = execSync(`git log -1 --format=%cI -- "${absolutePath}"`, {
+    const gitLog = execFileSync('git', ['log', '-1', '--format=%cI', '--', absolutePath], {
       stdio: ['ignore', 'pipe', 'ignore'],
     })
       .toString()
