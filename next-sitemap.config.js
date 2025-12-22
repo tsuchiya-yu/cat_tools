@@ -3,10 +3,17 @@ const TOOLS = (() => {
 
   if (
     !Array.isArray(tools) ||
-    !tools.every((tool) => tool && typeof tool.href === 'string')
+    !tools.every(
+      (tool) =>
+        tool &&
+        typeof tool.href === 'string' &&
+        typeof tool.ariaLabel === 'string' &&
+        typeof tool.title === 'string' &&
+        typeof tool.description === 'string'
+    )
   ) {
     throw new Error(
-      'Invalid structure in src/constants/tools.json. It must be an array of objects with an href string property.'
+      'Invalid structure in src/constants/tools.json. It must be an array of objects with href, ariaLabel, title, and description string properties.'
     );
   }
 
@@ -19,11 +26,11 @@ if (!BASE_URL) {
   throw new Error('SITE_URL is not set. Please configure SITE_URL or NEXT_PUBLIC_BASE_URL.');
 }
 
-const siteUrl = (
-  BASE_URL.startsWith('https://')
-    ? BASE_URL
-    : `https://${BASE_URL.replace(/^(http|\/\/)/, '')}`
-).replace(/\/$/, '');
+const url = new URL(
+  BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
+);
+url.protocol = 'https:';
+const siteUrl = url.origin;
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
