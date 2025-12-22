@@ -1,4 +1,8 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
+/**
+ * @typedef {{ href: string; ariaLabel: string; title: string; description: string; }} Tool
+ * @type {Tool[]}
+ */
 const tools = require('./src/constants/tools.json');
 
 const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'https://cat-tools.catnote.tokyo';
