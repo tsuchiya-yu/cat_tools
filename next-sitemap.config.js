@@ -1,6 +1,18 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
-/** @type {import('./src/types/tool').Tool[]} */
-const TOOLS = require('./src/constants/tools.json');
+const TOOLS = (() => {
+  const tools = require('./src/constants/tools.json');
+
+  if (
+    !Array.isArray(tools) ||
+    !tools.every((tool) => tool && typeof tool.href === 'string')
+  ) {
+    throw new Error(
+      'Invalid structure in src/constants/tools.json. It must be an array of objects with an href string property.'
+    );
+  }
+
+  return tools;
+})();
 
 const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -21,12 +33,11 @@ module.exports = {
   changefreq: 'monthly',
   priority: 0.7,
   autoLastmod: true,
-  transform: async (config, routePath, lastmod) => {
+  transform: async (config, routePath) => {
     const priority = routePath === '/' ? 1 : TOOL_PATHS.has(routePath) ? 0.8 : config.priority;
 
     return {
       loc: routePath,
-      lastmod,
       changefreq: config.changefreq,
       priority,
       alternateRefs: config.alternateRefs ?? [],
