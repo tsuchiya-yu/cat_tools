@@ -27,7 +27,14 @@ const siteUrl = (
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
-const { defaultSitemapTransformer } = require('next-sitemap/dist/cjs/utils/defaults.js');
+const buildSitemapField = (config, routePath) => ({
+  loc: routePath,
+  changefreq: config.changefreq,
+  priority: config.priority,
+  lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
+  alternateRefs: config.alternateRefs ?? [],
+  trailingSlash: config.trailingSlash,
+});
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
@@ -44,7 +51,7 @@ module.exports = {
         : TOOL_PATHS.has(routePath)
           ? TOOL_PAGE_PRIORITY
           : config.priority;
-    const sitemapField = await defaultSitemapTransformer(config, routePath);
+    const sitemapField = buildSitemapField(config, routePath);
 
     return {
       ...sitemapField,
