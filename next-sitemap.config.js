@@ -1,4 +1,4 @@
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://cat-tools.catnote.tokyo';
+const baseUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 const siteUrl = /^https?:\/\//.test(baseUrl) ? baseUrl : `https://${baseUrl}`;
 
 /** @type {import('next-sitemap').IConfig} */
@@ -24,6 +24,8 @@ module.exports = {
       lastmod: config.autoLastmod ? new Date().toISOString() : undefined,
       changefreq: config.changefreq,
       priority: override?.priority ?? config.priority,
+      alternateRefs: config.alternateRefs ?? [],
+      trailingSlash: config.trailingSlash,
     };
   },
 };
