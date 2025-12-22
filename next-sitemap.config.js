@@ -20,7 +20,9 @@ if (!BASE_URL) {
 }
 
 const siteUrl = (
-  BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
+  BASE_URL.startsWith('https://')
+    ? BASE_URL
+    : `https://${BASE_URL.replace(/^(http|\/\/)/, '')}`
 ).replace(/\/$/, '');
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
