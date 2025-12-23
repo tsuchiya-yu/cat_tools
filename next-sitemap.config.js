@@ -25,7 +25,7 @@ const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
 const buildSitemapField = (config, routePath, priority) => ({
-  loc: routePath,
+  loc: `${SITE_URL}${routePath}`,
   changefreq: config.changefreq,
   priority,
   lastmod: config.autoLastmod ? BUILD_DATE : undefined,
