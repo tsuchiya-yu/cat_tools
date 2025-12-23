@@ -20,7 +20,7 @@ try {
   );
 }
 url.protocol = 'https:';
-const SITE_URL = url.origin;
+const SITE_URL = url.href.replace(/\/$/, '');
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
