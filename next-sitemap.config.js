@@ -16,10 +16,10 @@ const siteUrl = url.origin;
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
-const buildSitemapField = (config, routePath) => ({
+const buildSitemapField = (config, routePath, priority) => ({
   loc: routePath,
   changefreq: config.changefreq,
-  priority: config.priority,
+  priority,
   lastmod: config.autoLastmod ? formatISO(Date.now()) : undefined,
   alternateRefs: config.alternateRefs ?? [],
   trailingSlash: config.trailingSlash,
@@ -40,11 +40,6 @@ module.exports = {
         : TOOL_PATHS.has(routePath)
           ? TOOL_PAGE_PRIORITY
           : config.priority;
-    const sitemapField = buildSitemapField(config, routePath);
-
-    return {
-      ...sitemapField,
-      priority,
-    };
+    return buildSitemapField(config, routePath, priority);
   },
 };
