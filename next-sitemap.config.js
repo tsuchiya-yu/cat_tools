@@ -12,7 +12,7 @@ const url = new URL(
   BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
 );
 url.protocol = 'https:';
-const siteUrl = url.origin;
+const SITE_URL = url.origin;
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
@@ -27,7 +27,7 @@ const buildSitemapField = (config, routePath, priority) => ({
 
 /** @type {import('next-sitemap').IConfig} */
 module.exports = {
-  siteUrl,
+  siteUrl: SITE_URL,
   appDir: true,
   generateRobotsTxt: true,
   changefreq: 'monthly',
