@@ -1,6 +1,7 @@
 const { formatISO } = require('date-fns');
 /** @type {import('./src/types/tool').Tool[]} */
 const TOOLS = require('./src/constants/tools.json');
+const BUILD_DATE = formatISO(Date.now());
 
 const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -27,7 +28,7 @@ const buildSitemapField = (config, routePath, priority) => ({
   loc: routePath,
   changefreq: config.changefreq,
   priority,
-  lastmod: config.autoLastmod ? formatISO(Date.now()) : undefined,
+  lastmod: config.autoLastmod ? BUILD_DATE : undefined,
   alternateRefs: config.alternateRefs ?? [],
   trailingSlash: config.trailingSlash,
 });
