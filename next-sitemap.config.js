@@ -8,9 +8,16 @@ if (!BASE_URL) {
   throw new Error('SITE_URL is not set. Please configure SITE_URL or NEXT_PUBLIC_BASE_URL.');
 }
 
-const url = new URL(
-  BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
-);
+let url;
+try {
+  url = new URL(
+    BASE_URL.startsWith('http') ? BASE_URL : `https://${BASE_URL.replace(/^\/\//, '')}`
+  );
+} catch {
+  throw new Error(
+    `Invalid URL provided for SITE_URL or NEXT_PUBLIC_BASE_URL: "${BASE_URL}". It should be a valid domain or full URL.`
+  );
+}
 url.protocol = 'https:';
 const SITE_URL = url.origin;
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
