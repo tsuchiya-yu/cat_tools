@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: https://cat-tools.catnote.tokyo/sitemap.xml
-

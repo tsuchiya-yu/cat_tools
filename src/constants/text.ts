@@ -1,3 +1,6 @@
+import tools from './tools.json';
+import type { Tool as ToolItem } from '../types/tool';
+
 // メタデータ
 export const META = {
   TITLE: '猫の年齢計算｜誕生日から人間年齢に換算【無料ツール】',
@@ -237,32 +240,7 @@ export const SHARE_UI_TEXT = {
 } as const;
 
 // トップページで表示するツール一覧
-export const TOOLS = [
-  {
-    href: '/cat-food-safety',
-    ariaLabel: '猫の食べ物安全性チェックを開く',
-    title: '猫の食べ物安全性チェック',
-    description: '食材名から猫にとって安全かどうか、危険な理由や注意点を確認できます。',
-  },
-  {
-    href: '/calculate-cat-age',
-    ariaLabel: '猫の年齢計算ツールを開く',
-    title: '猫の年齢計算',
-    description: '誕生日から人間年齢・ライフステージ・次の誕生日までを表示します。',
-  },
-  {
-    href: '/calculate-cat-calorie',
-    ariaLabel: '猫のカロリー計算ツールを開く',
-    title: '猫のカロリー計算',
-    description: '体重などから1日の必要カロリーと参考幅を表示します。',
-  },
-  {
-    href: '/calculate-cat-feeding',
-    ariaLabel: '猫の給餌量計算ツールを開く',
-    title: '猫の給餌量計算',
-    description: '必要カロリーとkcal/100gから、1日量と朝夜の目安を表示します。',
-  },
-] as const;
+export const TOOLS: readonly ToolItem[] = tools;
 
 // 給餌量計算用のUI文言
 export const FEEDING_RANGE = {

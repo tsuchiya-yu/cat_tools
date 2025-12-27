@@ -25,6 +25,12 @@ const eslintConfig = [
       "tailwind.config.mjs",
     ],
   },
+  {
+    files: ["next-sitemap.config.js"],
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
+    },
+  },
 ];
 
 export default eslintConfig;
