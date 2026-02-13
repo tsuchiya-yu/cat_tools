@@ -1,7 +1,7 @@
 const { formatISO } = require('date-fns');
 /** @type {import('./src/types/tool').Tool[]} */
 const TOOLS = require('./src/constants/tools.json');
-const BUILD_DATE = formatISO(Date.now());
+const BUILD_DATE = formatISO(new Date());
 
 const BASE_URL = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
 
