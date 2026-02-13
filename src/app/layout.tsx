@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Zen_Kaku_Gothic_New, Outfit } from "next/font/google";
 import "./globals.css";
-import { STRUCTURED_DATA } from '@/constants/text';
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 import { Suspense } from 'react';
 import Analytics from '@/components/Analytics';
@@ -143,46 +142,6 @@ export default function RootLayout({
           }}
         />
         
-        {/* ページ固有の構造化データ（猫の年齢計算ツール） */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify([
-              {
-                "@context": "https://schema.org",
-                "@type": "BreadcrumbList",
-                "itemListElement": [
-                  {
-                    "@type": "ListItem",
-                    "position": 1,
-                    "name": "ねこツールズ",
-                    "item": "https://cat-tools.catnote.tokyo"
-                  }
-                ]
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": "WebApplication",
-                "name": "猫の年齢計算ツール",
-                "url": "https://cat-tools.catnote.tokyo/calculate-cat-age",
-                "description": "誕生日を入力するだけで、猫の年齢を人間年齢に換算。ライフステージと次の誕生日までの日数も表示します。",
-                "applicationCategory": "CalculatorApplication",
-                "operatingSystem": "Any",
-                "browserRequirements": "Requires JavaScript",
-                "offers": {
-                  "@type": "Offer",
-                  "price": "0",
-                  "priceCurrency": "JPY"
-                }
-              },
-              {
-                "@context": "https://schema.org",
-                "@type": STRUCTURED_DATA.FAQ.TYPE,
-                "mainEntity": STRUCTURED_DATA.FAQ.ITEMS
-              }
-            ])
-          }}
-        />
       </head>
       <body
         className={`${zenKakuGothicNew.variable} ${outfit.variable} antialiased`}
