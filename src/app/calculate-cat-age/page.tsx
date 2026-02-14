@@ -27,7 +27,7 @@ const ageStructuredData = [
       "name": item.question,
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": item.answer.replace(/\n/g, '\\n')
+        "text": item.answer
       }
     }))
   }
