@@ -1,3 +1,7 @@
+/**
+ * @param {string} hostname
+ * @returns {boolean}
+ */
 function isLocalHost(hostname) {
   const host = hostname.toLowerCase();
   return (
@@ -10,6 +14,10 @@ function isLocalHost(hostname) {
   );
 }
 
+/**
+ * @param {string | undefined} siteUrl
+ * @returns {void}
+ */
 function validateSiteUrlForProduction(siteUrl) {
   if (process.env.NODE_ENV !== 'production') {
     return;
@@ -37,6 +45,9 @@ function validateSiteUrlForProduction(siteUrl) {
   }
 }
 
+/**
+ * @returns {void}
+ */
 function run() {
   const siteUrl = process.env.SITE_URL || process.env.NEXT_PUBLIC_BASE_URL;
   validateSiteUrlForProduction(siteUrl);
