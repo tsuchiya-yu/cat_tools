@@ -1,6 +1,37 @@
 import type { Metadata } from "next";
 import CatAgeCalculator from './CatAgeCalculator';
+import JsonLdScript from '@/components/JsonLdScript';
 import { META, FAQ_ITEMS } from '@/constants/text';
+
+const ageStructuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "猫の年齢計算ツール",
+    "url": META.OG.URL,
+    "description": META.DESCRIPTION,
+    "applicationCategory": "CalculatorApplication",
+    "operatingSystem": "Any",
+    "browserRequirements": "Requires JavaScript",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "JPY"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": FAQ_ITEMS.map(item => ({
+      "@type": "Question",
+      "name": item.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": item.answer.replace(/\n/g, '\\n')
+      }
+    }))
+  }
+];
 
 export const metadata: Metadata = {
   title: META.TITLE,
@@ -31,39 +62,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/calculate-cat-age',
   },
-  other: {
-    'application/ld+json': JSON.stringify([
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "猫の年齢計算ツール",
-        "url": META.OG.URL,
-        "description": META.DESCRIPTION,
-        "applicationCategory": "CalculatorApplication",
-        "operatingSystem": "Any",
-        "browserRequirements": "Requires JavaScript",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "JPY"
-        }
-      },
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": FAQ_ITEMS.map(item => ({
-          "@type": "Question",
-          "name": item.question,
-          "acceptedAnswer": {
-            "@type": "Answer",
-            "text": item.answer.replace(/\n/g, '\\n')
-          }
-        }))
-      }
-    ])
-  }
 };
 
 export default function Page() {
-  return <CatAgeCalculator />;
+  return (
+    <>
+      <JsonLdScript data={ageStructuredData} />
+      <CatAgeCalculator />
+    </>
+  );
 }
