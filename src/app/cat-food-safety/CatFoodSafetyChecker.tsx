@@ -53,7 +53,7 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
-  const pendingQueryRef = useRef<string | null>(null);
+  const pendingQueryRef = useRef<string | undefined>(undefined);
   const normalizedFoods = useMemo<NormalizedCatFood[]>(() => createNormalizedFoods(allFoods), [allFoods]);
 
   const resetSearchState = useCallback(() => {
@@ -73,7 +73,7 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
         pendingQueryRef.current = value.trim();
       } else {
         url.searchParams.delete('food');
-        pendingQueryRef.current = '';
+        pendingQueryRef.current = undefined;
       }
       router.replace(`${FOOD_SAFETY_PATH}${url.search}${url.hash}`);
     },
@@ -140,8 +140,8 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
   useEffect(() => {
     const applyFood = (foodParam?: string) => {
       const normalizedFood = (foodParam ?? '').trim();
-      if (pendingQueryRef.current !== null && pendingQueryRef.current === normalizedFood) {
-        pendingQueryRef.current = null;
+      if (pendingQueryRef.current !== undefined && pendingQueryRef.current === normalizedFood) {
+        pendingQueryRef.current = undefined;
         return;
       }
 

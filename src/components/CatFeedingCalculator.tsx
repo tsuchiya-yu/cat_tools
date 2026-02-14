@@ -70,11 +70,6 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
   const [density, setDensity] = React.useState<string>(initialDensity);
 
   React.useEffect(() => {
-    setDailyKcal(initialKcal);
-    setDensity(initialDensity);
-  }, [initialKcal, initialDensity]);
-
-  React.useEffect(() => {
     if (typeof window === "undefined") return;
     const syncFromLocation = () => {
       const url = new URL(window.location.href);
