@@ -42,6 +42,13 @@ describe('validate-site-url', () => {
     );
   });
 
+  test('本番でIPv6 loopbackは失敗する', () => {
+    process.env.NODE_ENV = 'production';
+    expect(() => validateSiteUrlForProduction('https://[::1]:3000')).toThrow(
+      'SITE_URL host must not be local in production: "[::1]"'
+    );
+  });
+
   test('本番でhttps公開URLは通過する', () => {
     process.env.NODE_ENV = 'production';
     expect(() => validateSiteUrlForProduction('https://cat-tools.catnote.tokyo')).not.toThrow();
@@ -51,6 +58,8 @@ describe('validate-site-url', () => {
     expect(isLocalHost('localhost')).toBe(true);
     expect(isLocalHost('127.0.0.1')).toBe(true);
     expect(isLocalHost('0.0.0.0')).toBe(true);
+    expect(isLocalHost('::1')).toBe(true);
+    expect(isLocalHost('[::1]')).toBe(true);
     expect(isLocalHost('machine.local')).toBe(true);
     expect(isLocalHost('cat-tools.catnote.tokyo')).toBe(false);
   });
