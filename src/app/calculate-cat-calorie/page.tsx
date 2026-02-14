@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CatCalorieCalculator from './CatCalorieCalculator';
+import JsonLdScript from '@/components/JsonLdScript';
 import { CALORIE_META, STRUCTURED_DATA } from '@/constants/text';
 
 const calorieFaqStructuredData = {
@@ -42,10 +43,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(calorieFaqStructuredData) }}
-      />
+      <JsonLdScript data={calorieFaqStructuredData} />
       <CatCalorieCalculator />
     </>
   );
