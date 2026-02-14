@@ -33,5 +33,5 @@ for skill_dir in "$src_dir"/*; do
     cp -R "$skill_dir/"* "$dest_dir/"
   fi
 
-  echo "Synced skill: $skill_name"
+  echo "Skillを同期しました: $skill_name"
 done

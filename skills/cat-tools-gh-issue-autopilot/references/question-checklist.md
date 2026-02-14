@@ -1,21 +1,21 @@
-# Blocking Question Checklist
+# 実装前の確認質問チェックリスト
 
-Ask blocking questions before implementation when any item is unclear.
+次の項目に不明点がある場合は、実装前に質問する。
 
-## Required
+## 必須項目
 
-- Goal: What exact user/business outcome is expected?
-- Scope: Which files/features are in and out of scope?
-- Acceptance: What conditions define done?
-- Validation: Which test/lint/e2e checks are required?
-- Risk constraints: Any prohibited changes (API, UI copy, SEO, schema)?
+- 目的: 何を達成すれば完了か
+- 対象範囲: どの機能/ファイルが対象で、どこまで除外か
+- 受け入れ条件: 完了判定の条件は何か
+- 検証方法: 必要な test/lint/e2e は何か
+- 制約: 変更禁止事項はあるか（API、UI文言、SEO、スキーマなど）
 
-## Optional but useful
+## 任意項目
 
-- Priority tradeoff: speed vs robustness
-- Backward compatibility requirements
-- Rollout constraints or deadlines
+- 優先度の方針: 速度優先か、堅牢性優先か
+- 後方互換性の要件
+- リリース時期や期限の制約
 
-## Decision rule
+## 判定ルール
 
-If one or more Required items are unresolved, ask questions and stop implementation.
+必須項目のうち1つでも未確定があれば、質問して実装を停止する。

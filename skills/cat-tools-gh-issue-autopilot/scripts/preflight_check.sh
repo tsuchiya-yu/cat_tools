@@ -2,30 +2,30 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <issue-url>" >&2
+  echo "使い方: $0 <issue-url>" >&2
   exit 1
 fi
 
 issue_url="$1"
 if [[ ! "$issue_url" =~ ^https://github\.com/([^/]+)/([^/]+)/issues/([0-9]+)$ ]]; then
-  echo "Error: issue-url must be like https://github.com/<owner>/<repo>/issues/<number>" >&2
+  echo "エラー: issue-url は https://github.com/<owner>/<repo>/issues/<number> 形式で指定してください" >&2
   exit 1
 fi
 
 issue_number="${BASH_REMATCH[3]}"
 
 if ! command -v gh >/dev/null 2>&1; then
-  echo "Error: gh CLI is required" >&2
+  echo "エラー: gh CLI が必要です" >&2
   exit 1
 fi
 
 if ! gh auth status >/dev/null 2>&1; then
-  echo "Error: gh auth is not ready" >&2
+  echo "エラー: gh auth が未設定です" >&2
   exit 1
 fi
 
 if ! command -v jq >/dev/null 2>&1; then
-  echo "Error: jq is required" >&2
+  echo "エラー: jq が必要です" >&2
   exit 1
 fi
 
@@ -44,13 +44,13 @@ else
 fi
 
 cat <<REPORT
-# Preflight Check
+# 事前チェック結果
 
 - gh auth: ok
 - jq: ok
-- Worktree: $worktree_state
-- Suggested branch: $branch_name
-- Base branch: main
+- ワークツリー状態: $worktree_state
+- 推奨ブランチ名: $branch_name
+- ベースブランチ: main
 
-If Worktree is dirty, keep unrelated changes and avoid destructive git operations.
+ワークツリーが dirty の場合、無関係な変更は保持し、破壊的な git 操作を避けること。
 REPORT

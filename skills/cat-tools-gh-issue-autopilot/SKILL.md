@@ -1,36 +1,36 @@
 ---
 name: cat-tools-gh-issue-autopilot
-description: Automate GitHub issue-driven delivery in the cat_tools project using gh CLI. Use when the user provides an Issue URL and asks for end-to-end execution from clarification, branch creation, implementation, and PR creation. Always perform a strict clarification gate before implementation: if unresolved questions exist, ask the user and stop implementation until answers are provided.
+description: cat_tools リポジトリで、Issue URL を起点に gh CLI を使った作業フロー（不明点確認、ブランチ作成、実装、PR 作成）を実行する。Issue 対応の自動化依頼時に使用する。実装前に不明点が残る場合は必ず質問し、回答が揃うまで実装を停止する。
 ---
 
 # cat-tools-gh-issue-autopilot
 
-Execute this workflow when given a GitHub Issue URL for this repository.
+このリポジトリの GitHub Issue URL を受け取ったとき、次の手順で実行する。
 
-## Required workflow
+## 必須フロー
 
-1. Parse and summarize the issue with `scripts/intake_issue.sh <issue-url>`.
-2. Run preflight checks with `scripts/preflight_check.sh <issue-url>`.
-3. Evaluate ambiguity using `references/question-checklist.md`.
-4. If any required detail is missing, ask concise blocking questions and stop implementation.
-5. After clarification is complete, create branch using:
+1. `scripts/intake_issue.sh <issue-url>` で Issue を取得して要約する。
+2. `scripts/preflight_check.sh <issue-url>` で事前チェックを行う。
+3. `references/question-checklist.md` で不明点を判定する。
+4. 必須項目に未確定事項があれば、短く具体的な質問を行い、実装を停止する。
+5. 不明点が解消されたら、次の命名規則でブランチを作成する。
    - `codex/issue-<number>-<slug>`
-6. Implement the requested change.
-7. Validate with the smallest meaningful test/lint scope for changed files.
-8. Commit and push.
-9. Create a PR to `main` with `references/pr-template.md`.
+6. 依頼内容を実装する。
+7. 変更に対して最小十分な lint/test を実行する。
+8. commit と push を行う。
+9. `main` 向けに PR を作成する。PR本文は `/.github/pull_request_template.md` に従う。
 
-## Non-negotiable rules
+## 厳守ルール
 
-- Use `gh` CLI for issue and PR operations.
-- Do not start implementation when blocking questions remain.
-- Keep PR base branch fixed to `main`.
-- Include `Closes #<issue-number>` in PR body when applicable.
-- If repository has unrelated local changes, do not revert them.
+- Issue / PR 操作は `gh` CLI を使う。
+- 不明点が残っている状態で実装を開始しない。
+- PR の base は常に `main` に固定する。
+- 該当 Issue を閉じる場合は PR 本文に `Closes #<issue-number>` を含める。
+- リポジトリに無関係なローカル変更がある場合でも、勝手に巻き戻さない。
 
-## Resources
+## リソース
 
-- Issue intake: `scripts/intake_issue.sh`
-- Preflight checks: `scripts/preflight_check.sh`
-- Clarification checklist: `references/question-checklist.md`
-- PR body template: `references/pr-template.md`
+- Issue 取得と要約: `scripts/intake_issue.sh`
+- 事前チェック: `scripts/preflight_check.sh`
+- 不明点チェックリスト: `references/question-checklist.md`
+- PR テンプレート: `/.github/pull_request_template.md`

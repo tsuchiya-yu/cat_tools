@@ -2,13 +2,13 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: $0 <issue-url>" >&2
+  echo "使い方: $0 <issue-url>" >&2
   exit 1
 fi
 
 issue_url="$1"
 if [[ ! "$issue_url" =~ ^https://github\.com/([^/]+)/([^/]+)/issues/([0-9]+)$ ]]; then
-  echo "Error: issue-url must be like https://github.com/<owner>/<repo>/issues/<number>" >&2
+  echo "エラー: issue-url は https://github.com/<owner>/<repo>/issues/<number> 形式で指定してください" >&2
   exit 1
 fi
 
@@ -35,20 +35,20 @@ if echo "$body" | rg -qi 'テスト|確認方法|validation|verify'; then
 fi
 
 cat <<REPORT
-# Issue Intake
+# Issue 取り込み結果
 
 - URL: $issue_url
-- Repository: $owner/$repo
-- Number: #$number
-- Title: $title
+- リポジトリ: $owner/$repo
+- 番号: #$number
+- タイトル: $title
 
-## Body
+## 本文
 
 $body
 
-## Clarification Signal (heuristic)
+## 不明点判定シグナル（簡易）
 
-- Acceptance criteria present: $has_acceptance
-- Scope detail present: $has_scope
-- Validation detail present: $has_validation
+- 受け入れ条件の記載: $has_acceptance
+- 対象範囲の記載: $has_scope
+- 検証方法の記載: $has_validation
 REPORT
