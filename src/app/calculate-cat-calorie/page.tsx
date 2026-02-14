@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import CatCalorieCalculator from './CatCalorieCalculator';
+import JsonLdScript from '@/components/JsonLdScript';
 import { CALORIE_META, STRUCTURED_DATA } from '@/constants/text';
+
+const calorieFaqStructuredData = {
+  "@context": "https://schema.org",
+  "@type": STRUCTURED_DATA.CALORIE_FAQ.TYPE,
+  mainEntity: STRUCTURED_DATA.CALORIE_FAQ.ITEMS,
+};
 
 export const metadata: Metadata = {
   title: CALORIE_META.TITLE,
@@ -31,15 +38,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/calculate-cat-calorie',
   },
-  other: {
-    'application/ld+json': JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": STRUCTURED_DATA.CALORIE_FAQ.TYPE,
-      "mainEntity": STRUCTURED_DATA.CALORIE_FAQ.ITEMS
-    })
-  }
 };
 
 export default function Page() {
-  return <CatCalorieCalculator />;
+  return (
+    <>
+      <JsonLdScript data={calorieFaqStructuredData} />
+      <CatCalorieCalculator />
+    </>
+  );
 }
