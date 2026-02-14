@@ -1,7 +1,7 @@
 'use client';
 
 import { FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import { CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
 import ShareMenu from '@/components/ShareMenu';
@@ -40,13 +40,15 @@ const createItemShareText = (item: CatFoodItem) => {
 
 type CatFoodSafetyCheckerProps = {
   allFoods: CatFoodItem[];
+  initialFood?: string;
 };
 
-export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerProps) {
-  const searchParams = useSearchParams();
+const FOOD_SAFETY_PATH = '/cat-food-safety';
+
+export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: CatFoodSafetyCheckerProps) {
   const router = useRouter();
   const suggestionsListId = useId();
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialFood);
   const [results, setResults] = useState<CatFoodItem[]>([]);
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
@@ -68,12 +70,12 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
       const url = new URL(window.location.href);
       if (value) {
         url.searchParams.set('food', value);
-        pendingQueryRef.current = value;
+        pendingQueryRef.current = value.trim();
       } else {
         url.searchParams.delete('food');
         pendingQueryRef.current = undefined;
       }
-      router.replace(`${url.pathname}${url.search}${url.hash}`);
+      router.replace(`${FOOD_SAFETY_PATH}${url.search}${url.hash}`);
     },
     [router]
   );
@@ -135,22 +137,40 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
     [normalizedFoods]
   );
 
-  const foodParam = searchParams?.get('food') ?? undefined;
-
   useEffect(() => {
-    if (pendingQueryRef.current !== undefined && pendingQueryRef.current === foodParam) {
-      pendingQueryRef.current = undefined;
+    const applyFood = (foodParam?: string) => {
+      const normalizedFood = (foodParam ?? '').trim();
+      if (pendingQueryRef.current !== undefined && pendingQueryRef.current === normalizedFood) {
+        pendingQueryRef.current = undefined;
+        return;
+      }
+
+      if (!normalizedFood) {
+        setQuery('');
+        resetSearchState();
+        return;
+      }
+
+      setQuery(normalizedFood);
+      performSearch(normalizedFood, { syncUrl: false });
+    };
+
+    applyFood(initialFood);
+
+    if (typeof window === 'undefined') {
       return;
     }
 
-    if (!foodParam) {
-      resetSearchState();
-      return;
-    }
+    const handlePopState = () => {
+      const url = new URL(window.location.href);
+      applyFood(url.searchParams.get('food') ?? undefined);
+    };
 
-    setQuery(foodParam);
-    performSearch(foodParam, { syncUrl: false });
-  }, [foodParam, performSearch, resetSearchState]);
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [initialFood, performSearch, resetSearchState]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

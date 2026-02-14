@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import CatFeedingCalculator from "@/components/CatFeedingCalculator";
 
@@ -32,10 +31,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
-  return (
-    <Suspense fallback={null}>
-      <CatFeedingCalculator />
-    </Suspense>
-  );
+type PageProps = {
+  searchParams?: {
+    kcal?: string | string[];
+    d?: string | string[];
+  };
+};
+
+const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? "" : value ?? "");
+
+export default function Page({ searchParams }: PageProps) {
+  const initialKcal = getSingleParam(searchParams?.kcal);
+  const initialDensity = getSingleParam(searchParams?.d);
+  return <CatFeedingCalculator initialKcal={initialKcal} initialDensity={initialDensity} />;
 }
