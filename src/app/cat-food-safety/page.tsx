@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
 import CatFoodSafetyChecker from './CatFoodSafetyChecker';
 import { CAT_FOOD_SAFETY_META } from '@/constants/text';
 import { getAllCatFoods } from '@/lib/catFoodSafety';
@@ -35,11 +34,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
+type PageProps = {
+  searchParams?: {
+    food?: string | string[];
+  };
+};
+
+const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? '' : value ?? '');
+
+export default function Page({ searchParams }: PageProps) {
   const allFoods = getAllCatFoods();
-  return (
-    <Suspense fallback={<div className="container max-w-3xl mx-auto px-6 py-12 text-sm text-gray-500">読み込み中です…</div>}>
-      <CatFoodSafetyChecker allFoods={allFoods} />
-    </Suspense>
-  );
+  const initialFood = getSingleParam(searchParams?.food).trim();
+  return <CatFoodSafetyChecker allFoods={allFoods} initialFood={initialFood} />;
 }

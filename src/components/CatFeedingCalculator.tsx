@@ -7,7 +7,7 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
 import ShareMenu from "@/components/ShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type FeedingInputGroupProps = {
   id: string;
@@ -57,33 +57,43 @@ function FeedingInputGroup({
   );
 }
 
-export default function CatFeedingCalculator() {
+type CatFeedingCalculatorProps = {
+  initialKcal?: string;
+  initialDensity?: string;
+};
+
+const FEEDING_PATH = "/calculate-cat-feeding";
+
+export default function CatFeedingCalculator({ initialKcal = "", initialDensity = "" }: CatFeedingCalculatorProps) {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+  const [dailyKcal, setDailyKcal] = React.useState<string>(initialKcal);
+  const [density, setDensity] = React.useState<string>(initialDensity);
 
-  const dailyKcalFromURL = searchParams.get("kcal") ?? "";
-  const densityFromURL = searchParams.get("d") ?? "";
-
-  const [dailyKcal, setDailyKcal] = React.useState<string>(dailyKcalFromURL);
-  const [density, setDensity] = React.useState<string>(densityFromURL);
-
-  // URL変更（戻る/進む等）に合わせて state を同期
   React.useEffect(() => {
-    setDailyKcal(dailyKcalFromURL);
-    setDensity(densityFromURL);
-  }, [dailyKcalFromURL, densityFromURL]);
+    setDailyKcal(initialKcal);
+    setDensity(initialDensity);
+  }, [initialKcal, initialDensity]);
+
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const syncFromLocation = () => {
+      const url = new URL(window.location.href);
+      setDailyKcal(url.searchParams.get("kcal") ?? "");
+      setDensity(url.searchParams.get("d") ?? "");
+    };
+    window.addEventListener("popstate", syncFromLocation);
+    return () => window.removeEventListener("popstate", syncFromLocation);
+  }, []);
 
   const buildPathWithQuery = React.useCallback(
     (kcalValue: string, densityValue: string) => {
-      if (!pathname) return '';
       const params = new URLSearchParams();
       if (kcalValue) params.set('kcal', kcalValue);
       if (densityValue) params.set('d', densityValue);
       const queryString = params.toString();
-      return queryString ? `${pathname}?${queryString}` : pathname;
+      return queryString ? `${FEEDING_PATH}?${queryString}` : FEEDING_PATH;
     },
-    [pathname],
+    [],
   );
 
   const pathWithQuery = React.useMemo(
