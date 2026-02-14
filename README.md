@@ -51,6 +51,19 @@
 4. E2E テスト準備（任意）
    - 初回のみ Playwright のブラウザをインストール: `npx playwright install`
 
+## Codex Skill の自動同期（任意）
+
+このリポジトリでは `skills/` 配下のカスタム Skill を、`main` ブランチで merge/pull したときに `~/.codex/skills` へ自動同期できます。
+
+1. Git hooks のパスを有効化（初回のみ）
+   - `git config core.hooksPath .githooks`
+2. `main` ブランチで pull/merge すると `post-merge` が実行される
+3. フックは `scripts/sync-codex-skills.sh` を呼び出し、`skills/*/SKILL.md` を持つ Skill を同期する
+
+補足:
+- 同期先は `${CODEX_HOME:-~/.codex}/skills`
+- `main` 以外のブランチでは同期しません
+
 ## スクリプト
 
 - `npm run dev`: 開発サーバー（Turbopack）
