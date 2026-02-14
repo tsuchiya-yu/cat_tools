@@ -24,13 +24,13 @@ has_acceptance="no"
 has_scope="no"
 has_validation="no"
 
-if echo "$body" | rg -qi '完了条件|受け入れ条件|acceptance criteria'; then
+if echo "$body" | grep -qiE '完了条件|受け入れ条件|acceptance criteria'; then
   has_acceptance="yes"
 fi
-if echo "$body" | rg -qi '対象|範囲|scope'; then
+if echo "$body" | grep -qiE '対象|範囲|scope'; then
   has_scope="yes"
 fi
-if echo "$body" | rg -qi 'テスト|確認方法|validation|verify'; then
+if echo "$body" | grep -qiE 'テスト|確認方法|validation|verify'; then
   has_validation="yes"
 fi
 

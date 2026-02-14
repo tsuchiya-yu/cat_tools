@@ -30,7 +30,7 @@ for skill_dir in "$src_dir"/*; do
   else
     rm -rf "$dest_dir"
     mkdir -p "$dest_dir"
-    cp -R "$skill_dir/"* "$dest_dir/"
+    cp -R "$skill_dir/." "$dest_dir/"
   fi
 
   echo "Skillを同期しました: $skill_name"
