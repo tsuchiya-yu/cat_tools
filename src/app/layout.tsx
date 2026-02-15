@@ -1,9 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Zen_Kaku_Gothic_New, Outfit } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 import { Suspense } from 'react';
 import Analytics from '@/components/Analytics';
+import {
+  CALCULATE_CAT_AGE_PATH,
+  CALCULATE_CAT_CALORIE_PATH,
+  CALCULATE_CAT_FEEDING_PATH,
+  CAT_FOOD_SAFETY_PATH,
+} from '@/constants/paths';
+import { FOOTER_TEXT } from '@/constants/text';
 
 const zenKakuGothicNew = Zen_Kaku_Gothic_New({
   weight: ['400', '700'],
@@ -152,7 +160,34 @@ export default function RootLayout({
         {children}
         <footer className="section text-gray-500 text-sm mt-10 pb-10">
           <div className="container max-w-3xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* ツール */}
+              <div>
+                <h2 className="font-bold mb-2">{FOOTER_TEXT.TOOLS.TITLE}</h2>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href={CAT_FOOD_SAFETY_PATH} className="hover:text-pink-600 transition-colors">
+                      {FOOTER_TEXT.TOOLS.LINKS.CAT_FOOD_SAFETY}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={CALCULATE_CAT_AGE_PATH} className="hover:text-pink-600 transition-colors">
+                      {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_AGE}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={CALCULATE_CAT_CALORIE_PATH} className="hover:text-pink-600 transition-colors">
+                      {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_CALORIE}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={CALCULATE_CAT_FEEDING_PATH} className="hover:text-pink-600 transition-colors">
+                      {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_FEEDING}
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
               {/* 規約 */}
               <div>
                 <h2 className="font-bold mb-2">規約</h2>
