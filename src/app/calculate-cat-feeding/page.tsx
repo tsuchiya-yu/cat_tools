@@ -32,16 +32,17 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     kcal?: string | string[];
     d?: string | string[];
-  };
+  }>;
 };
 
 const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? "" : value ?? "");
 
-export default function Page({ searchParams }: PageProps) {
-  const initialKcal = getSingleParam(searchParams?.kcal);
-  const initialDensity = getSingleParam(searchParams?.d);
+export default async function Page({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
+  const initialKcal = getSingleParam(resolvedSearchParams?.kcal);
+  const initialDensity = getSingleParam(resolvedSearchParams?.d);
   return <CatFeedingCalculator initialKcal={initialKcal} initialDensity={initialDensity} />;
 }
