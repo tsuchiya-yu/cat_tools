@@ -133,11 +133,6 @@ export default function RootLayout({
               "publisher": {
                 "@type": "Organization",
                 "name": "ねこツールズ"
-              },
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://cat-tools.catnote.tokyo/search?q={search_term_string}",
-                "query-input": "required name=search_term_string"
               }
             })
           }}
