@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Zen_Kaku_Gothic_New, Outfit } from "next/font/google";
+import Link from "next/link";
 import "./globals.css";
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 import { Suspense } from 'react';
@@ -152,7 +153,34 @@ export default function RootLayout({
         {children}
         <footer className="section text-gray-500 text-sm mt-10 pb-10">
           <div className="container max-w-3xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* ツール */}
+              <div>
+                <h2 className="font-bold mb-2">ツール</h2>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href="/cat-food-safety" className="hover:text-pink-600 transition-colors">
+                      猫の食べ物安全性チェック
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/calculate-cat-age" className="hover:text-pink-600 transition-colors">
+                      猫の年齢計算
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/calculate-cat-calorie" className="hover:text-pink-600 transition-colors">
+                      猫のカロリー計算
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/calculate-cat-feeding" className="hover:text-pink-600 transition-colors">
+                      猫の給餌量計算
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
               {/* 規約 */}
               <div>
                 <h2 className="font-bold mb-2">規約</h2>
