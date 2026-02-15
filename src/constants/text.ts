@@ -33,6 +33,18 @@ export const COMMON_TEXT = {
   },
 } as const;
 
+export const FOOTER_TEXT = {
+  TOOLS: {
+    TITLE: 'ツール',
+    LINKS: {
+      CAT_FOOD_SAFETY: '猫の食べ物安全性チェック',
+      CALCULATE_CAT_AGE: '猫の年齢計算',
+      CALCULATE_CAT_CALORIE: '猫のカロリー計算',
+      CALCULATE_CAT_FEEDING: '猫の給餌量計算',
+    },
+  },
+} as const;
+
 export const UI_TEXT = {
   HEADER: {
     EYECATCH: '猫の年齢を人間年齢に換算',
