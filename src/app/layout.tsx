@@ -5,6 +5,7 @@ import "./globals.css";
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 import { Suspense } from 'react';
 import Analytics from '@/components/Analytics';
+import JsonLdScript from '@/components/JsonLdScript';
 import {
   CALCULATE_CAT_AGE_PATH,
   CALCULATE_CAT_CALORIE_PATH,
@@ -128,20 +129,17 @@ export default function RootLayout({
         )}
         
         {/* サイト全体の構造化データ */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "ねこツールズ",
-              "url": "https://cat-tools.catnote.tokyo",
-              "description": "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
-              "publisher": {
-                "@type": "Organization",
-                "name": "ねこツールズ"
-              }
-            })
+        <JsonLdScript
+          data={{
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "ねこツールズ",
+            "url": "https://cat-tools.catnote.tokyo",
+            "description": "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
+            "publisher": {
+              "@type": "Organization",
+              "name": "ねこツールズ"
+            }
           }}
         />
         
