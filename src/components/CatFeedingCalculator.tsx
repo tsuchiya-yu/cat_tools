@@ -172,7 +172,9 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
           {FEEDING_UI_TEXT.HEADER.EYECATCH}
         </p>
         <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">{FEEDING_UI_TEXT.HEADER.TITLE}</h1>
-        <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">{FEEDING_UI_TEXT.HEADER.DESCRIPTION}</p>
+        <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">
+          1日の必要カロリーとフードのカロリー密度（kcal/100g）から、1日に与える量（g）を自動計算します。朝・夜に分けた1回量の目安も同時に表示できるため、毎日の給餌管理をすぐに始められます。結果はあくまで目安なので、便の状態や体重推移を見ながら調整してください。
+        </p>
 
         {/* 入力セクション：下線 */}
         <div className="surface border-none overflow-hidden border-b border-gray-200">
@@ -247,6 +249,23 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
           </div>
         </section>
       )}
+
+      <section className="section mt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">このツールでできること</h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            1日の必要カロリーと、フード100gあたりのカロリー（kcal/100g）から、1日に与える量（g）を自動計算できます。朝・夜の配分目安も同時に確認できます。
+          </p>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">使用例（こんなときに使えます）</h2>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
+            <li>今のフードを1日何g与えるべきか、すぐに計算したいとき</li>
+            <li>朝夕2回に分ける際の1回あたりの量を決めたいとき</li>
+            <li>フードを切り替えたあと、同じkcal基準で給餌量を再計算したいとき</li>
+          </ul>
+        </div>
+      </section>
 
       {/* FAQ */}
       <FeedingFAQ />

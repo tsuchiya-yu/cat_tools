@@ -129,7 +129,7 @@ export default function CatAgeCalculator() {
             {UI_TEXT.HEADER.TITLE}
           </h1>
           <p className="lead text-sm text-gray-600 mt-2.5 mb-0 leading-relaxed">
-            {UI_TEXT.HEADER.DESCRIPTION}
+            誕生日を入力するだけで、猫の実年齢を人間年齢の目安に換算できます。ライフステージと次の誕生日までの日数も同時に表示されるため、日々のケア計画に活用しやすい設計です。保護猫などで誕生日が不明な場合も、推定日を入れて目安として利用できます。
           </p>
 
           <div className="surface p-4 border-none overflow-hidden">
@@ -148,6 +148,23 @@ export default function CatAgeCalculator() {
           shareText={shareText}
           shareUrl={shareUrl}
         />
+
+        <section className="section mt-8 space-y-6">
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold">このツールでできること</h2>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              誕生日から猫の年齢を人間年齢の目安に換算し、ライフステージも確認できます。年齢に応じたケアを考える出発点として使えます。
+            </p>
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-xl font-bold">使用例（こんなときに使えます）</h2>
+            <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
+              <li>保護猫の推定年齢を入力して、現在のライフステージを把握したいとき</li>
+              <li>健康診断やワクチンの計画を立てる前に、年齢感を整理したいとき</li>
+              <li>家族やSNSで愛猫の年齢を分かりやすく共有したいとき</li>
+            </ul>
+          </div>
+        </section>
 
         {/* FAQ Section */}
         <FAQ />

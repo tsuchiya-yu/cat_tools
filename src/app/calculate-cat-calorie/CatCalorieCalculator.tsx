@@ -163,7 +163,7 @@ export default function CatCalorieCalculator() {
           {CALORIE_UI_TEXT.HEADER.TITLE}
         </h1>
         <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">
-          {CALORIE_UI_TEXT.HEADER.DESCRIPTION}
+          体重とライフステージなどの条件から、猫の1日に必要なカロリー（kcal/日）の目安を計算します。結果は「標準値」と「参考幅」で表示されるため、与えすぎ・不足の調整に使いやすいのが特長です。まずは標準値から始め、体重推移を見ながら少しずつ調整してください。
         </p>
 
         <CalorieInput
@@ -185,6 +185,23 @@ export default function CatCalorieCalculator() {
         isVisible={!!result}
         shareUrl={typeof window !== 'undefined' ? buildShareUrl() : undefined}
       />
+
+      <section className="section mt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">このツールでできること</h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            体重や条件から、1日に必要なカロリーの目安（標準値・参考幅）を確認できます。日々の食事量調整の基準作りに使えます。
+          </p>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">使用例（こんなときに使えます）</h2>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
+            <li>フードの適量が分からず、まずは基準となるkcalを知りたいとき</li>
+            <li>体重が増減してきたため、維持・減量・増量の目安を見直したいとき</li>
+            <li>去勢/避妊後に必要カロリーがどの程度変わるか確認したいとき</li>
+          </ul>
+        </div>
+      </section>
 
       {/* FAQ Section */}
       <CalorieFAQ />

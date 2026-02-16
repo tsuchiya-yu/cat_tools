@@ -220,10 +220,7 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
             {CAT_FOOD_SAFETY_TEXT.HEADER.TITLE}
           </h1>
           <p className="text-sm text-gray-600 mt-2.5 mb-0 leading-relaxed">
-            {CAT_FOOD_SAFETY_TEXT.HEADER.DESCRIPTION}
-          </p>
-          <p className="text-xs text-gray-500 mt-2">
-            {CAT_FOOD_SAFETY_TEXT.HEADER.NOTE}
+            食材名を入力すると、猫にとって「安全・注意・危険」の目安をすぐに確認できます。あわせて、危険な理由や起こりやすい症状、与える場合の注意点も表示します。誤食時の初動判断の参考としてご利用ください。最終判断は、猫の年齢・持病・体調を踏まえて獣医師に相談するのが安心です。
           </p>
         </div>
 
@@ -300,6 +297,23 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
             </p>
           )}
         </form>
+      </section>
+
+      <section className="section mt-8 space-y-6">
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">このツールでできること</h2>
+          <p className="text-sm text-gray-700 leading-relaxed">
+            食材名から、猫にとっての安全性を「安全・注意・危険」で素早く確認できます。あわせて、注意すべき理由や確認ポイントも把握できます。
+          </p>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-bold">使用例（こんなときに使えます）</h2>
+          <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
+            <li>料理中に猫が食材を口にしそうで、与えてよいかすぐ判断したいとき</li>
+            <li>家族が猫に人の食べ物をあげる前に、安全性を確認したいとき</li>
+            <li>誤食が疑われる食材の危険度を、受診判断の参考として確認したいとき</li>
+          </ul>
+        </div>
       </section>
 
       <section className="section mt-8" aria-live="polite">
