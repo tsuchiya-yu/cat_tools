@@ -5,6 +5,7 @@ import { CAT_FOOD_SAFETY_PATH } from '@/constants/paths';
 import { CAT_FOOD_SAFETY_META, CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
 import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 import { getAllCatFoods } from '@/lib/catFoodSafety';
+import { getSingleParam } from '@/lib/searchParams';
 
 export const metadata: Metadata = {
   title: CAT_FOOD_SAFETY_META.TITLE,
@@ -42,8 +43,6 @@ type PageProps = {
     food?: string | string[];
   };
 };
-
-const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? '' : value ?? '');
 
 const catFoodSafetyBreadcrumbStructuredData = createPageBreadcrumbList({
   name: CAT_FOOD_SAFETY_TEXT.BREADCRUMBS.CAT_FOOD_SAFETY,

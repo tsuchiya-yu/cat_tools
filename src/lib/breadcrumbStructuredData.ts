@@ -1,4 +1,5 @@
-const SITE_URL = "https://cat-tools.catnote.tokyo";
+import { getSiteUrl } from '@/config/site';
+
 const HOME_LABEL = "ねこツールズ";
 
 type BreadcrumbItemInput = {
@@ -18,7 +19,7 @@ type BreadcrumbListStructuredData = {
 };
 
 function toAbsoluteUrl(path: string) {
-  return new URL(path, SITE_URL).toString();
+  return new URL(path, getSiteUrl()).toString();
 }
 
 export function createHomeBreadcrumbList(): BreadcrumbListStructuredData {

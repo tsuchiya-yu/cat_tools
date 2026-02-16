@@ -4,6 +4,7 @@ import JsonLdScript from "@/components/JsonLdScript";
 import { CALCULATE_CAT_FEEDING_PATH } from "@/constants/paths";
 import { FEEDING_UI_TEXT } from "@/constants/text";
 import { createPageBreadcrumbList } from "@/lib/breadcrumbStructuredData";
+import { getSingleParam } from "@/lib/searchParams";
 
 const feedingBreadcrumbStructuredData = createPageBreadcrumbList({
   name: FEEDING_UI_TEXT.BREADCRUMBS.FEEDING_CALCULATOR,
@@ -46,8 +47,6 @@ type PageProps = {
     d?: string | string[];
   }>;
 };
-
-const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? "" : value ?? "");
 
 export default async function Page({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
