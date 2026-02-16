@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import CatFoodSafetyChecker from './CatFoodSafetyChecker';
-import { CAT_FOOD_SAFETY_META } from '@/constants/text';
+import JsonLdScript from '@/components/JsonLdScript';
+import { CAT_FOOD_SAFETY_META, STRUCTURED_DATA } from '@/constants/text';
 import { getAllCatFoods } from '@/lib/catFoodSafety';
 
 export const metadata: Metadata = {
@@ -42,8 +43,19 @@ type PageProps = {
 
 const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? '' : value ?? '');
 
+const catFoodSafetyFaqStructuredData = {
+  '@context': 'https://schema.org',
+  '@type': STRUCTURED_DATA.CAT_FOOD_SAFETY_FAQ.TYPE,
+  mainEntity: STRUCTURED_DATA.CAT_FOOD_SAFETY_FAQ.ITEMS,
+};
+
 export default function Page({ searchParams }: PageProps) {
   const allFoods = getAllCatFoods();
   const initialFood = getSingleParam(searchParams?.food).trim();
-  return <CatFoodSafetyChecker allFoods={allFoods} initialFood={initialFood} />;
+  return (
+    <>
+      <JsonLdScript data={catFoodSafetyFaqStructuredData} />
+      <CatFoodSafetyChecker allFoods={allFoods} initialFood={initialFood} />
+    </>
+  );
 }

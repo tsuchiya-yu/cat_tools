@@ -315,6 +315,35 @@ export const FEEDING_FAQ_ITEMS = [
   },
 ] as const;
 
+// 食べ物安全性チェック用のFAQ
+export const CAT_FOOD_SAFETY_FAQ_ITEMS = [
+  {
+    question: '入力した食材が「危険」と出たら、まず何をすればいいですか？',
+    answer:
+      '追加で与えるのを止め、食べた量・時刻・食材名をメモしてください。不安がある場合は、かかりつけの獣医師に相談して判断を仰いでください。',
+  },
+  {
+    question: '少量なら食べても大丈夫ですか？',
+    answer:
+      '食材によっては少量でも危険です。量だけで安全判断せず、表示された注意点を確認し、不安があれば獣医師に相談してください。',
+  },
+  {
+    question: '「注意」と「危険」の違いは何ですか？',
+    answer:
+      '「注意」は条件次第でリスクがある状態、「危険」は基本的に与えないべき状態です。体調や持病によって危険度は上がるため、迷う場合は受診を優先してください。',
+  },
+  {
+    question: '調理後の食材でも判定は同じですか？',
+    answer:
+      '加熱でリスクが変わる食材もありますが、基本的には「加熱すれば安全」とは考えないほうが安心です。人向けの味付けや加工が加わると、猫には不適切になる場合があります。',
+  },
+  {
+    question: '結果だけで自己判断してよいですか？',
+    answer:
+      '本ツールは目安情報です。正確な判断が必要な場合は、かかりつけの獣医師に相談してください。',
+  },
+] as const;
+
 // カロリー計算用のFAQ
 export const CALORIE_FAQ_ITEMS = [
     {
@@ -358,5 +387,16 @@ export const STRUCTURED_DATA = {
         'text': item.answer.replace(/\n/g, ' ') // 改行を空白に変換
       }
     }))
-  }
+  },
+  CAT_FOOD_SAFETY_FAQ: {
+    TYPE: 'FAQPage',
+    ITEMS: CAT_FOOD_SAFETY_FAQ_ITEMS.map(item => ({
+      '@type': 'Question',
+      'name': item.question,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': item.answer.replace(/\n/g, ' ') // 改行を空白に変換
+      }
+    }))
+  },
 } as const;
