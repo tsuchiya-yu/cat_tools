@@ -1,5 +1,15 @@
 import type { Metadata } from "next";
 import CatFeedingCalculator from "@/components/CatFeedingCalculator";
+import JsonLdScript from "@/components/JsonLdScript";
+import { CALCULATE_CAT_FEEDING_PATH } from "@/constants/paths";
+import { FEEDING_UI_TEXT } from "@/constants/text";
+import { createPageBreadcrumbList } from "@/lib/breadcrumbStructuredData";
+import { getSingleParam } from "@/lib/searchParams";
+
+const feedingBreadcrumbStructuredData = createPageBreadcrumbList({
+  name: FEEDING_UI_TEXT.BREADCRUMBS.FEEDING_CALCULATOR,
+  path: CALCULATE_CAT_FEEDING_PATH,
+});
 
 export const metadata: Metadata = {
   title: "猫の給餌量計算｜1日の必要カロリーから与える目安量を自動計算",
@@ -38,11 +48,14 @@ type PageProps = {
   }>;
 };
 
-const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? "" : value ?? "");
-
 export default async function Page({ searchParams }: PageProps) {
   const resolvedSearchParams = await searchParams;
   const initialKcal = getSingleParam(resolvedSearchParams?.kcal);
   const initialDensity = getSingleParam(resolvedSearchParams?.d);
-  return <CatFeedingCalculator initialKcal={initialKcal} initialDensity={initialDensity} />;
+  return (
+    <>
+      <JsonLdScript data={feedingBreadcrumbStructuredData} />
+      <CatFeedingCalculator initialKcal={initialKcal} initialDensity={initialDensity} />
+    </>
+  );
 }
