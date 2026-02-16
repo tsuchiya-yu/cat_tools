@@ -7,6 +7,12 @@ description: cat_tools リポジトリで、Issue URL を起点に gh CLI を使
 
 このリポジトリの GitHub Issue URL を受け取ったとき、次の手順で実行する。
 
+## 実行前提（パス解決）
+
+- `scripts/` と `references/` は、**skill ディレクトリ基準**で参照する。
+- 基本は `SKILL.md` と同じ階層を基準に、`scripts/intake_issue.sh` / `scripts/preflight_check.sh` / `references/question-checklist.md` を読む。
+- リポジトリ直下（`<repo>/scripts` など）に同名ファイルがあっても、まずは skill ディレクトリ側を優先する。
+
 ## 必須フロー
 
 1. `scripts/intake_issue.sh <issue-url>` で Issue を取得して要約する。
@@ -27,6 +33,21 @@ description: cat_tools リポジトリで、Issue URL を起点に gh CLI を使
 - PR の base は常に `main` に固定する。
 - 該当 Issue を閉じる場合は PR 本文に `Closes #<issue-number>` を含める。
 - リポジトリに無関係なローカル変更がある場合でも、勝手に巻き戻さない。
+
+## デフォルト方針（未指定時はこれを採用）
+
+- 検証方法:
+  - 必ず `npm run lint` と `npm run test` を実行する。
+  - 画面変更（UI/文言/スタイル/構造化データ表示含む）がある場合、Playwright MCP で対象ページのキャプチャを取得する。
+- 制約:
+  - 原則として、Issue 対応に必要な最小変更のみ行う。
+  - 無関係なリファクタ・命名変更・ファイル移動・整形のみ変更は行わない。
+
+## 追加ルール（質問の抑制）
+
+- `検証方法` は上記デフォルトが適用可能なら未確認でも実装を進める。
+- `制約` は上記デフォルト（最小変更）が適用可能なら未確認でも実装を進める。
+- ただし、Issue本文で明示的に別要件がある場合はそちらを優先する。
 
 ## リソース
 
