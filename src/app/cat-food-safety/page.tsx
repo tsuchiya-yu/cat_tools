@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import CatFoodSafetyChecker from './CatFoodSafetyChecker';
-import { CAT_FOOD_SAFETY_META } from '@/constants/text';
+import JsonLdScript from '@/components/JsonLdScript';
+import { CAT_FOOD_SAFETY_PATH } from '@/constants/paths';
+import { CAT_FOOD_SAFETY_META, CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
+import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 import { getAllCatFoods } from '@/lib/catFoodSafety';
 
 export const metadata: Metadata = {
@@ -42,8 +45,18 @@ type PageProps = {
 
 const getSingleParam = (value?: string | string[]) => (Array.isArray(value) ? value[0] ?? '' : value ?? '');
 
+const catFoodSafetyBreadcrumbStructuredData = createPageBreadcrumbList({
+  name: CAT_FOOD_SAFETY_TEXT.BREADCRUMBS.CAT_FOOD_SAFETY,
+  path: CAT_FOOD_SAFETY_PATH,
+});
+
 export default function Page({ searchParams }: PageProps) {
   const allFoods = getAllCatFoods();
   const initialFood = getSingleParam(searchParams?.food).trim();
-  return <CatFoodSafetyChecker allFoods={allFoods} initialFood={initialFood} />;
+  return (
+    <>
+      <JsonLdScript data={catFoodSafetyBreadcrumbStructuredData} />
+      <CatFoodSafetyChecker allFoods={allFoods} initialFood={initialFood} />
+    </>
+  );
 }
