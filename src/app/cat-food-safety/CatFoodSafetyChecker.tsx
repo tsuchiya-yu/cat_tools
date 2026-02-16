@@ -371,8 +371,8 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
           よくある質問
         </h2>
         <div>
-          {CAT_FOOD_SAFETY_FAQ_ITEMS.map((item, index) => (
-            <details key={index} className="group border-none border-t border-gray-100 py-4">
+          {CAT_FOOD_SAFETY_FAQ_ITEMS.map((item) => (
+            <details key={item.question} className="group border-none border-t border-gray-100 py-4">
               <summary className="list-none cursor-pointer flex items-center justify-between font-normal text-gray-900 hover:text-pink-600">
                 {item.question}
                 <svg
