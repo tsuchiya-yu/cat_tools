@@ -51,9 +51,10 @@ module.exports = {
           : config.priority;
     return buildSitemapField(config, routePath, priority);
   },
-  additionalPaths: async (config) =>
-    CORE_PATHS.map((routePath) => {
-      const priority = routePath === '/' ? HOME_PAGE_PRIORITY : TOOL_PAGE_PRIORITY;
-      return buildSitemapField(config, routePath, priority);
-    }),
+  additionalPaths: async (config) => {
+    const fields = await Promise.all(
+      CORE_PATHS.map((routePath) => config.transform(config, routePath))
+    );
+    return fields.filter(Boolean);
+  },
 };
