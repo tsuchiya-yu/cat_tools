@@ -6,6 +6,7 @@ import { CatAgeResult } from '@/types';
 import DateInput from '@/components/DateInput';
 import AgeResult from '@/components/AgeResult';
 import FAQ from '@/components/FAQ';
+import GuideSection from '@/components/GuideSection';
 import { UI_TEXT } from '@/constants/text';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
@@ -152,22 +153,13 @@ export default function CatAgeCalculator() {
         {/* FAQ Section */}
         <FAQ />
 
-        <section className="section mt-8 rounded-2xl border border-gray-200 bg-gray-100/80 p-6 md:p-8 space-y-8">
-          <div className="space-y-3">
-            <h2 className="text-[18px] font-bold">{UI_TEXT.GUIDE.WHAT_TITLE}</h2>
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {UI_TEXT.GUIDE.WHAT_DESCRIPTION}
-            </p>
-          </div>
-          <div className="space-y-3">
-            <h2 className="text-[18px] font-bold">{UI_TEXT.GUIDE.USAGE_TITLE}</h2>
-            <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
-              {UI_TEXT.GUIDE.USAGE_ITEMS.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </section>
+        <GuideSection
+          className="mt-8"
+          whatTitle={UI_TEXT.GUIDE.WHAT_TITLE}
+          whatDescription={UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+          usageTitle={UI_TEXT.GUIDE.USAGE_TITLE}
+          usageItems={UI_TEXT.GUIDE.USAGE_ITEMS}
+        />
     </main>
   );
 }

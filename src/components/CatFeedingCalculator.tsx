@@ -5,6 +5,7 @@ import { calcGramsPerDay, normalizeNumberInput, splitMorningNight } from "@/lib/
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
+import GuideSection from "@/components/GuideSection";
 import ShareMenu from "@/components/ShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
 import { useRouter } from "next/navigation";
@@ -253,22 +254,13 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
       {/* FAQ */}
       <FeedingFAQ />
 
-      <section className="section mt-8 rounded-2xl border border-gray-200 bg-gray-100/80 p-6 md:p-8 space-y-8">
-        <div className="space-y-3">
-          <h2 className="text-[18px] font-bold">{FEEDING_UI_TEXT.GUIDE.WHAT_TITLE}</h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
-            {FEEDING_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
-          </p>
-        </div>
-        <div className="space-y-3">
-          <h2 className="text-[18px] font-bold">{FEEDING_UI_TEXT.GUIDE.USAGE_TITLE}</h2>
-          <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
-            {FEEDING_UI_TEXT.GUIDE.USAGE_ITEMS.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <GuideSection
+        className="mt-8"
+        whatTitle={FEEDING_UI_TEXT.GUIDE.WHAT_TITLE}
+        whatDescription={FEEDING_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={FEEDING_UI_TEXT.GUIDE.USAGE_TITLE}
+        usageItems={FEEDING_UI_TEXT.GUIDE.USAGE_ITEMS}
+      />
     </main>
   );
 }

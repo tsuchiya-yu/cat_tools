@@ -8,6 +8,7 @@ import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
 import CalorieResult from '@/components/CalorieResult';
 import CalorieFAQ from '@/components/CalorieFAQ';
+import GuideSection from '@/components/GuideSection';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function CatCalorieCalculator() {
@@ -189,22 +190,13 @@ export default function CatCalorieCalculator() {
       {/* FAQ Section */}
       <CalorieFAQ />
 
-      <section className="section mt-8 rounded-2xl border border-gray-200 bg-gray-100/80 p-6 md:p-8 space-y-8">
-        <div className="space-y-3">
-          <h2 className="text-[18px] font-bold">{CALORIE_UI_TEXT.GUIDE.WHAT_TITLE}</h2>
-          <p className="text-sm text-gray-700 leading-relaxed">
-            {CALORIE_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
-          </p>
-        </div>
-        <div className="space-y-3">
-          <h2 className="text-[18px] font-bold">{CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}</h2>
-          <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
-            {CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      </section>
+      <GuideSection
+        className="mt-8"
+        whatTitle={CALORIE_UI_TEXT.GUIDE.WHAT_TITLE}
+        whatDescription={CALORIE_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}
+        usageItems={CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS}
+      />
     </main>
   );
 }
