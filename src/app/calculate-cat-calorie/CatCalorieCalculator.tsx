@@ -186,15 +186,18 @@ export default function CatCalorieCalculator() {
         shareUrl={typeof window !== 'undefined' ? buildShareUrl() : undefined}
       />
 
-      <section className="section mt-8 space-y-6">
-        <div className="space-y-2">
-          <h2 className="text-xl font-bold">{CALORIE_UI_TEXT.GUIDE.WHAT_TITLE}</h2>
+      {/* FAQ Section */}
+      <CalorieFAQ />
+
+      <section className="section mt-8 rounded-2xl border border-gray-200 bg-gray-100/80 p-6 md:p-8 space-y-8">
+        <div className="space-y-3">
+          <h2 className="text-[18px] font-bold">{CALORIE_UI_TEXT.GUIDE.WHAT_TITLE}</h2>
           <p className="text-sm text-gray-700 leading-relaxed">
             {CALORIE_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
           </p>
         </div>
-        <div className="space-y-2">
-          <h2 className="text-xl font-bold">{CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}</h2>
+        <div className="space-y-3">
+          <h2 className="text-[18px] font-bold">{CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}</h2>
           <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed">
             {CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS.map((item) => (
               <li key={item}>{item}</li>
@@ -202,9 +205,6 @@ export default function CatCalorieCalculator() {
           </ul>
         </div>
       </section>
-
-      {/* FAQ Section */}
-      <CalorieFAQ />
     </main>
   );
 }
