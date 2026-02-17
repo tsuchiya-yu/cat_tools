@@ -5,6 +5,8 @@ import "./globals.css";
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 import { Suspense } from 'react';
 import Analytics from '@/components/Analytics';
+import JsonLdScript from '@/components/JsonLdScript';
+import { SITE_CONFIG } from '@/config/site';
 import {
   CALCULATE_CAT_AGE_PATH,
   CALCULATE_CAT_CALORIE_PATH,
@@ -32,17 +34,17 @@ export const metadata: Metadata = {
     template: '%s | ねこツールズ',
     default: 'ねこツールズ｜飼い主さんのための猫ツール集',
   },
-  description: "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
+  description: SITE_CONFIG.DESCRIPTION,
   keywords: "猫, ペット, ツール, 飼い主, 年齢計算, 健康管理, お世話",
-  authors: [{ name: "ねこツールズ" }],
-  creator: "ねこツールズ",
-  publisher: "ねこツールズ",
+  authors: [{ name: SITE_CONFIG.NAME }],
+  creator: SITE_CONFIG.NAME,
+  publisher: SITE_CONFIG.NAME,
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://cat-tools.catnote.tokyo'),
+  metadataBase: new URL(SITE_CONFIG.URL),
   alternates: {
     canonical: '/',
   },
@@ -59,8 +61,8 @@ export const metadata: Metadata = {
     description: "飼い主さんのために猫に関する便利なツールを集めています。愛猫との生活をより豊かにするためのWebアプリケーション集です。",
     type: "website",
     locale: "ja_JP",
-    url: "https://cat-tools.catnote.tokyo",
-    siteName: "ねこツールズ",
+    url: SITE_CONFIG.URL,
+    siteName: SITE_CONFIG.NAME,
     images: [
       {
         url: '/og.png',
@@ -128,25 +130,17 @@ export default function RootLayout({
         )}
         
         {/* サイト全体の構造化データ */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "WebSite",
-              "name": "ねこツールズ",
-              "url": "https://cat-tools.catnote.tokyo",
-              "description": "飼い主さんのために猫に関する便利なツールを集めています。年齢計算、健康管理、お世話のサポートなど、愛猫との生活をより豊かにするためのWebアプリケーション集です。",
-              "publisher": {
-                "@type": "Organization",
-                "name": "ねこツールズ"
-              },
-              "potentialAction": {
-                "@type": "SearchAction",
-                "target": "https://cat-tools.catnote.tokyo/search?q={search_term_string}",
-                "query-input": "required name=search_term_string"
-              }
-            })
+        <JsonLdScript
+          data={{
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": SITE_CONFIG.NAME,
+            "url": SITE_CONFIG.URL,
+            "description": SITE_CONFIG.DESCRIPTION,
+            "publisher": {
+              "@type": "Organization",
+              "name": SITE_CONFIG.NAME
+            }
           }}
         />
         

@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import CatAgeCalculator from './CatAgeCalculator';
 import JsonLdScript from '@/components/JsonLdScript';
-import { META, FAQ_ITEMS } from '@/constants/text';
+import { CALCULATE_CAT_AGE_PATH } from '@/constants/paths';
+import { META, FAQ_ITEMS, UI_TEXT } from '@/constants/text';
+import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
+
+const ageBreadcrumbStructuredData = createPageBreadcrumbList({
+  name: UI_TEXT.BREADCRUMBS.CAT_AGE_CALCULATOR,
+  path: CALCULATE_CAT_AGE_PATH,
+});
 
 const ageStructuredData = [
   {
@@ -30,7 +37,8 @@ const ageStructuredData = [
         "text": item.answer
       }
     }))
-  }
+  },
+  ageBreadcrumbStructuredData,
 ];
 
 export const metadata: Metadata = {

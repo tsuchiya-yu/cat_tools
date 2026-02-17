@@ -1,13 +1,20 @@
 import type { Metadata } from "next";
 import CatCalorieCalculator from './CatCalorieCalculator';
 import JsonLdScript from '@/components/JsonLdScript';
-import { CALORIE_META, STRUCTURED_DATA } from '@/constants/text';
+import { CALCULATE_CAT_CALORIE_PATH } from '@/constants/paths';
+import { CALORIE_META, CALORIE_UI_TEXT, STRUCTURED_DATA } from '@/constants/text';
+import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 
 const calorieFaqStructuredData = {
   "@context": "https://schema.org",
   "@type": STRUCTURED_DATA.CALORIE_FAQ.TYPE,
   mainEntity: STRUCTURED_DATA.CALORIE_FAQ.ITEMS,
 };
+
+const calorieBreadcrumbStructuredData = createPageBreadcrumbList({
+  name: CALORIE_UI_TEXT.BREADCRUMBS.CAT_CALORIE_CALCULATOR,
+  path: CALCULATE_CAT_CALORIE_PATH,
+});
 
 export const metadata: Metadata = {
   title: CALORIE_META.TITLE,
@@ -43,7 +50,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <JsonLdScript data={calorieFaqStructuredData} />
+      <JsonLdScript data={[calorieFaqStructuredData, calorieBreadcrumbStructuredData]} />
       <CatCalorieCalculator />
     </>
   );
