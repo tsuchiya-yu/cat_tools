@@ -6,6 +6,7 @@ import { CatAgeResult } from '@/types';
 import DateInput from '@/components/DateInput';
 import AgeResult from '@/components/AgeResult';
 import FAQ from '@/components/FAQ';
+import GuideSection from '@/components/GuideSection';
 import { UI_TEXT } from '@/constants/text';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
@@ -151,6 +152,14 @@ export default function CatAgeCalculator() {
 
         {/* FAQ Section */}
         <FAQ />
+
+        <GuideSection
+          className="mt-8"
+          whatTitle={UI_TEXT.GUIDE.WHAT_TITLE}
+          whatDescription={UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+          usageTitle={UI_TEXT.GUIDE.USAGE_TITLE}
+          usageItems={UI_TEXT.GUIDE.USAGE_ITEMS}
+        />
     </main>
   );
 }

@@ -8,6 +8,7 @@ import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
 import CalorieResult from '@/components/CalorieResult';
 import CalorieFAQ from '@/components/CalorieFAQ';
+import GuideSection from '@/components/GuideSection';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 export default function CatCalorieCalculator() {
@@ -188,6 +189,14 @@ export default function CatCalorieCalculator() {
 
       {/* FAQ Section */}
       <CalorieFAQ />
+
+      <GuideSection
+        className="mt-8"
+        whatTitle={CALORIE_UI_TEXT.GUIDE.WHAT_TITLE}
+        whatDescription={CALORIE_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}
+        usageItems={CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS}
+      />
     </main>
   );
 }

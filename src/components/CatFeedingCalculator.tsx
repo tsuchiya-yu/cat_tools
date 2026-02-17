@@ -5,6 +5,7 @@ import { calcGramsPerDay, normalizeNumberInput, splitMorningNight } from "@/lib/
 import Link from "next/link";
 import Breadcrumbs from "@/components/Breadcrumbs";
 import FeedingFAQ from "@/components/FeedingFAQ";
+import GuideSection from "@/components/GuideSection";
 import ShareMenu from "@/components/ShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
 import { useRouter } from "next/navigation";
@@ -172,7 +173,9 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
           {FEEDING_UI_TEXT.HEADER.EYECATCH}
         </p>
         <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">{FEEDING_UI_TEXT.HEADER.TITLE}</h1>
-        <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">{FEEDING_UI_TEXT.HEADER.DESCRIPTION}</p>
+        <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">
+          {FEEDING_UI_TEXT.HEADER.DESCRIPTION}
+        </p>
 
         {/* 入力セクション：下線 */}
         <div className="surface border-none overflow-hidden border-b border-gray-200">
@@ -250,6 +253,14 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
 
       {/* FAQ */}
       <FeedingFAQ />
+
+      <GuideSection
+        className="mt-8"
+        whatTitle={FEEDING_UI_TEXT.GUIDE.WHAT_TITLE}
+        whatDescription={FEEDING_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={FEEDING_UI_TEXT.GUIDE.USAGE_TITLE}
+        usageItems={FEEDING_UI_TEXT.GUIDE.USAGE_ITEMS}
+      />
     </main>
   );
 }

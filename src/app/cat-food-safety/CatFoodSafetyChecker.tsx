@@ -3,6 +3,7 @@
 import { FormEvent, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import GuideSection from '@/components/GuideSection';
 import { CAT_FOOD_SAFETY_FAQ_ITEMS, CAT_FOOD_SAFETY_TEXT } from '@/constants/text';
 import ShareMenu from '@/components/ShareMenu';
 import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
@@ -222,9 +223,6 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
           <p className="text-sm text-gray-600 mt-2.5 mb-0 leading-relaxed">
             {CAT_FOOD_SAFETY_TEXT.HEADER.DESCRIPTION}
           </p>
-          <p className="text-xs text-gray-500 mt-2">
-            {CAT_FOOD_SAFETY_TEXT.HEADER.NOTE}
-          </p>
         </div>
 
         <form onSubmit={onSubmit} className="surface p-4 border-none rounded-2xl space-y-3" noValidate>
@@ -394,6 +392,14 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
           ))}
         </div>
       </section>
+
+      <GuideSection
+        className="mt-8"
+        whatTitle={CAT_FOOD_SAFETY_TEXT.GUIDE.WHAT_TITLE}
+        whatDescription={CAT_FOOD_SAFETY_TEXT.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={CAT_FOOD_SAFETY_TEXT.GUIDE.USAGE_TITLE}
+        usageItems={CAT_FOOD_SAFETY_TEXT.GUIDE.USAGE_ITEMS}
+      />
     </main>
   );
 }
