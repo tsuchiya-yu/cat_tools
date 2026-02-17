@@ -39,9 +39,9 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams?: {
+  searchParams?: Promise<{
     food?: string | string[];
-  };
+  }>;
 };
 
 const catFoodSafetyBreadcrumbStructuredData = createPageBreadcrumbList({
@@ -55,9 +55,10 @@ const catFoodSafetyFaqStructuredData = {
   mainEntity: STRUCTURED_DATA.CAT_FOOD_SAFETY_FAQ.ITEMS,
 };
 
-export default function Page({ searchParams }: PageProps) {
+export default async function Page({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
   const allFoods = getAllCatFoods();
-  const initialFood = getSingleParam(searchParams?.food).trim();
+  const initialFood = getSingleParam(resolvedSearchParams?.food).trim();
   return (
     <>
       <JsonLdScript data={catFoodSafetyBreadcrumbStructuredData} />

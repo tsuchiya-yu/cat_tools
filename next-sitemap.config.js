@@ -22,6 +22,7 @@ try {
 url.protocol = 'https:';
 const SITE_URL = url.href.replace(/\/$/, '');
 const TOOL_PATHS = new Set(TOOLS.map((tool) => tool.href));
+const CORE_PATHS = ['/', ...TOOLS.map((tool) => tool.href)];
 const HOME_PAGE_PRIORITY = 1;
 const TOOL_PAGE_PRIORITY = 0.8;
 const buildSitemapField = (config, routePath, priority) => ({
@@ -49,5 +50,11 @@ module.exports = {
           ? TOOL_PAGE_PRIORITY
           : config.priority;
     return buildSitemapField(config, routePath, priority);
+  },
+  additionalPaths: async (config) => {
+    const fields = await Promise.all(
+      CORE_PATHS.map((routePath) => config.transform(config, routePath))
+    );
+    return fields.filter(Boolean);
   },
 };
