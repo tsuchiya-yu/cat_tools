@@ -24,15 +24,15 @@ base_ref="$(echo "$pr_json" | jq -r '.baseRefName')"
 review_decision="$(echo "$pr_json" | jq -r '.reviewDecision // ""')"
 is_draft="$(echo "$pr_json" | jq -r '.isDraft')"
 
-threads_json="$(gh api graphql \
-  -f query='query($owner:String!, $repo:String!, $number:Int!) { repository(owner:$owner, name:$repo) { pullRequest(number:$number) { reviewThreads(first:100) { nodes { id isResolved comments(first:1) { nodes { author { login } body url } } } } } } }' \
+threads_pages="$(gh api graphql --paginate \
+  -f query='query($owner:String!, $repo:String!, $number:Int!, $endCursor:String) { repository(owner:$owner, name:$repo) { pullRequest(number:$number) { reviewThreads(first:100, after:$endCursor) { nodes { id isResolved comments(first:1) { nodes { author { login } body url } } } pageInfo { hasNextPage endCursor } } } } }' \
   -f owner="$owner" \
   -f repo="$repo" \
   -F number="$number")"
 
-total_threads="$(echo "$threads_json" | jq -r '.data.repository.pullRequest.reviewThreads.nodes | length')"
-unresolved_threads="$(echo "$threads_json" | jq -r '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)] | length')"
-first_unresolved_reviewer="$(echo "$threads_json" | jq -r '[.data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false) | .comments.nodes[0].author.login][0] // ""')"
+total_threads="$(echo "$threads_pages" | jq -sr '[.[].data.repository.pullRequest.reviewThreads.nodes[]] | length')"
+unresolved_threads="$(echo "$threads_pages" | jq -sr '[.[].data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false)] | length')"
+first_unresolved_reviewer="$(echo "$threads_pages" | jq -sr '[.[].data.repository.pullRequest.reviewThreads.nodes[] | select(.isResolved == false) | .comments.nodes[0].author.login][0] // ""')"
 
 has_acceptance="no"
 has_scope="no"
