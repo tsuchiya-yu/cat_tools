@@ -228,7 +228,7 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
         <form onSubmit={onSubmit} className="surface p-4 border-none rounded-2xl space-y-3" noValidate>
           <label htmlFor="food-name" className="text-sm font-semibold text-gray-700 flex items-center justify-between">
             {CAT_FOOD_SAFETY_TEXT.INPUT.LABEL}
-            <span className="text-xs text-gray-400">{`${query.trim().length}/${MAX_QUERY_LENGTH}`}</span>
+            <span className="text-xs text-gray-600">{`${query.trim().length}/${MAX_QUERY_LENGTH}`}</span>
           </label>
           <div className="flex flex-col gap-3 md:flex-row">
             <div
