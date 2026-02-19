@@ -1,0 +1,58 @@
+LLMS.txt - Cat Tools LLM Guide
+
+1. Project Summary / プロジェクト概要
+Cat Tools is a web app that provides practical calculators and checkers for cat owners, including age conversion, calorie estimation, feeding amount support, and food safety lookup.
+ねこツールズは、猫の年齢計算・必要カロリー計算・給餌量目安計算・食べ物安全性チェックを提供する Web アプリです。
+
+This file is a short navigation guide for AI agents. Treat this as an entry point and use linked documents for full details.
+このファイルは AI エージェント向けの導線です。詳細は参照先ドキュメントを正としてください。
+
+2. Tech Stack / 主要技術
+- Next.js 15 (App Router, Turbopack)
+- React 19
+- TypeScript 5
+- Tailwind CSS 4
+- MUI 7 + Emotion
+- Jest + Testing Library, Playwright
+- ESLint 9
+
+3. Run / Test / Lint Commands / 実行・検証コマンド
+- Install / インストール: `npm install`
+- Dev server / 開発起動: `npm run dev`
+- Build / 本番ビルド: `npm run build`
+- Start / 本番起動: `npm run start`
+- Lint: `npm run lint`
+- Unit tests / 単体テスト: `npm run test`
+- E2E tests: `npm run test:e2e`
+
+4. Key Directories and Files / 重要ディレクトリ・ファイル
+- `src/app`: App Router pages and route-level UI
+- `src/components`: Reusable UI components
+- `src/lib`: Calculation logic and helpers
+- `src/constants`: Text/options/route constants
+- `tests/unit`: Jest unit tests
+- `tests/e2e`: Playwright E2E tests
+- `public/data/cat_foods.json`: Food safety source data
+- `README.md`: Main project guide
+
+5. Architecture Brief / アーキテクチャ要点
+- User input is collected in route/page components and feature components.
+- Domain logic (age/calorie/feeding/safety) is implemented in `src/lib`.
+- Results are rendered in React components and optionally shared via URL/social helpers.
+- SEO metadata and JSON-LD are generated in page/component layers.
+- Food safety checks reference static data under `public/data`.
+
+6. Contribution Notes / コントリビューション要点
+- Keep changes minimal and scoped to the issue.
+- Run `npm run lint` and `npm run test` before opening PRs.
+- Link related issues in PR body (for example: `Close #123`, `Ref #456`).
+- Use issue labels/prefix intent (`bug`, `feat`, `improve`) consistently with repository workflow.
+
+7. Source of Truth / 詳細参照先
+- `README.md`: Setup, scripts, directory structure, operational notes
+- `AGENTS.md`: Agent workflow/instructions (if available in your execution context)
+- `README-playwright.md`: E2E testing details
+
+Maintenance Policy / メンテナンス方針（更新トリガー）
+- Update this file when major project structure, core commands, or primary tech stack changes.
+- Also update when contribution workflow or authoritative document paths change.
