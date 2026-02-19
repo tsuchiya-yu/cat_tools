@@ -410,39 +410,28 @@ export const CALORIE_FAQ_ITEMS = [
     }
 ] as const;
 
+const toFaqStructuredDataItems = <T extends { question: string; answer: string }>(items: readonly T[]) =>
+  items.map(item => ({
+    '@type': 'Question',
+    'name': item.question,
+    'acceptedAnswer': {
+      '@type': 'Answer',
+      'text': item.answer.replace(/\n/g, ' '), // 改行を空白に変換
+    },
+  }));
+
 // 構造化データ（JSON-LD）用のテキスト
 export const STRUCTURED_DATA = {
   FAQ: {
     TYPE: 'FAQPage',
-    ITEMS: FAQ_ITEMS.map(item => ({
-      '@type': 'Question',
-      'name': item.question,
-      'acceptedAnswer': {
-        '@type': 'Answer',
-        'text': item.answer.replace(/\n/g, ' ') // 改行を空白に変換
-      }
-    }))
+    ITEMS: toFaqStructuredDataItems(FAQ_ITEMS),
   },
   CALORIE_FAQ: {
     TYPE: 'FAQPage',
-    ITEMS: CALORIE_FAQ_ITEMS.map(item => ({
-      '@type': 'Question',
-      'name': item.question,
-      'acceptedAnswer': {
-        '@type': 'Answer',
-        'text': item.answer.replace(/\n/g, ' ') // 改行を空白に変換
-      }
-    }))
+    ITEMS: toFaqStructuredDataItems(CALORIE_FAQ_ITEMS),
   },
   CAT_FOOD_SAFETY_FAQ: {
     TYPE: 'FAQPage',
-    ITEMS: CAT_FOOD_SAFETY_FAQ_ITEMS.map(item => ({
-      '@type': 'Question',
-      'name': item.question,
-      'acceptedAnswer': {
-        '@type': 'Answer',
-        'text': item.answer.replace(/\n/g, ' ') // 改行を空白に変換
-      }
-    }))
+    ITEMS: toFaqStructuredDataItems(CAT_FOOD_SAFETY_FAQ_ITEMS),
   },
 } as const;
