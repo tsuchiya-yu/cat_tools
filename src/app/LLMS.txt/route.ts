@@ -11,7 +11,16 @@ export async function GET() {
         "content-type": "text/plain; charset=utf-8",
       },
     });
-  } catch {
-    return new Response("LLMS.txt not found", { status: 404 });
+  } catch (error: unknown) {
+    if (
+      error &&
+      typeof error === "object" &&
+      "code" in error &&
+      error.code === "ENOENT"
+    ) {
+      return new Response("LLMS.txt not found", { status: 404 });
+    }
+    console.error("Failed to read LLMS.txt", error);
+    return new Response("Internal Server Error", { status: 500 });
   }
 }
