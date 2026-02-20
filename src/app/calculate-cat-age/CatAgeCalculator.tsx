@@ -158,11 +158,6 @@ export default function CatAgeCalculator() {
             {content.CONVERSION.TITLE}
           </h2>
           <p className="text-sm text-gray-700 leading-relaxed">{content.CONVERSION.INTRO}</p>
-          <ul className="list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
-            {content.CONVERSION.BODY.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
           <div className="overflow-x-auto mt-5">
             <table className="w-full border-collapse text-sm text-left">
               <caption className="sr-only">猫年齢と人間年齢の早見表</caption>
@@ -182,7 +177,27 @@ export default function CatAgeCalculator() {
               </tbody>
             </table>
           </div>
+          <h3 className="mt-5 text-base font-bold text-gray-900">{content.CONVERSION.FORMULA_TITLE}</h3>
+          <ul className="list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed mt-2">
+            {content.CONVERSION.BODY.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
           <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.CONVERSION.NOTE}</p>
+          <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
+            {content.CONVERSION.SOURCES.map((source) => (
+              <li key={source.URL}>
+                <a
+                  href={source.URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-pink-700 hover:text-pink-800 underline underline-offset-2 break-all"
+                >
+                  出典: {source.LABEL}
+                </a>
+              </li>
+            ))}
+          </ul>
         </section>
 
         <section className="section mt-10" aria-labelledby="life-stage-care-title">
@@ -236,9 +251,14 @@ export default function CatAgeCalculator() {
           <h2 id="longevity-checklist-title" className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
             {content.LONGEVITY_CHECKLIST.TITLE}
           </h2>
-          <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed">
+          <ul className="space-y-2 text-sm text-gray-700 leading-relaxed">
             {content.LONGEVITY_CHECKLIST.ITEMS.map((item) => (
-              <li key={item}>{item}</li>
+              <li key={item}>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input type="checkbox" className="mt-0.5 h-4 w-4 rounded border-gray-300 accent-pink-600" />
+                  <span>{item}</span>
+                </label>
+              </li>
             ))}
           </ul>
           <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
@@ -281,32 +301,22 @@ export default function CatAgeCalculator() {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-600 leading-relaxed mt-4">
-            {content.AVERAGE_LIFESPAN.NOTE.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
-
-        <section className="section mt-10" aria-labelledby="references-title">
-          <h2 id="references-title" className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
-            {content.REFERENCES.TITLE}
-          </h2>
-          <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed">
-            {content.REFERENCES.LINKS.map((link) => (
-              <li key={link.URL}>
+          <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.AVERAGE_LIFESPAN.NOTE}</p>
+          <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
+            {content.AVERAGE_LIFESPAN.SOURCES.map((source) => (
+              <li key={source.URL}>
                 <a
-                  href={link.URL}
+                  href={source.URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-pink-700 hover:text-pink-800 underline underline-offset-2 break-all"
                 >
-                  {link.LABEL}
+                  出典: {source.LABEL}
                 </a>
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.REFERENCES.DISCLAIMER}</p>
+          <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.AVERAGE_LIFESPAN.DISCLAIMER}</p>
         </section>
 
         {/* FAQ Section */}
