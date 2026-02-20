@@ -1,0 +1,93 @@
+name: Lighthouse On Main Merge
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  lighthouse:
+    if: github.event.pull_request.merged == true && github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: |
+          npm run start -- -p 3000 > /tmp/next-start.log 2>&1 &
+
+      - name: Wait for application
+        run: |
+          for i in {1..60}; do
+            if curl -sf http://127.0.0.1:3000 > /dev/null; then
+              echo "Application is ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "::error::Application failed to start"
+          cat /tmp/next-start.log
+          exit 1
+
+      - name: Run Lighthouse for all pages
+        env:
+          BASE_URL: http://127.0.0.1:3000
+        run: |
+          set -euo pipefail
+
+          CHROME_FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage"
+          PAGES=(
+            "/"
+            "/cat-food-safety"
+            "/calculate-cat-age"
+            "/calculate-cat-calorie"
+            "/calculate-cat-feeding"
+          )
+
+          run_lighthouse() {
+            local path="$1"
+            local url="${BASE_URL}${path}"
+            local report_file
+            report_file="$(mktemp)"
+
+            echo "=================================================="
+            echo "Running Lighthouse: ${url}"
+
+            if ! npx --yes lighthouse "${url}" \
+              --output=json \
+              --output-path="${report_file}" \
+              --quiet \
+              --chrome-flags="${CHROME_FLAGS}"; then
+              echo "::error::Lighthouse execution failed for ${url}"
+              rm -f "${report_file}"
+              return 1
+            fi
+
+            echo "Scores for ${url}:"
+            jq -r '
+              "- Performance: \((.categories.performance.score * 100) | round)",
+              "- Accessibility: \((.categories.accessibility.score * 100) | round)",
+              "- Best Practices: \((.categories[\"best-practices\"].score * 100) | round)",
+              "- SEO: \((.categories.seo.score * 100) | round)"
+            ' "${report_file}"
+
+            rm -f "${report_file}"
+          }
+
+          for page in "${PAGES[@]}"; do
+            run_lighthouse "${page}"
+          done
