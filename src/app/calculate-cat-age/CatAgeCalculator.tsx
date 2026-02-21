@@ -205,6 +205,12 @@ export default function CatAgeCalculator() {
             {content.LIFE_STAGE_CARE.TITLE}
           </h2>
           <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">{content.LIFE_STAGE_CARE.INTRO}</p>
+          <h3 className="mt-4 text-base font-bold text-gray-900">BCSの簡易判定（9段階の目安）</h3>
+          <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed mt-2">
+            {content.LIFE_STAGE_CARE.BCS_CRITERIA.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
           <div className="space-y-4 mt-5">
             {content.LIFE_STAGE_CARE.ITEMS.map((item) => (
               <article key={item.STAGE} className="rounded-xl border border-gray-200 bg-gray-50/60 p-4">
@@ -316,7 +322,6 @@ export default function CatAgeCalculator() {
               </li>
             ))}
           </ul>
-          <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.AVERAGE_LIFESPAN.DISCLAIMER}</p>
         </section>
 
         {/* FAQ Section */}
@@ -329,6 +334,10 @@ export default function CatAgeCalculator() {
           usageTitle={UI_TEXT.GUIDE.USAGE_TITLE}
           usageItems={UI_TEXT.GUIDE.USAGE_ITEMS}
         />
+
+        <section className="section mt-8" aria-label="免責事項">
+          <p className="text-sm text-gray-600 leading-relaxed">{content.DISCLAIMER}</p>
+        </section>
     </main>
   );
 }
