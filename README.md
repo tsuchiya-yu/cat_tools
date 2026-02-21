@@ -103,6 +103,18 @@ E2E 詳細は `README-playwright.md` を参照してください。
 - 実行コマンド: `npm run start`
 - 主要環境変数: `NEXT_PUBLIC_GA_MEASUREMENT_ID`（任意）
 
+### SITE_URL ガード（本番ビルド）
+
+`npm run build` 実行時に `prebuild` で `scripts/validate-site-url.js` が走り、`NODE_ENV=production` の場合は `SITE_URL`（未設定なら `NEXT_PUBLIC_BASE_URL`）を検証します。
+
+次の場合はビルドを失敗させます。
+- 空文字
+- URLとして不正
+- `https://` 以外（`http://` を含む）
+- ローカル系ホスト（`localhost`, `127.0.0.1`, `0.0.0.0`, `*.local`）
+
+本番では必ず公開 `https://` URL を設定してください。
+
 ## Issue / PR 運用
 
 - Issue テンプレートを用意しています
