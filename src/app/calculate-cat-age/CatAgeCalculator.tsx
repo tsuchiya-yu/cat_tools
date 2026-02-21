@@ -307,7 +307,6 @@ export default function CatAgeCalculator() {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.AVERAGE_LIFESPAN.NOTE}</p>
           <ul className="list-disc space-y-1.5 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
             {content.AVERAGE_LIFESPAN.SOURCES.map((source) => (
               <li key={source.URL}>
