@@ -81,7 +81,7 @@ jobs:
             jq -r '
               "- Performance: \((.categories.performance.score * 100) | round)",
               "- Accessibility: \((.categories.accessibility.score * 100) | round)",
-              "- Best Practices: \((.categories[\"best-practices\"].score * 100) | round)",
+              "- Best Practices: \((.categories["best-practices"].score * 100) | round)",
               "- SEO: \((.categories.seo.score * 100) | round)"
             ' "${report_file}"
 
