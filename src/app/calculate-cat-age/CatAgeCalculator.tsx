@@ -7,6 +7,7 @@ import DateInput from '@/components/DateInput';
 import AgeResult from '@/components/AgeResult';
 import FAQ from '@/components/FAQ';
 import GuideSection from '@/components/GuideSection';
+import CatAgeContent from './CatAgeContent';
 import { UI_TEXT } from '@/constants/text';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
@@ -149,6 +150,7 @@ export default function CatAgeCalculator() {
           shareText={shareText}
           shareUrl={shareUrl}
         />
+        <CatAgeContent />
 
         {/* FAQ Section */}
         <FAQ />
@@ -160,6 +162,10 @@ export default function CatAgeCalculator() {
           usageTitle={UI_TEXT.GUIDE.USAGE_TITLE}
           usageItems={UI_TEXT.GUIDE.USAGE_ITEMS}
         />
+
+        <section className="section mt-8" aria-label="免責事項">
+          <p className="text-sm text-gray-600 leading-relaxed">{UI_TEXT.CONTENT.DISCLAIMER}</p>
+        </section>
     </main>
   );
 }
