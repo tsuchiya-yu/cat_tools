@@ -156,11 +156,13 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
       performSearch(normalizedFood, { syncUrl: false });
     };
 
-    applyFood(initialFood);
-
     if (typeof window === 'undefined') {
+      applyFood(initialFood);
       return;
     }
+
+    const initialFoodFromLocation = new URL(window.location.href).searchParams.get('food') ?? undefined;
+    applyFood(initialFood.trim() || initialFoodFromLocation);
 
     const handlePopState = () => {
       const url = new URL(window.location.href);
