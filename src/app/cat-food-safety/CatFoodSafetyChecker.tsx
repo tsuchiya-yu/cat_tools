@@ -41,15 +41,14 @@ const createItemShareText = (item: CatFoodItem) => {
 
 type CatFoodSafetyCheckerProps = {
   allFoods: CatFoodItem[];
-  initialFood?: string;
 };
 
 const FOOD_SAFETY_PATH = '/cat-food-safety';
 
-export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: CatFoodSafetyCheckerProps) {
+export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerProps) {
   const router = useRouter();
   const suggestionsListId = useId();
-  const [query, setQuery] = useState(initialFood);
+  const [query, setQuery] = useState('');
   const [results, setResults] = useState<CatFoodItem[]>([]);
   const [error, setError] = useState('');
   const [hasSearched, setHasSearched] = useState(false);
@@ -156,13 +155,10 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
       performSearch(normalizedFood, { syncUrl: false });
     };
 
-    if (typeof window === 'undefined') {
-      applyFood(initialFood);
-      return;
-    }
+    if (typeof window === 'undefined') return;
 
     const initialFoodFromLocation = new URL(window.location.href).searchParams.get('food') ?? undefined;
-    applyFood(initialFood.trim() || initialFoodFromLocation);
+    applyFood(initialFoodFromLocation);
 
     const handlePopState = () => {
       const url = new URL(window.location.href);
@@ -173,7 +169,7 @@ export default function CatFoodSafetyChecker({ allFoods, initialFood = '' }: Cat
     return () => {
       window.removeEventListener('popstate', handlePopState);
     };
-  }, [initialFood, performSearch, resetSearchState]);
+  }, [performSearch, resetSearchState]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
