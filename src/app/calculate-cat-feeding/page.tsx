@@ -4,7 +4,6 @@ import JsonLdScript from "@/components/JsonLdScript";
 import { CALCULATE_CAT_FEEDING_PATH } from "@/constants/paths";
 import { FEEDING_UI_TEXT } from "@/constants/text";
 import { createPageBreadcrumbList } from "@/lib/breadcrumbStructuredData";
-import { getSingleParam } from "@/lib/searchParams";
 
 const feedingBreadcrumbStructuredData = createPageBreadcrumbList({
   name: FEEDING_UI_TEXT.BREADCRUMBS.FEEDING_CALCULATOR,
@@ -41,21 +40,11 @@ export const metadata: Metadata = {
   },
 };
 
-type PageProps = {
-  searchParams?: Promise<{
-    kcal?: string | string[];
-    d?: string | string[];
-  }>;
-};
-
-export default async function Page({ searchParams }: PageProps) {
-  const resolvedSearchParams = await searchParams;
-  const initialKcal = getSingleParam(resolvedSearchParams?.kcal);
-  const initialDensity = getSingleParam(resolvedSearchParams?.d);
+export default function Page() {
   return (
     <>
       <JsonLdScript data={feedingBreadcrumbStructuredData} />
-      <CatFeedingCalculator initialKcal={initialKcal} initialDensity={initialDensity} />
+      <CatFeedingCalculator />
     </>
   );
 }
