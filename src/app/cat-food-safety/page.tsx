@@ -5,7 +5,6 @@ import { CAT_FOOD_SAFETY_PATH } from '@/constants/paths';
 import { CAT_FOOD_SAFETY_META, CAT_FOOD_SAFETY_TEXT, STRUCTURED_DATA } from '@/constants/text';
 import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 import { getAllCatFoods } from '@/lib/catFoodSafety';
-import { getSingleParam } from '@/lib/searchParams';
 
 export const metadata: Metadata = {
   title: CAT_FOOD_SAFETY_META.TITLE,
@@ -38,12 +37,6 @@ export const metadata: Metadata = {
   },
 };
 
-type PageProps = {
-  searchParams?: Promise<{
-    food?: string | string[];
-  }>;
-};
-
 const catFoodSafetyBreadcrumbStructuredData = createPageBreadcrumbList({
   name: CAT_FOOD_SAFETY_TEXT.BREADCRUMBS.CAT_FOOD_SAFETY,
   path: CAT_FOOD_SAFETY_PATH,
@@ -55,15 +48,13 @@ const catFoodSafetyFaqStructuredData = {
   mainEntity: STRUCTURED_DATA.CAT_FOOD_SAFETY_FAQ.ITEMS,
 };
 
-export default async function Page({ searchParams }: PageProps) {
-  const resolvedSearchParams = await searchParams;
+export default function Page() {
   const allFoods = getAllCatFoods();
-  const initialFood = getSingleParam(resolvedSearchParams?.food).trim();
   return (
     <>
       <JsonLdScript data={catFoodSafetyBreadcrumbStructuredData} />
       <JsonLdScript data={catFoodSafetyFaqStructuredData} />
-      <CatFoodSafetyChecker allFoods={allFoods} initialFood={initialFood} />
+      <CatFoodSafetyChecker allFoods={allFoods} />
     </>
   );
 }

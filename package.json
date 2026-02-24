@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
+    "prebuild": "node scripts/validate-site-url.js",
     "build": "next build --turbopack",
     "postbuild": "next-sitemap",
     "start": "next start",

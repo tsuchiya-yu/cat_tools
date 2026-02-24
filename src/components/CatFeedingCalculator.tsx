@@ -77,6 +77,7 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
       setDailyKcal(url.searchParams.get("kcal") ?? "");
       setDensity(url.searchParams.get("d") ?? "");
     };
+    syncFromLocation();
     window.addEventListener("popstate", syncFromLocation);
     return () => window.removeEventListener("popstate", syncFromLocation);
   }, []);
