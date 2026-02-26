@@ -1,7 +1,7 @@
 'use client';
 
 import Script from 'next/script';
-import { flushQueuedPageviews, GA_MEASUREMENT_ID } from '@/lib/gtag';
+import { flushQueuedEvents, flushQueuedPageviews, GA_MEASUREMENT_ID } from '@/lib/gtag';
 
 export default function GoogleAnalyticsScript() {
   if (!GA_MEASUREMENT_ID) return null;
@@ -24,6 +24,7 @@ export default function GoogleAnalyticsScript() {
         src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
         onLoad={() => {
           flushQueuedPageviews();
+          flushQueuedEvents();
         }}
       />
     </>

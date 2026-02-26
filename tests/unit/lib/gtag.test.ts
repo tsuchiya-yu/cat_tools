@@ -48,4 +48,27 @@ describe('gtag utilities', () => {
       }),
     ).not.toThrow();
   });
+
+  it('queues event until gtag is available and flushes later', async () => {
+    const { event, flushQueuedEvents } = await import('@/lib/gtag');
+
+    event({
+      action: 'click_button',
+      category: 'ui',
+      label: 'signup',
+      value: 1,
+    });
+
+    const gtagMock = jest.fn();
+    window.gtag = gtagMock;
+
+    flushQueuedEvents();
+
+    expect(gtagMock).toHaveBeenCalledTimes(1);
+    expect(gtagMock).toHaveBeenCalledWith('event', 'click_button', {
+      event_category: 'ui',
+      event_label: 'signup',
+      value: 1,
+    });
+  });
 });

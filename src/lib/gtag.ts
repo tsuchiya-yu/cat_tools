@@ -10,10 +10,18 @@ type GtagConfigParams = {
   value?: number;
 };
 
+type GtagEventParams = {
+  action: string;
+  category: string;
+  label?: string;
+  value?: number;
+};
+
 // GA4測定ID
 export const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || '';
 
 const queuedPageviews: string[] = [];
+const queuedEvents: GtagEventParams[] = [];
 
 const canUseWindow = () => typeof window !== 'undefined';
 const hasMeasurementId = () => Boolean(GA_MEASUREMENT_ID);
@@ -22,6 +30,14 @@ const hasGtag = () => canUseWindow() && typeof window.gtag === 'function';
 const sendPageview = (url: string) => {
   window.gtag('config', GA_MEASUREMENT_ID, {
     page_path: url,
+  });
+};
+
+const sendEvent = ({ action, category, label, value }: GtagEventParams) => {
+  window.gtag('event', action, {
+    event_category: category,
+    event_label: label,
+    value: value,
   });
 };
 
@@ -36,6 +52,17 @@ export const flushQueuedPageviews = () => {
 
   for (const url of pendingPageviews) {
     sendPageview(url);
+  }
+};
+
+// 遅延ロード中に溜めた event を送信
+export const flushQueuedEvents = () => {
+  if (!hasMeasurementId() || !hasGtag() || queuedEvents.length === 0) return;
+
+  const pendingEvents = queuedEvents.splice(0, queuedEvents.length);
+
+  for (const queuedEvent of pendingEvents) {
+    sendEvent(queuedEvent);
   }
 };
 
@@ -54,19 +81,17 @@ export const pageview = (url: string) => {
 };
 
 // イベントをトラッキング
-export const event = ({ action, category, label, value }: {
-  action: string;
-  category: string;
-  label?: string;
-  value?: number;
-}) => {
-  if (!isGAEnabled() || !hasGtag()) return;
+export const event = ({ action, category, label, value }: GtagEventParams) => {
+  if (!isGAEnabled()) return;
 
-  window.gtag('event', action, {
-    event_category: category,
-    event_label: label,
-    value: value,
-  });
+  const eventParams = { action, category, label, value };
+  if (!hasGtag()) {
+    queuedEvents.push(eventParams);
+    return;
+  }
+
+  flushQueuedEvents();
+  sendEvent(eventParams);
 };
 
 // gtag関数の型定義
