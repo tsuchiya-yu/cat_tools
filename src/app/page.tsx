@@ -26,6 +26,7 @@ export default function Home() {
             <Link
               key={tool.href}
               href={tool.href}
+              prefetch={false}
               aria-label={tool.ariaLabel}
               className="block no-underline rounded-xl border border-[var(--border)] bg-white p-5 transition-shadow hover:shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600"
             >
