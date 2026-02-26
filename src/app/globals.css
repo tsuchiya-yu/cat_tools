@@ -19,8 +19,8 @@
 }
 
 @theme inline {
-  --font-sans: var(--font-zen-kaku);
-  --font-mono: var(--font-outfit);
+  --font-sans: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
 /* 基本とタイポ */
@@ -39,7 +39,7 @@ body {
   margin: 0;
   background: #fff;
   color: var(--text);
-  font-family: var(--font-zen-kaku), "Noto Sans JP", -apple-system, system-ui, "Segoe UI", Meiryo, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -165,7 +165,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 .numeral {
-  font-family: var(--font-outfit), ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   font-variant-numeric: tabular-nums;
   letter-spacing: -.01em;
 }

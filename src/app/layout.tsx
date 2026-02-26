@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Zen_Kaku_Gothic_New, Outfit } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
 import { GA_MEASUREMENT_ID } from '@/lib/gtag';
@@ -14,20 +13,6 @@ import {
   CAT_FOOD_SAFETY_PATH,
 } from '@/constants/paths';
 import { FOOTER_TEXT } from '@/constants/text';
-
-const zenKakuGothicNew = Zen_Kaku_Gothic_New({
-  weight: ['400', '700'],
-  subsets: ['latin'],
-  variable: '--font-zen-kaku',
-  display: 'swap',
-});
-
-const outfit = Outfit({
-  weight: ['600', '800'],
-  subsets: ['latin'],
-  variable: '--font-outfit',
-  display: 'swap',
-});
 
 export const metadata: Metadata = {
   title: {
@@ -104,9 +89,6 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        
         {/* Google Analytics 4 */}
         {GA_MEASUREMENT_ID && (
           <>
@@ -145,9 +127,7 @@ export default function RootLayout({
         />
         
       </head>
-      <body
-        className={`${zenKakuGothicNew.variable} ${outfit.variable} antialiased`}
-      >
+      <body className="antialiased">
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
