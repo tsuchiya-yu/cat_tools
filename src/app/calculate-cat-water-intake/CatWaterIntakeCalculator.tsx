@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
+import GuideSection from '@/components/GuideSection';
 import WaterIntakeFAQ from '@/components/WaterIntakeFAQ';
 import { WATER_INTAKE_UI_TEXT } from '@/constants/text';
 import { calculateCatWaterIntake, formatMl } from '@/lib/catWaterIntake';
@@ -218,8 +219,8 @@ export default function CatWaterIntakeCalculator() {
               中央目安 {formatMl(result.drinkTargetMl.mid)} mL
             </div>
 
-            <div className={`mt-8 grid gap-4 ${hasFoodInput ? 'sm:grid-cols-2' : 'sm:grid-cols-1'}`}>
-              <div className="py-4 border-t border-pink-100">
+            <div className={`mt-8 flex flex-col gap-4 ${hasFoodInput ? 'sm:flex-row' : ''}`}>
+              <div className="py-4 border-t border-pink-100 sm:flex-1">
                 <div className="text-sm text-gray-500 mb-1.5">{WATER_INTAKE_UI_TEXT.RESULT.TOTAL_WATER_TITLE}</div>
                 <div id="totalWaterResult" className="font-extrabold text-2xl text-gray-900">
                   {formatMl(result.totalWaterMl.min)}〜{formatMl(result.totalWaterMl.max)} mL
@@ -230,7 +231,7 @@ export default function CatWaterIntakeCalculator() {
               </div>
 
               {hasFoodInput && (
-                <div className="py-4 border-t border-pink-100">
+                <div className="py-4 border-t border-pink-100 sm:flex-1">
                   <div className="text-sm text-gray-500 mb-1.5">{WATER_INTAKE_UI_TEXT.RESULT.FOOD_WATER_TITLE}</div>
                   <div id="foodWaterResult" className="font-extrabold text-2xl text-gray-900">
                     {formatMl(result.foodWaterMl)} mL
@@ -249,6 +250,14 @@ export default function CatWaterIntakeCalculator() {
       )}
 
       <WaterIntakeFAQ />
+
+      <GuideSection
+        className="mt-8"
+        whatTitle={WATER_INTAKE_UI_TEXT.GUIDE.WHAT_TITLE}
+        whatDescription={WATER_INTAKE_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={WATER_INTAKE_UI_TEXT.GUIDE.USAGE_TITLE}
+        usageItems={WATER_INTAKE_UI_TEXT.GUIDE.USAGE_ITEMS}
+      />
     </main>
   );
 }
