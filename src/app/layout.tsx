@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { GA_MEASUREMENT_ID } from '@/lib/gtag';
 import { Suspense } from 'react';
 import Analytics from '@/components/Analytics';
+import GoogleAnalyticsScript from '@/components/GoogleAnalyticsScript';
 import JsonLdScript from '@/components/JsonLdScript';
 import { SITE_CONFIG } from '@/config/site';
 import {
@@ -89,28 +89,6 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <head>
-        {/* Google Analytics 4 */}
-        {GA_MEASUREMENT_ID && (
-          <>
-            <script
-              async
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-            />
-            <script
-              dangerouslySetInnerHTML={{
-                __html: `
-                  window.dataLayer = window.dataLayer || [];
-                  function gtag(){dataLayer.push(arguments);}
-                  gtag('js', new Date());
-                  gtag('config', '${GA_MEASUREMENT_ID}', {
-                    page_path: window.location.pathname,
-                  });
-                `,
-              }}
-            />
-          </>
-        )}
-        
         {/* サイト全体の構造化データ */}
         <JsonLdScript
           data={{
@@ -128,6 +106,7 @@ export default function RootLayout({
         
       </head>
       <body className="antialiased">
+        <GoogleAnalyticsScript />
         <Suspense fallback={null}>
           <Analytics />
         </Suspense>
