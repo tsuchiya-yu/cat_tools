@@ -41,6 +41,7 @@ export const FOOTER_TEXT = {
       CALCULATE_CAT_AGE: '猫の年齢計算',
       CALCULATE_CAT_CALORIE: '猫のカロリー計算',
       CALCULATE_CAT_FEEDING: '猫の給餌量計算',
+      CALCULATE_CAT_WATER_INTAKE: '猫の必要給水量計算',
     },
   },
 } as const;
@@ -376,6 +377,20 @@ export const CALORIE_META = {
   },
 } as const;
 
+export const WATER_INTAKE_META = {
+  TITLE: '猫の必要給水量計算｜体重とフード量から1日の飲水目安を算出',
+  DESCRIPTION:
+    '体重とフード量（任意）から、猫の1日の総水分目標と器からの飲水目安を参考幅で計算します。ドライ10%、ウェット78%の水分率で食事由来水分も表示します。',
+  KEYWORDS: '猫, 給水量, 飲水量, 水分量, 水分補給, 健康管理',
+  OG: {
+    TITLE: '猫の必要給水量計算',
+    DESCRIPTION:
+      '体重とフード量から、猫の1日の総水分目標と器からの飲水目安を計算します。',
+    URL: 'https://cat-tools.catnote.tokyo/calculate-cat-water-intake',
+    SITE_NAME: 'ねこツールズ',
+  },
+} as const;
+
 // カロリー計算用のUI文言
 export const CALORIE_UI_TEXT = {
   HEADER: {
@@ -539,6 +554,67 @@ export const FEEDING_FAQ_ITEMS = [
   },
 ] as const;
 
+export const WATER_INTAKE_UI_TEXT = {
+  HEADER: {
+    EYECATCH: '体重とフード量から必要水分を計算',
+    TITLE: '猫の必要給水量計算',
+    DESCRIPTION:
+      '体重から1日の総水分目標（参考幅）を算出し、フード量を入力した場合は食事由来の水分量（ドライ10%、ウェット78%）を差し引いて、器からの飲水目安を表示します。',
+  },
+  BREADCRUMBS: {
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
+    WATER_INTAKE_CALCULATOR: '猫の必要給水量計算',
+  },
+  INPUT: {
+    WEIGHT_LABEL: '体重（kg）',
+    DRY_FOOD_LABEL: 'ドライフード量（g/日）',
+    WET_FOOD_LABEL: 'ウェットフード量（g/日）',
+    OPTIONAL_HINT: '未入力の場合は 0g として計算します。',
+    ERROR: {
+      NUMBER: '数値を入力してください。',
+      WEIGHT_POSITIVE: '体重は 0 より大きい値を入力してください。',
+      NON_NEGATIVE: '0 以上の値を入力してください。',
+    },
+  },
+  RESULT: {
+    TOTAL_WATER_TITLE: '総水分目標（1日）',
+    FOOD_WATER_TITLE: '食事由来水分（1日）',
+    DRINK_TARGET_TITLE: '器からの飲水目標（1日）',
+    NOTES: [
+      '目安値であり、体調・季節・活動量・持病で変動します。',
+      '異常が続く場合は受診を推奨します。',
+    ],
+  },
+} as const;
+
+export const WATER_INTAKE_FAQ_ITEMS = [
+  {
+    question: 'この計算結果は絶対に守るべき量ですか？',
+    answer:
+      'いいえ。表示値は健康管理のための目安です。体調・季節・運動量・食事内容で必要量は変わります。',
+  },
+  {
+    question: '参考幅はどう使えばよいですか？',
+    answer:
+      '日々の飲水量を目安レンジと比較し、増減の傾向を見るために使います。1日だけで判断せず、数日から1週間の推移で確認してください。',
+  },
+  {
+    question: 'あまり水を飲まない場合はどうすればいいですか？',
+    answer:
+      '水飲み場を増やす、器の素材や形を変える、循環式給水器を使う、ウェットフード比率を上げるなどで改善することがあります。',
+  },
+  {
+    question: 'どんなときに病院へ相談すべきですか？',
+    answer:
+      '多飲が続く、急に飲水量が増減した、体重減少・食欲低下・嘔吐・元気低下がある場合は早めに受診してください。',
+  },
+  {
+    question: '計算方法は何ですか？',
+    answer:
+      '体重から総水分目安（40〜60mL/kg/日）を算出し、フード量入力時は食事由来の水分量（ドライ10%、ウェット78%）を差し引いて器からの飲水目安を表示します。',
+  },
+] as const;
+
 // 食べ物安全性チェック用のFAQ
 export const CAT_FOOD_SAFETY_FAQ_ITEMS = [
   {
@@ -611,5 +687,9 @@ export const STRUCTURED_DATA = {
   CAT_FOOD_SAFETY_FAQ: {
     TYPE: 'FAQPage',
     ITEMS: toFaqStructuredDataItems(CAT_FOOD_SAFETY_FAQ_ITEMS),
+  },
+  WATER_INTAKE_FAQ: {
+    TYPE: 'FAQPage',
+    ITEMS: toFaqStructuredDataItems(WATER_INTAKE_FAQ_ITEMS),
   },
 } as const;

@@ -10,6 +10,7 @@ import {
   CALCULATE_CAT_AGE_PATH,
   CALCULATE_CAT_CALORIE_PATH,
   CALCULATE_CAT_FEEDING_PATH,
+  CALCULATE_CAT_WATER_INTAKE_PATH,
   CAT_FOOD_SAFETY_PATH,
 } from '@/constants/paths';
 import { FOOTER_TEXT } from '@/constants/text';
@@ -157,6 +158,11 @@ export default function RootLayout({
                   <li>
                     <Link href={CALCULATE_CAT_FEEDING_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_FEEDING}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href={CALCULATE_CAT_WATER_INTAKE_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
+                      {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_WATER_INTAKE}
                     </Link>
                   </li>
                 </ul>
