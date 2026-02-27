@@ -206,29 +206,40 @@ export default function CatWaterIntakeCalculator() {
 
       {result && (
         <section className="section mt-6" aria-live="polite">
-          <div className="pt-6 pb-4 border-b border-gray-200">
-            <h2 className="text-lg font-bold text-gray-900">{WATER_INTAKE_UI_TEXT.RESULT.TOTAL_WATER_TITLE}</h2>
-            <p id="totalWaterResult" className="text-gray-700 mt-2">
-              {formatMl(result.totalWaterMl.min)}〜{formatMl(result.totalWaterMl.max)} mL
-              <span className="text-sm text-gray-500 ml-2">（中央目安 {formatMl(result.totalWaterMl.mid)} mL）</span>
-            </p>
+          <div className="result relative text-center py-2 pb-6 border-b border-gray-200">
+            <div className="text-gray-600 mb-1.5 tracking-wide text-sm">
+              {WATER_INTAKE_UI_TEXT.RESULT.DRINK_TARGET_TITLE}
+            </div>
+            <div id="drinkTargetResult" className="numeral text-4xl md:text-6xl font-extrabold text-pink-600 tracking-tight">
+              {formatMl(result.drinkTargetMl.min)}〜{formatMl(result.drinkTargetMl.max)}
+              <span className="text-lg md:text-2xl text-gray-900 ml-2">mL</span>
+            </div>
+            <div className="text-sm text-gray-500 mt-2">
+              中央目安 {formatMl(result.drinkTargetMl.mid)} mL
+            </div>
 
-            {hasFoodInput && (
-              <>
-                <h2 className="text-lg font-bold text-gray-900 mt-6">{WATER_INTAKE_UI_TEXT.RESULT.FOOD_WATER_TITLE}</h2>
-                <p id="foodWaterResult" className="text-gray-700 mt-2">
-                  {formatMl(result.foodWaterMl)} mL
-                </p>
-              </>
-            )}
+            <div className={`mt-8 grid gap-4 ${hasFoodInput ? 'sm:grid-cols-2' : 'sm:grid-cols-1'}`}>
+              <div className="py-4 border-t border-pink-100">
+                <div className="text-sm text-gray-500 mb-1.5">{WATER_INTAKE_UI_TEXT.RESULT.TOTAL_WATER_TITLE}</div>
+                <div id="totalWaterResult" className="font-extrabold text-2xl text-gray-900">
+                  {formatMl(result.totalWaterMl.min)}〜{formatMl(result.totalWaterMl.max)} mL
+                </div>
+                <div className="text-sm text-gray-500 mt-1">
+                  中央目安 {formatMl(result.totalWaterMl.mid)} mL
+                </div>
+              </div>
 
-            <h2 className="text-lg font-bold text-gray-900 mt-6">{WATER_INTAKE_UI_TEXT.RESULT.DRINK_TARGET_TITLE}</h2>
-            <p id="drinkTargetResult" className="text-gray-700 mt-2">
-              {formatMl(result.drinkTargetMl.min)}〜{formatMl(result.drinkTargetMl.max)} mL
-              <span className="text-sm text-gray-500 ml-2">（中央目安 {formatMl(result.drinkTargetMl.mid)} mL）</span>
-            </p>
+              {hasFoodInput && (
+                <div className="py-4 border-t border-pink-100">
+                  <div className="text-sm text-gray-500 mb-1.5">{WATER_INTAKE_UI_TEXT.RESULT.FOOD_WATER_TITLE}</div>
+                  <div id="foodWaterResult" className="font-extrabold text-2xl text-gray-900">
+                    {formatMl(result.foodWaterMl)} mL
+                  </div>
+                </div>
+              )}
+            </div>
 
-            <ul className="list-disc pl-6 text-sm text-gray-600 mt-5 space-y-1">
+            <ul className="list-disc pl-6 text-sm text-gray-600 mt-5 space-y-1 text-left">
               {WATER_INTAKE_UI_TEXT.RESULT.NOTES.map((note) => (
                 <li key={note}>{note}</li>
               ))}
