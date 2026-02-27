@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import GuideSection from '@/components/GuideSection';
 import WaterIntakeFAQ from '@/components/WaterIntakeFAQ';
+import { CALCULATE_CAT_WATER_INTAKE_PATH } from '@/constants/paths';
 import { WATER_INTAKE_UI_TEXT } from '@/constants/text';
 import { calculateCatWaterIntake, formatMl } from '@/lib/catWaterIntake';
-
-const WATER_INTAKE_PATH = '/calculate-cat-water-intake';
 
 function parsePositiveOrZero(value: string) {
   const parsed = Number.parseFloat(value);
@@ -50,7 +49,7 @@ export default function CatWaterIntakeCalculator() {
     if (nextWet) params.set('wet', nextWet);
 
     const query = params.toString();
-    return query ? `${WATER_INTAKE_PATH}?${query}` : WATER_INTAKE_PATH;
+    return query ? `${CALCULATE_CAT_WATER_INTAKE_PATH}?${query}` : CALCULATE_CAT_WATER_INTAKE_PATH;
   }, []);
 
   const pathWithQuery = useMemo(
