@@ -140,22 +140,22 @@ export default function RootLayout({
                 <h2 className="font-bold mb-2">{FOOTER_TEXT.TOOLS.TITLE}</h2>
                 <ul className="space-y-2">
                   <li>
-                    <Link href={CAT_FOOD_SAFETY_PATH} className="hover:text-pink-600 transition-colors">
+                    <Link href={CAT_FOOD_SAFETY_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CAT_FOOD_SAFETY}
                     </Link>
                   </li>
                   <li>
-                    <Link href={CALCULATE_CAT_AGE_PATH} className="hover:text-pink-600 transition-colors">
+                    <Link href={CALCULATE_CAT_AGE_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_AGE}
                     </Link>
                   </li>
                   <li>
-                    <Link href={CALCULATE_CAT_CALORIE_PATH} className="hover:text-pink-600 transition-colors">
+                    <Link href={CALCULATE_CAT_CALORIE_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_CALORIE}
                     </Link>
                   </li>
                   <li>
-                    <Link href={CALCULATE_CAT_FEEDING_PATH} className="hover:text-pink-600 transition-colors">
+                    <Link href={CALCULATE_CAT_FEEDING_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_FEEDING}
                     </Link>
                   </li>
