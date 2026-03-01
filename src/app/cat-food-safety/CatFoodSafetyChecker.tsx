@@ -527,26 +527,33 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
           {content.SOURCES.TITLE}
         </h2>
         <p className="text-sm text-gray-700 leading-relaxed">{content.SOURCES.INTRO}</p>
-        <ul className="space-y-3 mt-5">
-          {content.SOURCES.LINKS.map((source) => (
-            <li key={source.URL} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700">
-                  {source.KIND}
-                </span>
-                <a
-                  href={source.URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-semibold text-pink-700 underline underline-offset-2 break-all"
-                >
-                  {source.LABEL}
-                </a>
-              </div>
-              {source.NOTE && <p className="mt-2 text-sm text-gray-600 leading-relaxed">{source.NOTE}</p>}
-            </li>
+        <div className="space-y-6 mt-5">
+          {content.SOURCES.GROUPS.map((group) => (
+            <section key={group.TITLE} aria-label={group.TITLE}>
+              <h3 className="text-base font-bold text-gray-900">{group.TITLE}</h3>
+              <ul className="space-y-3 mt-3">
+                {group.LINKS.map((source) => (
+                  <li key={source.URL} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700">
+                        {source.KIND}
+                      </span>
+                      <a
+                        href={source.URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-semibold text-pink-700 underline underline-offset-2 break-all"
+                      >
+                        {source.LABEL}
+                      </a>
+                    </div>
+                    {source.NOTE && <p className="mt-2 text-sm text-gray-600 leading-relaxed">{source.NOTE}</p>}
+                  </li>
+                ))}
+              </ul>
+            </section>
           ))}
-        </ul>
+        </div>
       </section>
 
       <section className="section mt-10 mb-8" aria-labelledby="faqTitle">

@@ -421,27 +421,49 @@ export const CAT_FOOD_SAFETY_TEXT = {
       NOTE: '本ツールは参考情報であり最終判断ではありません。迷う場合は受診を優先してください。',
     },
     SOURCES: {
-      TITLE: '出典・更新方針・免責',
+      TITLE: '出典',
       INTRO:
-        '掲載情報は、公的機関の案内を中心に、一般向けに参照しやすい獣医系情報を補助的に確認して作成しています。',
-      LINKS: [
+        '掲載情報は、公的機関の飼い主向け資料を中心に、動物中毒対応で広く参照される専門機関の情報を補助的に確認して作成しています。',
+      GROUPS: [
         {
-          LABEL: '農林水産省: ペットフード安全法',
-          URL: 'https://www.maff.go.jp/j/syouan/tikusui/petfood/index.html',
-          KIND: '公的機関',
-          NOTE: '国内のペットフード安全に関する基礎情報',
+          TITLE: '危険・注意が必要な食べ物の参考',
+          LINKS: [
+            {
+              LABEL: '環境省: 飼い主のためのペットフード・ガイドライン',
+              URL: 'https://www.env.go.jp/nature/dobutsu/aigo/2_data/pamph/petfood_guide_1808.html',
+              KIND: '公的機関',
+              NOTE: '飼い主向けの総合ガイドライン',
+            },
+            {
+              LABEL: 'FDA: Potentially Dangerous Items for Your Pet',
+              URL: 'https://www.fda.gov/animal-veterinary/animal-health-literacy/potentially-dangerous-items-your-pet',
+              KIND: '公的機関',
+              NOTE: '危険な食べ物・家庭内危険物の例',
+            },
+            {
+              LABEL: 'ASPCA Poison Control: People Foods to Avoid Feeding Your Pets',
+              URL: 'https://www.aspca.org/pet-care/aspca-poison-control/people-foods-avoid-feeding-your-pets',
+              KIND: '専門機関',
+              NOTE: '避けるべき人の食べ物の例',
+            },
+          ],
         },
         {
-          LABEL: 'FDA: Healthy Habits: Feeding Your Pet',
-          URL: 'https://www.fda.gov/animal-veterinary/animal-health-literacy/healthy-habits-feeding-your-pet',
-          KIND: '公的機関',
-          NOTE: 'ペットの食事管理に関する一般向け案内',
-        },
-        {
-          LABEL: 'Merck Veterinary Manual: Introduction to Poisoning',
-          URL: 'https://www.merckvetmanual.com/special-pet-topics/poisoning/introduction-to-poisoning',
-          KIND: '獣医系',
-          NOTE: '中毒時の一般的な考え方と初期対応',
+          TITLE: '誤食時の対応の参考',
+          LINKS: [
+            {
+              LABEL: 'ASPCA: What to Do if Your Pet Is Poisoned',
+              URL: 'https://www.aspca.org/news/what-do-if-your-pet-poisoned',
+              KIND: '専門機関',
+              NOTE: '誤食時の初動対応',
+            },
+            {
+              LABEL: 'ASPCA Poison Control',
+              URL: 'https://www.aspca.org/pet-care/aspca-poison-control',
+              KIND: '専門機関',
+              NOTE: '相談窓口と毒性情報の総合案内',
+            },
+          ],
         },
       ],
     },

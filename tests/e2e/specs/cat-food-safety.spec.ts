@@ -10,7 +10,7 @@ test.describe('猫の食べ物安全性チェック', () => {
       '猫に与えるときに注意が必要な食材',
       '食べ物以外で猫が口にしやすい危険物',
       '判定基準とこのページの使い方',
-      '出典・更新方針・免責',
+      '出典',
     ] as const;
 
     for (const heading of expectedHeadings) {
@@ -31,9 +31,30 @@ test.describe('猫の食べ物安全性チェック', () => {
       expect(currentIndex).toBeLessThan(guideIndex);
     }
 
-    await expect(page.getByRole('link', { name: /農林水産省: ペットフード安全法/ })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Healthy Habits: Feeding Your Pet/ })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Merck Veterinary Manual: Introduction to Poisoning/ })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: '危険・注意が必要な食べ物の参考' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: '誤食時の対応の参考' })).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /環境省: 飼い主のためのペットフード・ガイドライン/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /FDA: Potentially Dangerous Items for Your Pet/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /ASPCA Poison Control: People Foods to Avoid Feeding Your Pets/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /ASPCA: What to Do if Your Pet Is Poisoned/ })
+    ).toBeVisible();
+    await expect(page.getByRole('link', { name: /^ASPCA Poison Control$/ })).toBeVisible();
+    await expect(
+      page.locator('a[href=\"https://www.maff.go.jp/j/syouan/tikusui/petfood/index.html\"]')
+    ).toHaveCount(0);
+    await expect(
+      page.locator('a[href=\"https://www.merckvetmanual.com/special-pet-topics/poisoning/introduction-to-poisoning\"]')
+    ).toHaveCount(0);
+    await expect(
+      page.locator('a[href=\"https://www.fda.gov/animal-veterinary/animal-health-literacy/healthy-habits-feeding-your-pet\"]')
+    ).toHaveCount(0);
     await expect(
       page.getByText(
         '本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。体調不良や判断に迷う症状がある場合は、獣医師の診察を受けてください。'
