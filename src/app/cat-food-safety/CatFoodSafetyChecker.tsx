@@ -8,6 +8,11 @@ import { CAT_FOOD_SAFETY_FAQ_ITEMS, CAT_FOOD_SAFETY_TEXT } from '@/constants/tex
 import ShareMenu from '@/components/ShareMenu';
 import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
 import {
+  FEATURED_CAUTION_FOOD_NAMES,
+  FEATURED_DANGER_FOOD_NAMES,
+  pickFeaturedCatFoods,
+} from '@/lib/catFoodFeaturedContent';
+import {
   createNormalizedFoods,
   searchNormalizedFoods,
   type NormalizedCatFood,
@@ -47,6 +52,7 @@ const FOOD_SAFETY_PATH = '/cat-food-safety';
 
 export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerProps) {
   const router = useRouter();
+  const content = CAT_FOOD_SAFETY_TEXT.CONTENT;
   const suggestionsListId = useId();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<CatFoodItem[]>([]);
@@ -55,6 +61,14 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
   const pendingQueryRef = useRef<string | undefined>(undefined);
   const normalizedFoods = useMemo<NormalizedCatFood[]>(() => createNormalizedFoods(allFoods), [allFoods]);
+  const featuredDangerFoods = useMemo(
+    () => pickFeaturedCatFoods(allFoods, FEATURED_DANGER_FOOD_NAMES, '危険'),
+    [allFoods]
+  );
+  const featuredCautionFoods = useMemo(
+    () => pickFeaturedCatFoods(allFoods, FEATURED_CAUTION_FOOD_NAMES, '注意'),
+    [allFoods]
+  );
 
   const resetSearchState = useCallback(() => {
     setQuery('');
@@ -360,6 +374,189 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
             );
           })}
         </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-emergency-title">
+        <h2
+          id="cat-food-safety-emergency-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.EMERGENCY.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.EMERGENCY.INTRO}</p>
+        <ol className="mt-4 space-y-2 text-sm text-gray-700 leading-relaxed list-decimal pl-5">
+          {content.EMERGENCY.STEPS.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <div className="rounded-xl border border-pink-200 bg-pink-50/70 p-4 mt-5">
+          <p className="text-sm text-pink-950 leading-relaxed">{content.EMERGENCY.NOTE}</p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-danger-title">
+        <h2
+          id="cat-food-safety-danger-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.DANGER_FOODS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.DANGER_FOODS.INTRO}</p>
+        <div className="rounded-xl border border-red-200 bg-red-50/70 p-4 mt-5">
+          <p className="text-sm text-red-950 leading-relaxed">{content.DANGER_FOODS.NOTE}</p>
+        </div>
+        {featuredDangerFoods.length > 0 ? (
+          <div className="grid gap-4 mt-5 md:grid-cols-2">
+            {featuredDangerFoods.map((item) => {
+              const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.危険;
+              return (
+                <article key={item.name} className={`rounded-2xl border ${styles.border} bg-white p-5 shadow-sm`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-base font-bold text-gray-900">{item.name}</h3>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
+                    >
+                      <span aria-hidden="true">●</span>
+                      {item.status}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.description}</p>
+                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">{item.notes}</p>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-500">{content.DANGER_FOODS.EMPTY}</p>
+        )}
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-caution-title">
+        <h2
+          id="cat-food-safety-caution-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.CAUTION_FOODS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.CAUTION_FOODS.INTRO}</p>
+        <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 mt-5">
+          <p className="text-sm text-amber-950 leading-relaxed">{content.CAUTION_FOODS.NOTE}</p>
+        </div>
+        {featuredCautionFoods.length > 0 ? (
+          <div className="grid gap-4 mt-5 md:grid-cols-2">
+            {featuredCautionFoods.map((item) => {
+              const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.注意;
+              return (
+                <article key={item.name} className={`rounded-2xl border ${styles.border} bg-white p-5 shadow-sm`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <h3 className="text-base font-bold text-gray-900">{item.name}</h3>
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
+                    >
+                      <span aria-hidden="true">●</span>
+                      {item.status}
+                    </span>
+                  </div>
+                  <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.description}</p>
+                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">{item.notes}</p>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="mt-4 text-sm text-gray-500">{content.CAUTION_FOODS.EMPTY}</p>
+        )}
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-non-food-title">
+        <h2
+          id="cat-food-safety-non-food-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.NON_FOOD_HAZARDS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.NON_FOOD_HAZARDS.INTRO}</p>
+        <div className="grid gap-3 mt-5 md:grid-cols-2">
+          {content.NON_FOOD_HAZARDS.ITEMS.map((item) => (
+            <div key={item} className="rounded-xl border border-gray-200 bg-gray-50/70 p-4">
+              <p className="text-sm font-medium text-gray-800">{item}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.NON_FOOD_HAZARDS.NOTE}</p>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-guide-title">
+        <h2
+          id="cat-food-safety-guide-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.GUIDE.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.GUIDE.INTRO}</p>
+        <div className="space-y-3 mt-5">
+          {content.GUIDE.STATUS_ITEMS.map((item) => {
+            const styles = STATUS_STYLES[item.LABEL] ?? STATUS_STYLES.注意;
+            return (
+              <article key={item.LABEL} className={`rounded-xl border ${styles.border} bg-white p-4 shadow-sm`}>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
+                  >
+                    <span aria-hidden="true">●</span>
+                    {item.LABEL}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.DESCRIPTION}</p>
+              </article>
+            );
+          })}
+        </div>
+        <ol className="mt-5 space-y-2 text-sm text-gray-700 leading-relaxed list-decimal pl-5">
+          {content.GUIDE.STEPS.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.GUIDE.NOTE}</p>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-sources-title">
+        <h2
+          id="cat-food-safety-sources-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.SOURCES.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.SOURCES.INTRO}</p>
+        <ul className="space-y-3 mt-5">
+          {content.SOURCES.LINKS.map((source) => (
+            <li key={source.URL} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700">
+                  {source.KIND}
+                </span>
+                <a
+                  href={source.URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-semibold text-pink-700 underline underline-offset-2 break-all"
+                >
+                  {source.LABEL}
+                </a>
+              </div>
+              {source.NOTE && <p className="mt-2 text-sm text-gray-600 leading-relaxed">{source.NOTE}</p>}
+            </li>
+          ))}
+        </ul>
+        <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4 mt-5">
+          <h3 className="text-base font-bold text-gray-900">更新方針</h3>
+          <p className="mt-2 text-sm text-gray-700 leading-relaxed">{content.SOURCES.UPDATE_POLICY}</p>
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4 mt-4">
+          <h3 className="text-base font-bold text-gray-900">免責</h3>
+          <p className="mt-2 text-sm text-gray-700 leading-relaxed">{content.SOURCES.DISCLAIMER}</p>
+        </div>
+        <p className="mt-4 text-sm text-gray-500">{`更新日: ${content.SOURCES.UPDATED_AT}`}</p>
       </section>
 
       <section className="section mt-10 mb-8" aria-labelledby="faqTitle">
