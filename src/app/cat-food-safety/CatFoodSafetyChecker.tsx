@@ -8,6 +8,11 @@ import { CAT_FOOD_SAFETY_FAQ_ITEMS, CAT_FOOD_SAFETY_TEXT } from '@/constants/tex
 import ShareMenu from '@/components/ShareMenu';
 import type { CatFoodItem, CatFoodSafetyStatus } from '@/types';
 import {
+  FEATURED_CAUTION_FOOD_NAMES,
+  FEATURED_DANGER_FOOD_NAMES,
+  pickFeaturedCatFoods,
+} from '@/lib/catFoodFeaturedContent';
+import {
   createNormalizedFoods,
   searchNormalizedFoods,
   type NormalizedCatFood,
@@ -45,8 +50,70 @@ type CatFoodSafetyCheckerProps = {
 
 const FOOD_SAFETY_PATH = '/cat-food-safety';
 
+type FeaturedFoodSectionContent = {
+  TITLE: string;
+  INTRO: string;
+  NOTE: string;
+  EMPTY: string;
+};
+
+type FeaturedFoodSectionProps = {
+  sectionId: string;
+  content: FeaturedFoodSectionContent;
+  foods: readonly CatFoodItem[];
+  fallbackStatus: CatFoodSafetyStatus;
+  noteClassName: string;
+  noteTextClassName: string;
+};
+
+function FeaturedFoodSection({
+  sectionId,
+  content,
+  foods,
+  fallbackStatus,
+  noteClassName,
+  noteTextClassName,
+}: FeaturedFoodSectionProps) {
+  return (
+    <section className="section mt-10" aria-labelledby={sectionId}>
+      <h2 id={sectionId} className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
+        {content.TITLE}
+      </h2>
+      <p className="text-sm text-gray-700 leading-relaxed">{content.INTRO}</p>
+      <div className={`rounded-xl border p-4 mt-5 ${noteClassName}`}>
+        <p className={`text-sm leading-relaxed ${noteTextClassName}`}>{content.NOTE}</p>
+      </div>
+      {foods.length > 0 ? (
+        <div className="mt-5 space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+          {foods.map((item) => {
+            const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES[fallbackStatus];
+            return (
+              <article key={item.name} className={`rounded-2xl border ${styles.border} bg-white p-5 shadow-sm`}>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-base font-bold text-gray-900">{item.name}</h3>
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
+                  >
+                    <span aria-hidden="true">●</span>
+                    {item.status}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.description}</p>
+                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{item.notes}</p>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="mt-4 text-sm text-gray-500">{content.EMPTY}</p>
+      )}
+    </section>
+  );
+}
+
 export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerProps) {
   const router = useRouter();
+  const content = CAT_FOOD_SAFETY_TEXT.CONTENT;
   const suggestionsListId = useId();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<CatFoodItem[]>([]);
@@ -55,6 +122,14 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
   const [suggestions, setSuggestions] = useState<CatFoodItem[]>([]);
   const pendingQueryRef = useRef<string | undefined>(undefined);
   const normalizedFoods = useMemo<NormalizedCatFood[]>(() => createNormalizedFoods(allFoods), [allFoods]);
+  const featuredDangerFoods = useMemo(
+    () => pickFeaturedCatFoods(allFoods, FEATURED_DANGER_FOOD_NAMES, '危険'),
+    [allFoods]
+  );
+  const featuredCautionFoods = useMemo(
+    () => pickFeaturedCatFoods(allFoods, FEATURED_CAUTION_FOOD_NAMES, '注意'),
+    [allFoods]
+  );
 
   const resetSearchState = useCallback(() => {
     setQuery('');
@@ -224,9 +299,8 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
         </div>
 
         <form onSubmit={onSubmit} className="surface p-4 border-none rounded-2xl space-y-3" noValidate>
-          <label htmlFor="food-name" className="text-sm font-semibold text-gray-700 flex items-center justify-between">
+          <label htmlFor="food-name" className="text-sm font-semibold text-gray-700">
             {CAT_FOOD_SAFETY_TEXT.INPUT.LABEL}
-            <span className="text-xs text-gray-600">{`${query.trim().length}/${MAX_QUERY_LENGTH}`}</span>
           </label>
           <div className="flex flex-col gap-3 md:flex-row">
             <div
@@ -362,6 +436,131 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
         </div>
       </section>
 
+      <section className="section mt-10" aria-labelledby="cat-food-safety-emergency-title">
+        <h2
+          id="cat-food-safety-emergency-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.EMERGENCY.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.EMERGENCY.INTRO}</p>
+        <ol className="mt-4 space-y-2 text-sm text-gray-700 leading-relaxed list-decimal pl-5">
+          {content.EMERGENCY.STEPS.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <div className="rounded-xl border border-pink-200 bg-pink-50/70 p-4 mt-5">
+          <p className="text-sm text-pink-950 leading-relaxed">{content.EMERGENCY.NOTE}</p>
+        </div>
+      </section>
+
+      <FeaturedFoodSection
+        sectionId="cat-food-safety-danger-title"
+        content={content.DANGER_FOODS}
+        foods={featuredDangerFoods}
+        fallbackStatus="危険"
+        noteClassName="border-red-200 bg-red-50/70"
+        noteTextClassName="text-red-950"
+      />
+
+      <FeaturedFoodSection
+        sectionId="cat-food-safety-caution-title"
+        content={content.CAUTION_FOODS}
+        foods={featuredCautionFoods}
+        fallbackStatus="注意"
+        noteClassName="border-amber-200 bg-amber-50/70"
+        noteTextClassName="text-amber-950"
+      />
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-non-food-title">
+        <h2
+          id="cat-food-safety-non-food-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.NON_FOOD_HAZARDS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.NON_FOOD_HAZARDS.INTRO}</p>
+        <div className="grid gap-3 mt-5 md:grid-cols-2">
+          {content.NON_FOOD_HAZARDS.ITEMS.map((item) => (
+            <div key={item} className="rounded-xl border border-gray-200 bg-gray-50/70 p-4">
+              <p className="text-sm font-medium text-gray-800">{item}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.NON_FOOD_HAZARDS.NOTE}</p>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-guide-title">
+        <h2
+          id="cat-food-safety-guide-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.GUIDE.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.GUIDE.INTRO}</p>
+        <div className="space-y-3 mt-5">
+          {content.GUIDE.STATUS_ITEMS.map((item) => {
+            const styles = STATUS_STYLES[item.LABEL] ?? STATUS_STYLES.注意;
+            return (
+              <article key={item.LABEL} className={`rounded-xl border ${styles.border} bg-white p-4 shadow-sm`}>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
+                  >
+                    <span aria-hidden="true">●</span>
+                    {item.LABEL}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.DESCRIPTION}</p>
+              </article>
+            );
+          })}
+        </div>
+        <ol className="mt-5 space-y-2 text-sm text-gray-700 leading-relaxed list-decimal pl-5">
+          {content.GUIDE.STEPS.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        <p className="mt-4 text-sm text-gray-600 leading-relaxed">{content.GUIDE.NOTE}</p>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="cat-food-safety-sources-title">
+        <h2
+          id="cat-food-safety-sources-title"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
+        >
+          {content.SOURCES.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed">{content.SOURCES.INTRO}</p>
+        <div className="space-y-6 mt-5">
+          {content.SOURCES.GROUPS.map((group) => (
+            <section key={group.TITLE} aria-label={group.TITLE}>
+              <h3 className="text-base font-bold text-gray-900">{group.TITLE}</h3>
+              <ul className="space-y-3 mt-3">
+                {group.LINKS.map((source) => (
+                  <li key={source.URL} className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="inline-flex rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs font-medium text-gray-700">
+                        {source.KIND}
+                      </span>
+                      <a
+                        href={source.URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-semibold text-pink-700 underline underline-offset-2 break-all"
+                      >
+                        {source.LABEL}
+                      </a>
+                    </div>
+                    {source.NOTE && <p className="mt-2 text-sm text-gray-600 leading-relaxed">{source.NOTE}</p>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </section>
+
       <section className="section mt-10 mb-8" aria-labelledby="faqTitle">
         <h2 id="faqTitle" className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
           よくある質問
@@ -398,6 +597,10 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
         usageTitle={CAT_FOOD_SAFETY_TEXT.GUIDE.USAGE_TITLE}
         usageItems={CAT_FOOD_SAFETY_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed">{CAT_FOOD_SAFETY_TEXT.DISCLAIMER}</p>
+      </section>
     </main>
   );
 }
