@@ -238,9 +238,8 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
         </div>
 
         <form onSubmit={onSubmit} className="surface p-4 border-none rounded-2xl space-y-3" noValidate>
-          <label htmlFor="food-name" className="text-sm font-semibold text-gray-700 flex items-center justify-between">
+          <label htmlFor="food-name" className="text-sm font-semibold text-gray-700">
             {CAT_FOOD_SAFETY_TEXT.INPUT.LABEL}
-            <span className="text-xs text-gray-600">{`${query.trim().length}/${MAX_QUERY_LENGTH}`}</span>
           </label>
           <div className="flex flex-col gap-3 md:flex-row">
             <div
@@ -548,15 +547,6 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
             </li>
           ))}
         </ul>
-        <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4 mt-5">
-          <h3 className="text-base font-bold text-gray-900">更新方針</h3>
-          <p className="mt-2 text-sm text-gray-700 leading-relaxed">{content.SOURCES.UPDATE_POLICY}</p>
-        </div>
-        <div className="rounded-xl border border-gray-200 bg-gray-50/70 p-4 mt-4">
-          <h3 className="text-base font-bold text-gray-900">免責</h3>
-          <p className="mt-2 text-sm text-gray-700 leading-relaxed">{content.SOURCES.DISCLAIMER}</p>
-        </div>
-        <p className="mt-4 text-sm text-gray-500">{`更新日: ${content.SOURCES.UPDATED_AT}`}</p>
       </section>
 
       <section className="section mt-10 mb-8" aria-labelledby="faqTitle">
@@ -595,6 +585,10 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
         usageTitle={CAT_FOOD_SAFETY_TEXT.GUIDE.USAGE_TITLE}
         usageItems={CAT_FOOD_SAFETY_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed">{CAT_FOOD_SAFETY_TEXT.DISCLAIMER}</p>
+      </section>
     </main>
   );
 }

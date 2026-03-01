@@ -8,7 +8,7 @@ export const FEATURED_DANGER_FOOD_NAMES = [
   'チョコレート',
   'コーヒー・紅茶・緑茶',
   'ぶどう・レーズン',
-  'ナツメグ',
+  '人工甘味料（キシリトール）',
 ] as const;
 
 export const FEATURED_CAUTION_FOOD_NAMES = [

@@ -20,8 +20,6 @@ test.describe('猫の食べ物安全性チェック', () => {
     await expect(page.getByText('自己判断で吐かせない')).toBeVisible();
     await expect(page.getByText('ネギ類は加熱しても危険')).toBeVisible();
     await expect(page.getByText('人間向け味付け・加工食品は別問題')).toBeVisible();
-    await expect(page.getByText('更新日: 2026年3月1日')).toBeVisible();
-
     const h2Texts = await page.locator('main h2').allTextContents();
     const faqIndex = h2Texts.indexOf('よくある質問');
     const guideIndex = h2Texts.indexOf('このツールでできること');
@@ -34,7 +32,13 @@ test.describe('猫の食べ物安全性チェック', () => {
     }
 
     await expect(page.getByRole('link', { name: /農林水産省: ペットフード安全法/ })).toBeVisible();
-    await expect(page.getByRole('link', { name: /Merck Veterinary Manual/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Healthy Habits: Feeding Your Pet/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Merck Veterinary Manual: Introduction to Poisoning/ })).toBeVisible();
+    await expect(
+      page.getByText(
+        '本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。体調不良や判断に迷う症状がある場合は、獣医師の診察を受けてください。'
+      )
+    ).toBeVisible();
   });
 
   test('既知の危険食材を検索できる', async ({ page }) => {

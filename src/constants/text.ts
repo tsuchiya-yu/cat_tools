@@ -318,6 +318,8 @@ export const CAT_FOOD_SAFETY_TEXT = {
       '誤食が疑われる食材の危険度を、受診判断の参考として確認したいとき',
     ],
   },
+  DISCLAIMER:
+    '本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。体調不良や判断に迷う症状がある場合は、獣医師の診察を受けてください。',
   BREADCRUMBS: {
     HOME: COMMON_TEXT.BREADCRUMBS.HOME,
     CAT_FOOD_SAFETY: '猫の食べ物安全性チェック',
@@ -430,23 +432,18 @@ export const CAT_FOOD_SAFETY_TEXT = {
           NOTE: '国内のペットフード安全に関する基礎情報',
         },
         {
-          LABEL: 'FDA: People Foods to Avoid Feeding Your Pets',
-          URL: 'https://www.fda.gov/animal-veterinary/animal-health-literacy/people-foods-avoid-feeding-your-pets',
+          LABEL: 'FDA: Healthy Habits: Feeding Your Pet',
+          URL: 'https://www.fda.gov/animal-veterinary/animal-health-literacy/healthy-habits-feeding-your-pet',
           KIND: '公的機関',
-          NOTE: '人の食べ物を与える際の注意喚起',
+          NOTE: 'ペットの食事管理に関する一般向け案内',
         },
         {
-          LABEL: 'Merck Veterinary Manual: Introduction to Poisoning in Cats',
-          URL: 'https://www.merckvetmanual.com/cat-owners/injuries-and-poisoning-of-cats/introduction-to-poisoning-in-cats',
+          LABEL: 'Merck Veterinary Manual: Introduction to Poisoning',
+          URL: 'https://www.merckvetmanual.com/special-pet-topics/poisoning/introduction-to-poisoning',
           KIND: '獣医系',
-          NOTE: '猫の中毒時の一般的な対応',
+          NOTE: '中毒時の一般的な考え方と初期対応',
         },
       ],
-      UPDATE_POLICY:
-        '掲載内容はデータ更新や主要な参考情報の見直しにあわせて随時更新します。個別の製品成分や体質差までは反映できないため、実際の判断時は最新の製品表示も確認してください。',
-      DISCLAIMER:
-        'このページは一般的な参考情報であり、診断や治療の代替ではありません。誤食や体調不良が疑われる場合は、できるだけ早く獣医師へ相談してください。',
-      UPDATED_AT: '2026年3月1日',
     },
   },
 } as const;
