@@ -405,7 +405,7 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
           <p className="text-sm text-red-950 leading-relaxed">{content.DANGER_FOODS.NOTE}</p>
         </div>
         {featuredDangerFoods.length > 0 ? (
-          <div className="grid gap-4 mt-5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 mt-5 lg:grid-cols-2">
             {featuredDangerFoods.map((item) => {
               const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.危険;
               return (
@@ -442,7 +442,7 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
           <p className="text-sm text-amber-950 leading-relaxed">{content.CAUTION_FOODS.NOTE}</p>
         </div>
         {featuredCautionFoods.length > 0 ? (
-          <div className="grid gap-4 mt-5 md:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4 mt-5 lg:grid-cols-2">
             {featuredCautionFoods.map((item) => {
               const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.注意;
               return (

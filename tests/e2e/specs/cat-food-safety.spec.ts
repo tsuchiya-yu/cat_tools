@@ -40,12 +40,12 @@ test.describe('猫の食べ物安全性チェック', () => {
       page.getByRole('link', { name: /FDA: Potentially Dangerous Items for Your Pet/ })
     ).toBeVisible();
     await expect(
-      page.getByRole('link', { name: /ASPCA Poison Control: People Foods to Avoid Feeding Your Pets/ })
+      page.getByRole('link', { name: /ASPCA: People Foods to Avoid Feeding Your Pets/ })
     ).toBeVisible();
     await expect(
       page.getByRole('link', { name: /ASPCA: What to Do if Your Pet Is Poisoned/ })
     ).toBeVisible();
-    await expect(page.getByRole('link', { name: /^ASPCA Poison Control$/ })).toBeVisible();
+    await expect(page.locator('a[href=\"https://www.aspca.org/pet-care/aspca-poison-control\"]')).toHaveCount(0);
     await expect(
       page.locator('a[href=\"https://www.maff.go.jp/j/syouan/tikusui/petfood/index.html\"]')
     ).toHaveCount(0);

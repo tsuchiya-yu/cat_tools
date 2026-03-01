@@ -441,7 +441,7 @@ export const CAT_FOOD_SAFETY_TEXT = {
               NOTE: '危険な食べ物・家庭内危険物の例',
             },
             {
-              LABEL: 'ASPCA Poison Control: People Foods to Avoid Feeding Your Pets',
+              LABEL: 'ASPCA: People Foods to Avoid Feeding Your Pets',
               URL: 'https://www.aspca.org/pet-care/aspca-poison-control/people-foods-avoid-feeding-your-pets',
               KIND: '専門機関',
               NOTE: '避けるべき人の食べ物の例',
@@ -456,12 +456,6 @@ export const CAT_FOOD_SAFETY_TEXT = {
               URL: 'https://www.aspca.org/news/what-do-if-your-pet-poisoned',
               KIND: '専門機関',
               NOTE: '誤食時の初動対応',
-            },
-            {
-              LABEL: 'ASPCA Poison Control',
-              URL: 'https://www.aspca.org/pet-care/aspca-poison-control',
-              KIND: '専門機関',
-              NOTE: '相談窓口と毒性情報の総合案内',
             },
           ],
         },
