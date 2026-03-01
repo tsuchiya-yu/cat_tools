@@ -44,4 +44,20 @@ describe('pickFeaturedCatFoods', () => {
 
     expect(result.map((item) => item.name)).toEqual(['玉ねぎ']);
   });
+
+  it('development では未存在やステータス不一致を警告する', () => {
+    const originalNodeEnv = process.env.NODE_ENV;
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+    try {
+      process.env.NODE_ENV = 'development';
+
+      pickFeaturedCatFoods(sampleFoods, ['存在しない食材', '牛乳・乳製品'], '危険');
+
+      expect(warnSpy).toHaveBeenCalledTimes(2);
+    } finally {
+      warnSpy.mockRestore();
+      process.env.NODE_ENV = originalNodeEnv;
+    }
+  });
 });

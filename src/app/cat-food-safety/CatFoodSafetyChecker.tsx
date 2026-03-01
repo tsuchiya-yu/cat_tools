@@ -50,6 +50,67 @@ type CatFoodSafetyCheckerProps = {
 
 const FOOD_SAFETY_PATH = '/cat-food-safety';
 
+type FeaturedFoodSectionContent = {
+  TITLE: string;
+  INTRO: string;
+  NOTE: string;
+  EMPTY: string;
+};
+
+type FeaturedFoodSectionProps = {
+  sectionId: string;
+  content: FeaturedFoodSectionContent;
+  foods: readonly CatFoodItem[];
+  fallbackStatus: CatFoodSafetyStatus;
+  noteClassName: string;
+  noteTextClassName: string;
+};
+
+function FeaturedFoodSection({
+  sectionId,
+  content,
+  foods,
+  fallbackStatus,
+  noteClassName,
+  noteTextClassName,
+}: FeaturedFoodSectionProps) {
+  return (
+    <section className="section mt-10" aria-labelledby={sectionId}>
+      <h2 id={sectionId} className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight">
+        {content.TITLE}
+      </h2>
+      <p className="text-sm text-gray-700 leading-relaxed">{content.INTRO}</p>
+      <div className={`rounded-xl border p-4 mt-5 ${noteClassName}`}>
+        <p className={`text-sm leading-relaxed ${noteTextClassName}`}>{content.NOTE}</p>
+      </div>
+      {foods.length > 0 ? (
+        <div className="mt-5 space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
+          {foods.map((item) => {
+            const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES[fallbackStatus];
+            return (
+              <article key={item.name} className={`rounded-2xl border ${styles.border} bg-white p-5 shadow-sm`}>
+                <div className="flex items-center justify-between gap-3">
+                  <h3 className="text-base font-bold text-gray-900">{item.name}</h3>
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
+                  >
+                    <span aria-hidden="true">●</span>
+                    {item.status}
+                  </span>
+                </div>
+                <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.description}</p>
+                <p className="mt-3 text-sm text-gray-600 leading-relaxed">{item.notes}</p>
+              </article>
+            );
+          })}
+        </div>
+      ) : (
+        <p className="mt-4 text-sm text-gray-500">{content.EMPTY}</p>
+      )}
+    </section>
+  );
+}
+
 export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerProps) {
   const router = useRouter();
   const content = CAT_FOOD_SAFETY_TEXT.CONTENT;
@@ -393,79 +454,23 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
         </div>
       </section>
 
-      <section className="section mt-10" aria-labelledby="cat-food-safety-danger-title">
-        <h2
-          id="cat-food-safety-danger-title"
-          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
-        >
-          {content.DANGER_FOODS.TITLE}
-        </h2>
-        <p className="text-sm text-gray-700 leading-relaxed">{content.DANGER_FOODS.INTRO}</p>
-        <div className="rounded-xl border border-red-200 bg-red-50/70 p-4 mt-5">
-          <p className="text-sm text-red-950 leading-relaxed">{content.DANGER_FOODS.NOTE}</p>
-        </div>
-        {featuredDangerFoods.length > 0 ? (
-          <div className="mt-5 space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-            {featuredDangerFoods.map((item) => {
-              const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.危険;
-              return (
-                <article key={item.name} className={`rounded-2xl border ${styles.border} bg-white p-5 shadow-sm`}>
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="text-base font-bold text-gray-900">{item.name}</h3>
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
-                    >
-                      <span aria-hidden="true">●</span>
-                      {item.status}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.description}</p>
-                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">{item.notes}</p>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="mt-4 text-sm text-gray-500">{content.DANGER_FOODS.EMPTY}</p>
-        )}
-      </section>
+      <FeaturedFoodSection
+        sectionId="cat-food-safety-danger-title"
+        content={content.DANGER_FOODS}
+        foods={featuredDangerFoods}
+        fallbackStatus="危険"
+        noteClassName="border-red-200 bg-red-50/70"
+        noteTextClassName="text-red-950"
+      />
 
-      <section className="section mt-10" aria-labelledby="cat-food-safety-caution-title">
-        <h2
-          id="cat-food-safety-caution-title"
-          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight"
-        >
-          {content.CAUTION_FOODS.TITLE}
-        </h2>
-        <p className="text-sm text-gray-700 leading-relaxed">{content.CAUTION_FOODS.INTRO}</p>
-        <div className="rounded-xl border border-amber-200 bg-amber-50/70 p-4 mt-5">
-          <p className="text-sm text-amber-950 leading-relaxed">{content.CAUTION_FOODS.NOTE}</p>
-        </div>
-        {featuredCautionFoods.length > 0 ? (
-          <div className="mt-5 space-y-4 lg:grid lg:grid-cols-2 lg:gap-4 lg:space-y-0">
-            {featuredCautionFoods.map((item) => {
-              const styles = STATUS_STYLES[item.status] ?? STATUS_STYLES.注意;
-              return (
-                <article key={item.name} className={`rounded-2xl border ${styles.border} bg-white p-5 shadow-sm`}>
-                  <div className="flex items-center justify-between gap-3">
-                    <h3 className="text-base font-bold text-gray-900">{item.name}</h3>
-                    <span
-                      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium ${styles.badge}`}
-                    >
-                      <span aria-hidden="true">●</span>
-                      {item.status}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm text-gray-700 leading-relaxed">{item.description}</p>
-                  <p className="mt-3 text-sm text-gray-600 leading-relaxed">{item.notes}</p>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="mt-4 text-sm text-gray-500">{content.CAUTION_FOODS.EMPTY}</p>
-        )}
-      </section>
+      <FeaturedFoodSection
+        sectionId="cat-food-safety-caution-title"
+        content={content.CAUTION_FOODS}
+        foods={featuredCautionFoods}
+        fallbackStatus="注意"
+        noteClassName="border-amber-200 bg-amber-50/70"
+        noteTextClassName="text-amber-950"
+      />
 
       <section className="section mt-10" aria-labelledby="cat-food-safety-non-food-title">
         <h2

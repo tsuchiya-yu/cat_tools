@@ -39,7 +39,21 @@ export function pickFeaturedCatFoods(
     }
 
     const item = foodsByName.get(name);
-    if (!item || item.status !== expectedStatus) {
+    if (!item) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(
+          `[pickFeaturedCatFoods] Featured food "${name}" was not found in cat_foods.json for expected status "${expectedStatus}".`
+        );
+      }
+      continue;
+    }
+
+    if (item.status !== expectedStatus) {
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(
+          `[pickFeaturedCatFoods] Featured food "${name}" has status "${item.status}" but expected "${expectedStatus}".`
+        );
+      }
       continue;
     }
 
