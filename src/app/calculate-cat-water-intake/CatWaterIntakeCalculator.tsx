@@ -128,7 +128,7 @@ function WaterIntakeSupplementaryContent() {
             変わります。このツールは、食事由来の水分を差し引いたうえで、器からの飲水量の目安を見やすくしています。
           </p>
         </div>
-        <div className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-5 grid grid-cols-2 gap-5 lg:grid-cols-3">
           {WATER_INTAKE_FACTOR_CARDS.map((item) => (
             <article key={item.title} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 text-balance">{item.title}</h3>
@@ -157,11 +157,9 @@ function WaterIntakeSupplementaryContent() {
         </p>
         <div className="rounded-2xl border border-gray-200 bg-white p-5 mt-5 shadow-sm">
           <h3 className="text-base font-bold text-gray-900 text-balance">チェックしたい変化</h3>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
             {DEHYDRATION_SIGN_ITEMS.map((item) => (
-              <li key={item} className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-700 leading-relaxed text-pretty">
-                {item}
-              </li>
+              <li key={item}>{item}</li>
             ))}
           </ul>
         </div>
@@ -185,24 +183,20 @@ function WaterIntakeSupplementaryContent() {
           飲水量を増やしたいときは、量だけでなく、飲みやすい環境づくりも同じくらい重要です。猫ごとに好みが違うため、
           ひとつずつ試して反応を見ると続けやすくなります。
         </p>
-        <div className="mt-5 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="mt-5 space-y-6">
+          <div>
             <h3 className="text-base font-bold text-gray-900 text-balance">すぐ試しやすい工夫</h3>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
               {QUICK_HYDRATION_TIPS.map((item) => (
-                <li key={item} className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-700 leading-relaxed text-pretty">
-                  {item}
-                </li>
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          <div>
             <h3 className="text-base font-bold text-gray-900 text-balance">器や置き場所を見直すポイント</h3>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
               {BOWL_AND_PLACE_TIPS.map((item) => (
-                <li key={item} className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-700 leading-relaxed text-pretty">
-                  {item}
-                </li>
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </div>
@@ -228,17 +222,12 @@ function WaterIntakeSupplementaryContent() {
         </div>
         <div className="rounded-2xl border border-gray-200 bg-white p-5 mt-5 shadow-sm">
           <h3 className="text-base font-bold text-gray-900 text-balance">あわせて確認したい変化</h3>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
             {OVERDRINKING_CHECK_ITEMS.map((item) => (
-              <li key={item} className="rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 text-sm text-gray-700 leading-relaxed text-pretty">
-                {item}
-              </li>
+              <li key={item}>{item}</li>
             ))}
           </ul>
         </div>
-        <p className="mt-5 text-sm text-gray-600 leading-relaxed text-pretty">
-          ここでの情報は受診の目安を整理するための補足です。急な変化が続く場合は、早めに動物病院へ相談してください。
-        </p>
       </section>
     </>
   );
@@ -482,6 +471,12 @@ export default function CatWaterIntakeCalculator() {
         usageTitle={WATER_INTAKE_UI_TEXT.GUIDE.USAGE_TITLE}
         usageItems={WATER_INTAKE_UI_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed text-pretty">
+          ここでの情報は受診の目安を整理するための補足です。急な変化が続く場合は、早めに動物病院へ相談してください。
+        </p>
+      </section>
     </main>
   );
 }
