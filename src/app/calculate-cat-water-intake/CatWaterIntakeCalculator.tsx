@@ -21,6 +21,150 @@ function parseRequiredPositive(value: string) {
   return Number.isFinite(parsed) ? parsed : Number.NaN;
 }
 
+function WaterIntakeSupplementaryContent() {
+  const supplementaryText = WATER_INTAKE_UI_TEXT.SUPPLEMENTARY;
+
+  return (
+    <>
+      <section className="section mt-10" aria-labelledby="water-intake-result-guide">
+        <h2
+          id="water-intake-result-guide"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.RESULT_GUIDE.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.RESULT_GUIDE.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div className="rounded-xl border border-pink-200 bg-pink-50 p-4 mt-5">
+          <p className="text-sm text-pink-900 leading-relaxed text-pretty">
+            {supplementaryText.RESULT_GUIDE.NOTE}
+          </p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="water-intake-basics">
+        <h2
+          id="water-intake-basics"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.BASICS.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.BASICS.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div
+          className="mt-6 grid"
+          style={{
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gap: 'calc(var(--spacing) * 2)',
+          }}
+        >
+          {supplementaryText.BASICS.FACTORS.map((item) => (
+            <article key={item.title} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
+              <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.title}</h3>
+              <p className="mt-2 text-xs sm:text-sm text-gray-700 leading-relaxed text-pretty">{item.description}</p>
+            </article>
+          ))}
+        </div>
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 mt-5">
+          <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+            {supplementaryText.BASICS.NOTE}
+          </p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="water-intake-low-signs">
+        <h2
+          id="water-intake-low-signs"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.LOW_SIGNS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.LOW_SIGNS.INTRO}
+        </p>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 mt-5 shadow-sm">
+          <h3 className="text-base font-bold text-gray-900 text-balance">{supplementaryText.LOW_SIGNS.CHECK_TITLE}</h3>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
+            {supplementaryText.LOW_SIGNS.ITEMS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="rounded-xl border border-pink-200 bg-pink-50 p-4 mt-5">
+          <h3 className="text-base font-bold text-pink-900 text-balance">{supplementaryText.LOW_SIGNS.NOTE_TITLE}</h3>
+          <p className="mt-2 text-sm text-pink-900 leading-relaxed text-pretty">
+            {supplementaryText.LOW_SIGNS.NOTE}
+          </p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="water-intake-tips">
+        <h2
+          id="water-intake-tips"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.TIPS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.TIPS.INTRO}
+        </p>
+        <div className="mt-5 space-y-6">
+          <div>
+            <h3 className="text-base font-bold text-gray-900 text-balance">{supplementaryText.TIPS.QUICK_TITLE}</h3>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
+              {supplementaryText.TIPS.QUICK_ITEMS.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-gray-900 text-balance">{supplementaryText.TIPS.PLACE_TITLE}</h3>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
+              {supplementaryText.TIPS.PLACE_ITEMS.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="water-intake-overdrinking">
+        <h2
+          id="water-intake-overdrinking"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.OVERDRINKING.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.OVERDRINKING.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 mt-5 shadow-sm">
+          <h3 className="text-base font-bold text-gray-900 text-balance">{supplementaryText.OVERDRINKING.CHECK_TITLE}</h3>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed text-pretty">
+            {supplementaryText.OVERDRINKING.ITEMS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    </>
+  );
+}
+
 export default function CatWaterIntakeCalculator() {
   const router = useRouter();
   const [weight, setWeight] = useState('');
@@ -248,6 +392,8 @@ export default function CatWaterIntakeCalculator() {
         </section>
       )}
 
+      <WaterIntakeSupplementaryContent />
+
       <WaterIntakeFAQ />
 
       <GuideSection
@@ -257,6 +403,12 @@ export default function CatWaterIntakeCalculator() {
         usageTitle={WATER_INTAKE_UI_TEXT.GUIDE.USAGE_TITLE}
         usageItems={WATER_INTAKE_UI_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed text-pretty">
+          {WATER_INTAKE_UI_TEXT.SUPPLEMENTARY.DISCLAIMER}
+        </p>
+      </section>
     </main>
   );
 }
