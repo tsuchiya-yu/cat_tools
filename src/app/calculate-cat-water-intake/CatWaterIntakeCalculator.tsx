@@ -129,8 +129,11 @@ function WaterIntakeSupplementaryContent() {
           </p>
         </div>
         <div
-          className="mt-6 grid gap-5 sm:gap-6"
-          style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}
+          className="mt-6 grid"
+          style={{
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gap: 'calc(var(--spacing) * 2)',
+          }}
         >
           {WATER_INTAKE_FACTOR_CARDS.map((item) => (
             <article key={item.title} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
