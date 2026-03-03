@@ -128,9 +128,12 @@ function WaterIntakeSupplementaryContent() {
             変わります。このツールは、食事由来の水分を差し引いたうえで、器からの飲水量の目安を見やすくしています。
           </p>
         </div>
-        <div className="mt-6 grid grid-cols-2 gap-6">
+        <div
+          className="mt-6 grid gap-5 sm:gap-6"
+          style={{ gridTemplateColumns: 'repeat(2, minmax(0, 1fr))' }}
+        >
           {WATER_INTAKE_FACTOR_CARDS.map((item) => (
-            <article key={item.title} className="rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
+            <article key={item.title} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
               <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.title}</h3>
               <p className="mt-2 text-xs sm:text-sm text-gray-700 leading-relaxed text-pretty">{item.description}</p>
             </article>
