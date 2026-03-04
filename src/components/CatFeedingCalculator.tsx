@@ -58,6 +58,200 @@ function FeedingInputGroup({
   );
 }
 
+function FeedingSupplementaryContent() {
+  const supplementaryText = FEEDING_UI_TEXT.SUPPLEMENTARY;
+
+  return (
+    <>
+      <section className="section mt-10" aria-labelledby="feeding-basics">
+        <h2
+          id="feeding-basics"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.BASICS.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.BASICS.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div className="rounded-xl border border-pink-200 bg-pink-50 p-4 mt-5">
+          <p className="text-sm text-pink-900 leading-relaxed text-pretty">
+            {supplementaryText.BASICS.NOTE}
+          </p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-formula">
+        <h2
+          id="feeding-formula"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.FORMULA.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.FORMULA.INTRO}
+        </p>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 mt-5 shadow-sm">
+          <p className="text-base font-bold text-gray-900 leading-relaxed text-balance">
+            {supplementaryText.FORMULA.EQUATION}
+          </p>
+        </div>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty mt-5">
+          {supplementaryText.FORMULA.EXAMPLE}
+        </p>
+        <div className="space-y-3 mt-5">
+          {supplementaryText.FORMULA.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-conditions">
+        <h2
+          id="feeding-conditions"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.CONDITIONS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.CONDITIONS.INTRO}
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+          {supplementaryText.CONDITIONS.ITEMS.map((item) => (
+            <article key={item.TITLE} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
+              <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <div className="space-y-3 mt-3">
+                {item.BODY.map((paragraph) => (
+                  <p key={paragraph} className="text-xs sm:text-sm text-gray-700 leading-relaxed text-pretty">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-adjustment">
+        <h2
+          id="feeding-adjustment"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.ADJUSTMENT.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.ADJUSTMENT.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div className="mt-5 space-y-6">
+          {supplementaryText.ADJUSTMENT.ITEMS.map((item) => (
+            <div key={item.TITLE}>
+              <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <div className="space-y-3 mt-3">
+                {item.BODY.map((paragraph) => (
+                  <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="rounded-xl border border-pink-200 bg-pink-50 p-4 mt-5">
+          <p className="text-sm text-pink-900 leading-relaxed text-pretty">
+            {supplementaryText.ADJUSTMENT.NOTE}
+          </p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-food-types">
+        <h2
+          id="feeding-food-types"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.FOOD_TYPES.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.FOOD_TYPES.BODY.map((paragraph) => (
+            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div className="mt-5 space-y-6">
+          {supplementaryText.FOOD_TYPES.ITEMS.map((item) => (
+            <div key={item.TITLE}>
+              <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <div className="space-y-3 mt-3">
+                {item.BODY.map((paragraph) => (
+                  <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-examples">
+        <h2
+          id="feeding-examples"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.EXAMPLES.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.EXAMPLES.INTRO}
+        </p>
+        <div className="mt-5 space-y-6">
+          {supplementaryText.EXAMPLES.ITEMS.map((item) => (
+            <div key={item.TITLE}>
+              <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <div className="space-y-3 mt-3">
+                {item.BODY.map((paragraph) => (
+                  <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-related-tools">
+        <h2
+          id="feeding-related-tools"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.RELATED_TOOLS.TITLE}
+        </h2>
+        <div className="space-y-3">
+          <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+            {supplementaryText.RELATED_TOOLS.INTRO_BEFORE_LINK}
+            <Link href="/calculate-cat-calorie" className="text-pink-600 font-bold">
+              {FEEDING_UI_TEXT.LINKS.CALORIE_PAGE}
+            </Link>
+            {supplementaryText.RELATED_TOOLS.INTRO_AFTER_LINK}
+          </p>
+          <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+            {supplementaryText.RELATED_TOOLS.BODY}
+          </p>
+        </div>
+      </section>
+    </>
+  );
+}
+
 type CatFeedingCalculatorProps = {
   initialKcal?: string;
   initialDensity?: string;
@@ -252,6 +446,8 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
         </section>
       )}
 
+      <FeedingSupplementaryContent />
+
       {/* FAQ */}
       <FeedingFAQ />
 
@@ -262,6 +458,12 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
         usageTitle={FEEDING_UI_TEXT.GUIDE.USAGE_TITLE}
         usageItems={FEEDING_UI_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed text-pretty">
+          {FEEDING_UI_TEXT.SUPPLEMENTARY.DISCLAIMER}
+        </p>
+      </section>
     </main>
   );
 }

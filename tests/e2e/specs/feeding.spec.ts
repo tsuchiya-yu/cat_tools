@@ -79,4 +79,23 @@ test.describe('猫の給餌量計算 E2E', () => {
     const link = page.getByRole('link', { name: 'こちら（カロリー計算ツール）' });
     await expect(link).toBeVisible();
   });
+
+  test('補助本文と追加FAQが表示され、下部に関連ツール導線がある', async ({ page }) => {
+    await page.goto(PAGE);
+
+    await expect(page.getByRole('heading', { name: '猫の1日の給餌量はどう決まる？' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '給餌量の計算式と考え方' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '猫の状態によって給餌量が変わる理由' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '計算結果をどう調整するか' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'ドライフード・ウェットフード・おやつの考え方' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '給餌量の具体例' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '関連ツール' })).toBeVisible();
+
+    await expect(page.getByText('ウェットフードだけでも同じように計算できる？')).toBeVisible();
+    await expect(page.getByText('フードを変えたら給餌量も変えるべき？')).toBeVisible();
+
+    const relatedToolLink = page.getByRole('link', { name: '猫のカロリー計算ページ' });
+    await expect(relatedToolLink).toBeVisible();
+    await expect(relatedToolLink).toHaveAttribute('href', '/calculate-cat-calorie');
+  });
 });
