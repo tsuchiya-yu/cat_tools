@@ -138,6 +138,11 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     await expect(page.getByRole('heading', { level: 2, name: '計算結果を給餌量に落とし込む手順' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'よくある失敗と見直しポイント' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: '受診を検討したいサイン' })).toBeVisible();
+    await expect(page.getByRole('link', { name: '猫の給餌量計算ページ' })).toHaveAttribute('href', '/calculate-cat-feeding');
+    await expect(page.getByRole('link', { name: '猫の年齢計算ページ' })).toHaveAttribute('href', '/calculate-cat-age');
+    await expect(
+      page.getByText('本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。')
+    ).toBeVisible();
   });
 
   test('メタタグの確認', async ({ page }) => {

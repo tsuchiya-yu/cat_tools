@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { LifeStage, Goal, CatCalorieResult } from '@/types';
 import { calculateCatCalorie } from '@/lib/catCalorie';
+import { CALCULATE_CAT_AGE_PATH, CALCULATE_CAT_FEEDING_PATH } from '@/constants/paths';
 import { CALORIE_UI_TEXT } from '@/constants/text';
 import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
@@ -24,8 +26,8 @@ function CalorieSupplementaryContent() {
           {supplementaryText.RESULT_GUIDE.TITLE}
         </h2>
         <div className="space-y-3">
-          {supplementaryText.RESULT_GUIDE.BODY.map((paragraph) => (
-            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.RESULT_GUIDE.BODY.map((paragraph, index) => (
+            <p key={`result-guide-${index}`} className="text-sm text-gray-700 leading-relaxed text-pretty">
               {paragraph}
             </p>
           ))}
@@ -48,13 +50,20 @@ function CalorieSupplementaryContent() {
           {supplementaryText.BASICS.INTRO}
         </p>
         <div className="mt-5 space-y-5">
-          {supplementaryText.BASICS.FACTORS.map((item) => (
-            <article key={item.TITLE} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          {supplementaryText.BASICS.FACTORS.map((item, index) => (
+            <article key={`basics-factor-${index}-${item.TITLE}`} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
               <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY}</p>
             </article>
           ))}
         </div>
+        <p className="mt-5 text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.BASICS.AGE_LINK.TEXT_BEFORE}
+          <Link href={CALCULATE_CAT_AGE_PATH} className="text-pink-600 font-bold">
+            {supplementaryText.BASICS.AGE_LINK.LABEL}
+          </Link>
+          {supplementaryText.BASICS.AGE_LINK.TEXT_AFTER}
+        </p>
       </section>
 
       <section className="section mt-10" aria-labelledby="calorie-feeding-steps">
@@ -68,10 +77,19 @@ function CalorieSupplementaryContent() {
           {supplementaryText.FEEDING_STEPS.INTRO}
         </p>
         <div className="mt-5 space-y-6">
-          {supplementaryText.FEEDING_STEPS.ITEMS.map((item) => (
-            <div key={item.TITLE}>
+          {supplementaryText.FEEDING_STEPS.ITEMS.map((item, index) => (
+            <div key={`feeding-step-${index}-${item.TITLE}`}>
               <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
               <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY}</p>
+              {index === 1 && (
+                <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">
+                  {supplementaryText.FEEDING_STEPS.FEEDING_LINK.TEXT_BEFORE}
+                  <Link href={CALCULATE_CAT_FEEDING_PATH} className="text-pink-600 font-bold">
+                    {supplementaryText.FEEDING_STEPS.FEEDING_LINK.LABEL}
+                  </Link>
+                  {supplementaryText.FEEDING_STEPS.FEEDING_LINK.TEXT_AFTER}
+                </p>
+              )}
             </div>
           ))}
         </div>
@@ -85,8 +103,8 @@ function CalorieSupplementaryContent() {
           {supplementaryText.PITFALLS.TITLE}
         </h2>
         <div className="mt-5 space-y-5">
-          {supplementaryText.PITFALLS.ITEMS.map((item) => (
-            <article key={item.TITLE} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+          {supplementaryText.PITFALLS.ITEMS.map((item, index) => (
+            <article key={`pitfall-${index}-${item.TITLE}`} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
               <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
               <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY}</p>
             </article>
@@ -102,8 +120,8 @@ function CalorieSupplementaryContent() {
           {supplementaryText.VET_SIGNS.TITLE}
         </h2>
         <div className="space-y-3">
-          {supplementaryText.VET_SIGNS.BODY.map((paragraph) => (
-            <p key={paragraph} className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.VET_SIGNS.BODY.map((paragraph, index) => (
+            <p key={`vet-signs-${index}`} className="text-sm text-gray-700 leading-relaxed text-pretty">
               {paragraph}
             </p>
           ))}
@@ -301,6 +319,12 @@ export default function CatCalorieCalculator() {
         usageTitle={CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}
         usageItems={CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed text-pretty">
+          {CALORIE_UI_TEXT.SUPPLEMENTARY.DISCLAIMER}
+        </p>
+      </section>
     </main>
   );
 }
