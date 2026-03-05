@@ -63,12 +63,12 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
   });
 
   test('FAQ セクションの存在確認', async ({ page }) => {
-    // FAQ セクションが4つ存在することを確認
+    // FAQ セクションが7つ存在することを確認
     const faqDetails = page.locator('details');
-    await expect(faqDetails).toHaveCount(4);
+    await expect(faqDetails).toHaveCount(7);
 
     // 各FAQが閉じた状態で表示されている
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 7; i++) {
       const detail = faqDetails.nth(i);
       await expect(detail).toBeVisible();
       await expect(detail).not.toHaveAttribute('open');
@@ -120,7 +120,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     const data = faqPayloads[0];
     expect(data['@type']).toBe('FAQPage');
     expect(Array.isArray(data.mainEntity)).toBeTruthy();
-    expect(data.mainEntity.length).toBeGreaterThanOrEqual(4);
+    expect(data.mainEntity.length).toBeGreaterThanOrEqual(7);
 
     // 各FAQ項目の構造をざっくり確認
     for (const entry of data.mainEntity) {
@@ -130,6 +130,14 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
       expect(entry.acceptedAnswer['@type']).toBe('Answer');
       expect(entry.acceptedAnswer.text).toBeTruthy();
     }
+  });
+
+  test('補助本文セクションの存在確認', async ({ page }) => {
+    await expect(page.getByRole('heading', { level: 2, name: '計算結果の見方' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '猫の必要カロリーはどう決まる？' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '計算結果を給餌量に落とし込む手順' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: 'よくある失敗と見直しポイント' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '受診を検討したいサイン' })).toBeVisible();
   });
 
   test('メタタグの確認', async ({ page }) => {
