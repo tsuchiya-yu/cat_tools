@@ -125,9 +125,7 @@ function FeedingSupplementaryContent() {
           {supplementaryText.CONDITIONS.ITEMS.map((item) => (
             <article key={item.TITLE} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
               <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
-              <p className="mt-2 text-xs sm:text-sm text-gray-700 leading-relaxed text-pretty whitespace-pre-line">
-                {item.BODY.join('\n')}
-              </p>
+              <p className="mt-2 text-xs sm:text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY.join(' ')}</p>
             </article>
           ))}
         </div>
