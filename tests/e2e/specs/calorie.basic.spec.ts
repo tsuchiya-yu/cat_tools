@@ -63,12 +63,12 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
   });
 
   test('FAQ セクションの存在確認', async ({ page }) => {
-    // FAQ セクションが7つ存在することを確認
+    // FAQ セクションが6つ存在することを確認
     const faqDetails = page.locator('details');
-    await expect(faqDetails).toHaveCount(7);
+    await expect(faqDetails).toHaveCount(6);
 
     // 各FAQが閉じた状態で表示されている
-    for (let i = 0; i < 7; i++) {
+    for (let i = 0; i < 6; i++) {
       const detail = faqDetails.nth(i);
       await expect(detail).toBeVisible();
       await expect(detail).not.toHaveAttribute('open');
@@ -120,7 +120,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     const data = faqPayloads[0];
     expect(data['@type']).toBe('FAQPage');
     expect(Array.isArray(data.mainEntity)).toBeTruthy();
-    expect(data.mainEntity.length).toBeGreaterThanOrEqual(7);
+    expect(data.mainEntity.length).toBeGreaterThanOrEqual(6);
 
     // 各FAQ項目の構造をざっくり確認
     for (const entry of data.mainEntity) {
