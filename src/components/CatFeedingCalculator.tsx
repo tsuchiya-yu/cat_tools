@@ -121,7 +121,13 @@ function FeedingSupplementaryContent() {
         <p className="text-sm text-gray-700 leading-relaxed text-pretty">
           {supplementaryText.CONDITIONS.INTRO}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6">
+        <div
+          className="mt-6 grid"
+          style={{
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gap: 'calc(var(--spacing) * 2)',
+          }}
+        >
           {supplementaryText.CONDITIONS.ITEMS.map((item) => (
             <article key={item.TITLE} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
               <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
