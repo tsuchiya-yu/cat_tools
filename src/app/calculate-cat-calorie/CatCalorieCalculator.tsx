@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 import { LifeStage, Goal, CatCalorieResult } from '@/types';
 import { calculateCatCalorie } from '@/lib/catCalorie';
+import { CALCULATE_CAT_AGE_PATH, CALCULATE_CAT_FEEDING_PATH } from '@/constants/paths';
 import { CALORIE_UI_TEXT } from '@/constants/text';
 import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
@@ -10,6 +12,124 @@ import CalorieResult from '@/components/CalorieResult';
 import CalorieFAQ from '@/components/CalorieFAQ';
 import GuideSection from '@/components/GuideSection';
 import Breadcrumbs from '@/components/Breadcrumbs';
+
+function CalorieSupplementaryContent() {
+  const supplementaryText = CALORIE_UI_TEXT.SUPPLEMENTARY;
+
+  return (
+    <>
+      <section className="section mt-10" aria-labelledby="calorie-result-guide">
+        <h2
+          id="calorie-result-guide"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.RESULT_GUIDE.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.RESULT_GUIDE.BODY.map((paragraph, index) => (
+            <p key={`result-guide-${index}`} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <div className="rounded-xl border border-pink-200 bg-pink-50 p-4 mt-5">
+          <p className="text-sm text-pink-900 leading-relaxed text-pretty">
+            {supplementaryText.RESULT_GUIDE.NOTE}
+          </p>
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="calorie-basics">
+        <h2
+          id="calorie-basics"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.BASICS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.BASICS.INTRO}
+        </p>
+        <div className="mt-5 space-y-5">
+          {supplementaryText.BASICS.FACTORS.map((item, index) => (
+            <article key={`basics-factor-${index}-${item.TITLE}`} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY}</p>
+            </article>
+          ))}
+        </div>
+        <p className="mt-5 text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.BASICS.AGE_LINK.TEXT_BEFORE}
+          <Link href={CALCULATE_CAT_AGE_PATH} className="text-pink-600 font-bold">
+            {supplementaryText.BASICS.AGE_LINK.LABEL}
+          </Link>
+          {supplementaryText.BASICS.AGE_LINK.TEXT_AFTER}
+        </p>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="calorie-feeding-steps">
+        <h2
+          id="calorie-feeding-steps"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.FEEDING_STEPS.TITLE}
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.FEEDING_STEPS.INTRO}
+        </p>
+        <div className="mt-5 space-y-6">
+          {supplementaryText.FEEDING_STEPS.ITEMS.map((item, index) => (
+            <div key={`feeding-step-${index}-${item.TITLE}`}>
+              <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY}</p>
+              {index === 1 && (
+                <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">
+                  {supplementaryText.FEEDING_STEPS.FEEDING_LINK.TEXT_BEFORE}
+                  <Link href={CALCULATE_CAT_FEEDING_PATH} className="text-pink-600 font-bold">
+                    {supplementaryText.FEEDING_STEPS.FEEDING_LINK.LABEL}
+                  </Link>
+                  {supplementaryText.FEEDING_STEPS.FEEDING_LINK.TEXT_AFTER}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="calorie-pitfalls">
+        <h2
+          id="calorie-pitfalls"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.PITFALLS.TITLE}
+        </h2>
+        <div className="mt-5 space-y-5">
+          {supplementaryText.PITFALLS.ITEMS.map((item, index) => (
+            <article key={`pitfall-${index}-${item.TITLE}`} className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+              <h3 className="text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
+              <p className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">{item.BODY}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="calorie-vet-signs">
+        <h2
+          id="calorie-vet-signs"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.VET_SIGNS.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.VET_SIGNS.BODY.map((paragraph, index) => (
+            <p key={`vet-signs-${index}`} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+      </section>
+    </>
+  );
+}
 
 export default function CatCalorieCalculator() {
   const [weight, setWeight] = useState('');
@@ -187,6 +307,8 @@ export default function CatCalorieCalculator() {
         shareUrl={typeof window !== 'undefined' ? buildShareUrl() : undefined}
       />
 
+      <CalorieSupplementaryContent />
+
       {/* FAQ Section */}
       <CalorieFAQ />
 
@@ -197,6 +319,12 @@ export default function CatCalorieCalculator() {
         usageTitle={CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}
         usageItems={CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS}
       />
+
+      <section className="section mt-8" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed text-pretty">
+          {CALORIE_UI_TEXT.SUPPLEMENTARY.DISCLAIMER}
+        </p>
+      </section>
     </main>
   );
 }
