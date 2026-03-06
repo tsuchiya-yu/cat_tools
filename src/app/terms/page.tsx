@@ -12,7 +12,7 @@ export default function TermsPage() {
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-12">
       <section className="section mt-6" aria-labelledby="terms-title">
-        <h1 id="terms-title" className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-4">
+        <h1 id="terms-title" className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-7">
           ねこツールズ 利用規約
         </h1>
         <p className="text-sm text-gray-700 leading-relaxed">
