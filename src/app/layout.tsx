@@ -152,14 +152,13 @@ export default function RootLayout({
                 <h2 className="font-bold mb-2">規約</h2>
                 <ul className="space-y-2">
                   <li>
-                    <a 
-                      href="https://cat-link.catnote.tokyo/terms" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
+                    <Link
+                      href="/terms"
+                      prefetch={false}
                       className="hover:text-pink-600 transition-colors"
                     >
                       利用規約
-                    </a>
+                    </Link>
                   </li>
                   <li>
                     <a 
