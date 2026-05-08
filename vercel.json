@@ -1,8 +1,9 @@
 {
-  "rewrites": [
+  "redirects": [
     {
       "source": "/cat-age",
-      "destination": "/calculate-cat-age"
+      "destination": "/calculate-cat-age",
+      "permanent": true
     }
   ],
   "headers": [

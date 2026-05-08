@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     siteName: CALORIE_META.OG.SITE_NAME,
     images: [
       {
-        url: '/og-cat-calorie.png',
+        url: '/og.png',
         width: 1200,
         height: 630,
         alt: CALORIE_META.OG.TITLE,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: CALORIE_META.OG.TITLE,
     description: CALORIE_META.OG.DESCRIPTION,
-    images: ['/og-cat-calorie.png'],
+    images: ['/og.png'],
   },
   alternates: {
     canonical: '/calculate-cat-calorie',
