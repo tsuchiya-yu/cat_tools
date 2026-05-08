@@ -5,7 +5,7 @@ test.describe('ナビゲーション', () => {
     // ルートページにアクセスし、ホームのUIが表示される
     await page.goto('/');
     await expect(page.locator('main h1')).toHaveText('ねこツールズ');
-    const h2 = page.locator('main h2');
+    const h2 = page.locator('section[aria-label="ツール一覧"] h2');
     await expect(h2).toHaveCount(5);
     await expect(h2.nth(0)).toHaveText('猫の食べ物安全性チェック');
     await expect(h2.nth(1)).toHaveText('猫の年齢計算');

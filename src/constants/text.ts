@@ -697,6 +697,18 @@ export const SHARE_UI_TEXT = {
 // トップページで表示するツール一覧
 export const TOOLS: readonly ToolItem[] = tools;
 
+export const HOME_ABOUT_TEXT = {
+  TITLE: 'このサイトについて',
+  DESCRIPTION:
+    'ねこツールズは、猫と暮らす中で必要になりやすい計算や確認をまとめた無料ツール集です。年齢、カロリー、給餌量、必要な水分量、食べ物の安全性など、日々の判断を整理するための補助として利用できます。',
+  OPERATOR_TITLE: '運営者の背景',
+  OPERATOR_DESCRIPTION:
+    '運営者はねこ検定上級に合格しており、実際に猫と暮らす中で感じた「ちょっと確認したい」をもとに、日々のケアに役立つツールを作っています。',
+  NOTICE_TITLE: 'ご利用にあたって',
+  NOTICE_DESCRIPTION:
+    '各ツールの結果は一般的な情報や目安であり、診断・治療・投薬判断を行うものではありません。猫の体調不良、誤食、急変などがある場合は、自己判断せず獣医師へ相談してください。',
+} as const;
+
 // 給餌量計算用のUI文言
 export const FEEDING_RANGE = {
   kcal: { min: 50, max: 1000 },

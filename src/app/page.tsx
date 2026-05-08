@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import JsonLdScript from '@/components/JsonLdScript';
-import { TOOLS } from '@/constants/text';
+import { HOME_ABOUT_TEXT, TOOLS } from '@/constants/text';
 import { createHomeBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 
 const homeBreadcrumbStructuredData = createHomeBreadcrumbList();
@@ -39,6 +39,26 @@ export default function Home() {
               </span>
             </Link>
           ))}
+        </section>
+
+        <section
+          className="section mt-10"
+          aria-labelledby="about-site-title"
+        >
+          <h2 id="about-site-title" className="text-xl font-bold text-[var(--text)]">
+            {HOME_ABOUT_TEXT.TITLE}
+          </h2>
+          <div className="mt-3 space-y-4 text-sm leading-relaxed text-gray-700">
+            <p>{HOME_ABOUT_TEXT.DESCRIPTION}</p>
+            <div>
+              <h3 className="font-bold text-[var(--text)]">{HOME_ABOUT_TEXT.OPERATOR_TITLE}</h3>
+              <p className="mt-1">{HOME_ABOUT_TEXT.OPERATOR_DESCRIPTION}</p>
+            </div>
+            <div>
+              <h3 className="font-bold text-[var(--text)]">{HOME_ABOUT_TEXT.NOTICE_TITLE}</h3>
+              <p className="mt-1">{HOME_ABOUT_TEXT.NOTICE_DESCRIPTION}</p>
+            </div>
+          </div>
         </section>
       </main>
     </>
