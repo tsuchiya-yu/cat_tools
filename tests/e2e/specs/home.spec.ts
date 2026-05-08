@@ -10,7 +10,7 @@ test.describe('Home (/)', () => {
     await expect(page.locator('main h1')).toHaveText('ねこツールズ');
 
     // h2: カード見出し（順序を確認）
-    const h2 = page.locator('main h2');
+    const h2 = page.locator('section[aria-label="ツール一覧"] h2');
     await expect(h2).toHaveCount(5);
     await expect(h2.nth(0)).toHaveText('猫の食べ物安全性チェック');
     await expect(h2.nth(1)).toHaveText('猫の年齢計算');
@@ -25,15 +25,19 @@ test.describe('Home (/)', () => {
   });
 
   test('年齢計算カードはキーボード操作で遷移できる', async ({ page }) => {
-    await page.getByRole('link', { name: '猫の年齢計算ツールを開く' }).focus();
-    await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/calculate-cat-age$/);
+    const ageLink = page.getByRole('link', { name: '猫の年齢計算ツールを開く' });
+    await Promise.all([
+      page.waitForURL(/\/calculate-cat-age$/),
+      ageLink.press('Enter'),
+    ]);
   });
 
   test('カロリー計算カードはキーボード操作で遷移できる', async ({ page }) => {
-    await page.getByRole('link', { name: '猫のカロリー計算ツールを開く' }).focus();
-    await page.keyboard.press('Enter');
-    await expect(page).toHaveURL(/\/calculate-cat-calorie$/);
+    const calorieLink = page.getByRole('link', { name: '猫のカロリー計算ツールを開く' });
+    await Promise.all([
+      page.waitForURL(/\/calculate-cat-calorie$/),
+      calorieLink.press('Enter'),
+    ]);
   });
 
   test('給餌量計算カードはキーボード操作で遷移できる', async ({ page }) => {
@@ -47,6 +51,7 @@ test.describe('Home (/)', () => {
 
   test('見出し階層: h1→h2 の降順', async ({ page }) => {
     await expect(page.locator('main h1')).toHaveCount(1);
-    await expect(page.locator('main h2')).toHaveCount(5);
+    await expect(page.locator('section[aria-label="ツール一覧"] h2')).toHaveCount(5);
+    await expect(page.getByRole('heading', { level: 2, name: 'このサイトについて' })).toBeVisible();
   });
 });
