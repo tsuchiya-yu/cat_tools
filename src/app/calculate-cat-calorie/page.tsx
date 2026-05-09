@@ -21,7 +21,7 @@ const calorieWebApplicationStructuredData = createWebApplicationStructuredData({
   name: CALORIE_UI_TEXT.HEADER.TITLE,
   url: CALORIE_META.OG.URL,
   description: '体重と条件から猫の1日の必要カロリーの目安を計算します。',
-  applicationCategory: 'CalculatorApplication',
+  applicationCategory: 'UtilitiesApplication',
 });
 
 export const metadata: Metadata = {

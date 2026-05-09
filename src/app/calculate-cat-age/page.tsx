@@ -16,7 +16,7 @@ const ageStructuredData = [
     name: '猫の年齢計算',
     url: META.OG.URL,
     description: '誕生日から猫の年齢を人間年齢の目安に換算し、ライフステージも確認できます。',
-    applicationCategory: 'CalculatorApplication',
+    applicationCategory: 'UtilitiesApplication',
   }),
   {
     "@context": "https://schema.org",

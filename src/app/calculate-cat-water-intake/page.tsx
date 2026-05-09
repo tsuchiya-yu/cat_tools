@@ -25,7 +25,7 @@ const waterIntakeWebApplicationStructuredData = createWebApplicationStructuredDa
   name: '猫の必要給水量計算',
   url: WATER_INTAKE_META.OG.URL,
   description: '体重とフード量から、総水分目標・食事由来水分・器からの飲水目標を計算します。',
-  applicationCategory: 'CalculatorApplication',
+  applicationCategory: 'UtilitiesApplication',
 });
 
 export const metadata: Metadata = {

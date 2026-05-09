@@ -24,7 +24,7 @@ const toolPages = [
     name: '猫の年齢計算',
     url: 'https://cat-tools.catnote.tokyo/calculate-cat-age',
     description: '誕生日から猫の年齢を人間年齢の目安に換算し、ライフステージも確認できます。',
-    applicationCategory: 'CalculatorApplication',
+    applicationCategory: 'UtilitiesApplication',
     hasFaq: true,
   },
   {
@@ -32,7 +32,7 @@ const toolPages = [
     name: '猫のカロリー計算',
     url: 'https://cat-tools.catnote.tokyo/calculate-cat-calorie',
     description: '体重と条件から猫の1日の必要カロリーの目安を計算します。',
-    applicationCategory: 'CalculatorApplication',
+    applicationCategory: 'UtilitiesApplication',
     hasFaq: true,
   },
   {
@@ -40,7 +40,7 @@ const toolPages = [
     name: '猫の給餌量計算',
     url: 'https://cat-tools.catnote.tokyo/calculate-cat-feeding',
     description: '1日の必要カロリーとフードのカロリー密度から、1日量と朝夜の目安量を計算します。',
-    applicationCategory: 'CalculatorApplication',
+    applicationCategory: 'UtilitiesApplication',
     hasFaq: false,
   },
   {
@@ -48,7 +48,7 @@ const toolPages = [
     name: '猫の必要給水量計算',
     url: 'https://cat-tools.catnote.tokyo/calculate-cat-water-intake',
     description: '体重とフード量から、総水分目標・食事由来水分・器からの飲水目標を計算します。',
-    applicationCategory: 'CalculatorApplication',
+    applicationCategory: 'UtilitiesApplication',
     hasFaq: true,
   },
   {

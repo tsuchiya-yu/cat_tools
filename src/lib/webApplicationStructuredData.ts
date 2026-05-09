@@ -2,7 +2,7 @@ type WebApplicationStructuredDataInput = {
   name: string;
   url: string;
   description: string;
-  applicationCategory: 'CalculatorApplication' | 'ReferenceApplication';
+  applicationCategory: 'UtilitiesApplication' | 'ReferenceApplication';
 };
 
 export function createWebApplicationStructuredData({

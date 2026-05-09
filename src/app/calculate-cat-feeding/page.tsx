@@ -15,7 +15,7 @@ const feedingWebApplicationStructuredData = createWebApplicationStructuredData({
   name: '猫の給餌量計算',
   url: 'https://cat-tools.catnote.tokyo/calculate-cat-feeding',
   description: '1日の必要カロリーとフードのカロリー密度から、1日量と朝夜の目安量を計算します。',
-  applicationCategory: 'CalculatorApplication',
+  applicationCategory: 'UtilitiesApplication',
 });
 
 export const metadata: Metadata = {
