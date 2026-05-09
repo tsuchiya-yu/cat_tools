@@ -16,6 +16,23 @@ const calorieBreadcrumbStructuredData = createPageBreadcrumbList({
   path: CALCULATE_CAT_CALORIE_PATH,
 });
 
+const calorieWebApplicationStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: CALORIE_UI_TEXT.HEADER.TITLE,
+  url: CALORIE_META.OG.URL,
+  description: CALORIE_META.DESCRIPTION,
+  applicationCategory: "UtilitiesApplication",
+  operatingSystem: "Any",
+  inLanguage: "ja",
+  isAccessibleForFree: true,
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "JPY",
+  },
+};
+
 export const metadata: Metadata = {
   title: CALORIE_META.TITLE,
   description: CALORIE_META.DESCRIPTION,
@@ -50,7 +67,13 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <JsonLdScript data={[calorieFaqStructuredData, calorieBreadcrumbStructuredData]} />
+      <JsonLdScript
+        data={[
+          calorieWebApplicationStructuredData,
+          calorieFaqStructuredData,
+          calorieBreadcrumbStructuredData,
+        ]}
+      />
       <CatCalorieCalculator />
     </>
   );
