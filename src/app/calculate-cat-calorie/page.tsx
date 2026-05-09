@@ -4,6 +4,7 @@ import JsonLdScript from '@/components/JsonLdScript';
 import { CALCULATE_CAT_CALORIE_PATH } from '@/constants/paths';
 import { CALORIE_META, CALORIE_UI_TEXT, STRUCTURED_DATA } from '@/constants/text';
 import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
+import { createWebApplicationStructuredData } from '@/lib/webApplicationStructuredData';
 
 const calorieFaqStructuredData = {
   "@context": "https://schema.org",
@@ -16,22 +17,12 @@ const calorieBreadcrumbStructuredData = createPageBreadcrumbList({
   path: CALCULATE_CAT_CALORIE_PATH,
 });
 
-const calorieWebApplicationStructuredData = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
+const calorieWebApplicationStructuredData = createWebApplicationStructuredData({
   name: CALORIE_UI_TEXT.HEADER.TITLE,
   url: CALORIE_META.OG.URL,
-  description: CALORIE_META.DESCRIPTION,
-  applicationCategory: "UtilitiesApplication",
-  operatingSystem: "Any",
-  inLanguage: "ja",
-  isAccessibleForFree: true,
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "JPY",
-  },
-};
+  description: '体重と条件から猫の1日の必要カロリーの目安を計算します。',
+  applicationCategory: 'CalculatorApplication',
+});
 
 export const metadata: Metadata = {
   title: CALORIE_META.TITLE,

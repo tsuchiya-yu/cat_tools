@@ -150,7 +150,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
 
     const webApplication = webApplicationPayloads[0];
     expect(webApplication.name).toBe('猫のカロリー計算');
-    expect(webApplication.applicationCategory).toBe('UtilitiesApplication');
+    expect(webApplication.applicationCategory).toBe('CalculatorApplication');
     expect(webApplication.operatingSystem).toBe('Any');
     expect(webApplication.inLanguage).toBe('ja');
     expect(webApplication.isAccessibleForFree).toBe(true);

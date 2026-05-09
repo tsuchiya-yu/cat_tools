@@ -4,6 +4,7 @@ import JsonLdScript from '@/components/JsonLdScript';
 import { CALCULATE_CAT_AGE_PATH } from '@/constants/paths';
 import { META, FAQ_ITEMS, UI_TEXT } from '@/constants/text';
 import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
+import { createWebApplicationStructuredData } from '@/lib/webApplicationStructuredData';
 
 const ageBreadcrumbStructuredData = createPageBreadcrumbList({
   name: UI_TEXT.BREADCRUMBS.CAT_AGE_CALCULATOR,
@@ -11,21 +12,12 @@ const ageBreadcrumbStructuredData = createPageBreadcrumbList({
 });
 
 const ageStructuredData = [
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "猫の年齢計算ツール",
-    "url": META.OG.URL,
-    "description": META.DESCRIPTION,
-    "applicationCategory": "CalculatorApplication",
-    "operatingSystem": "Any",
-    "browserRequirements": "Requires JavaScript",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "JPY"
-    }
-  },
+  createWebApplicationStructuredData({
+    name: '猫の年齢計算',
+    url: META.OG.URL,
+    description: '誕生日から猫の年齢を人間年齢の目安に換算し、ライフステージも確認できます。',
+    applicationCategory: 'CalculatorApplication',
+  }),
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",

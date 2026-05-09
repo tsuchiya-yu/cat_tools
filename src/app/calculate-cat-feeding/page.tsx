@@ -4,10 +4,18 @@ import JsonLdScript from "@/components/JsonLdScript";
 import { CALCULATE_CAT_FEEDING_PATH } from "@/constants/paths";
 import { FEEDING_UI_TEXT } from "@/constants/text";
 import { createPageBreadcrumbList } from "@/lib/breadcrumbStructuredData";
+import { createWebApplicationStructuredData } from "@/lib/webApplicationStructuredData";
 
 const feedingBreadcrumbStructuredData = createPageBreadcrumbList({
   name: FEEDING_UI_TEXT.BREADCRUMBS.FEEDING_CALCULATOR,
   path: CALCULATE_CAT_FEEDING_PATH,
+});
+
+const feedingWebApplicationStructuredData = createWebApplicationStructuredData({
+  name: '猫の給餌量計算',
+  url: 'https://cat-tools.catnote.tokyo/calculate-cat-feeding',
+  description: '1日の必要カロリーとフードのカロリー密度から、1日量と朝夜の目安量を計算します。',
+  applicationCategory: 'CalculatorApplication',
 });
 
 export const metadata: Metadata = {
@@ -43,7 +51,7 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <JsonLdScript data={feedingBreadcrumbStructuredData} />
+      <JsonLdScript data={[feedingWebApplicationStructuredData, feedingBreadcrumbStructuredData]} />
       <CatFeedingCalculator />
     </>
   );
