@@ -22,7 +22,7 @@ const calorieWebApplicationStructuredData = {
   name: CALORIE_UI_TEXT.HEADER.TITLE,
   url: CALORIE_META.OG.URL,
   description: CALORIE_META.DESCRIPTION,
-  applicationCategory: "CalculatorApplication",
+  applicationCategory: "UtilitiesApplication",
   operatingSystem: "Any",
   inLanguage: "ja",
   isAccessibleForFree: true,
