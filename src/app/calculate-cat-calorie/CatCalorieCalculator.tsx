@@ -4,7 +4,11 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { LifeStage, Goal, CatCalorieResult } from '@/types';
 import { calculateCatCalorie } from '@/lib/catCalorie';
-import { CALCULATE_CAT_AGE_PATH, CALCULATE_CAT_FEEDING_PATH } from '@/constants/paths';
+import {
+  CALCULATE_CAT_AGE_PATH,
+  CALCULATE_CAT_FEEDING_PATH,
+  CALCULATE_CAT_WATER_INTAKE_PATH,
+} from '@/constants/paths';
 import { CALORIE_UI_TEXT } from '@/constants/text';
 import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
@@ -93,6 +97,13 @@ function CalorieSupplementaryContent() {
             </div>
           ))}
         </div>
+        <p className="mt-5 text-sm text-gray-700 leading-relaxed text-pretty">
+          {supplementaryText.FEEDING_STEPS.WATER_INTAKE_LINK.TEXT_BEFORE}
+          <Link href={CALCULATE_CAT_WATER_INTAKE_PATH} className="text-pink-600 font-bold">
+            {supplementaryText.FEEDING_STEPS.WATER_INTAKE_LINK.LABEL}
+          </Link>
+          {supplementaryText.FEEDING_STEPS.WATER_INTAKE_LINK.TEXT_AFTER}
+        </p>
       </section>
 
       <section className="section mt-10" aria-labelledby="calorie-pitfalls">
@@ -126,6 +137,37 @@ function CalorieSupplementaryContent() {
             </p>
           ))}
         </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="calorie-references">
+        <h2
+          id="calorie-references"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.REFERENCES.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.REFERENCES.BODY.map((paragraph, index) => (
+            <p key={`calorie-reference-body-${index}`} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <ul className="list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
+          {supplementaryText.REFERENCES.LINKS.map((source) => (
+            <li key={source.URL}>
+              <a
+                href={source.URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-pink-700 hover:text-pink-800 underline underline-offset-2 break-all"
+              >
+                {source.LABEL}
+              </a>
+              <span className="text-gray-600"> — {source.NOTE}</span>
+            </li>
+          ))}
+        </ul>
       </section>
     </>
   );

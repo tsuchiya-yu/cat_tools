@@ -631,6 +631,11 @@ export const CALORIE_UI_TEXT = {
         LABEL: '猫の給餌量計算ページ',
         TEXT_AFTER: 'で朝・夜の配分目安まで確認できます。',
       },
+      WATER_INTAKE_LINK: {
+        TEXT_BEFORE: '1日のフード量が決まったら、ドライ・ウェットの量をもとに',
+        LABEL: '猫の必要給水量計算ページ',
+        TEXT_AFTER: 'で水分摂取の目安も確認できます。',
+      },
     },
     PITFALLS: {
       TITLE: 'よくある失敗と見直しポイント',
@@ -657,6 +662,30 @@ export const CALORIE_UI_TEXT = {
       BODY: [
         '食事量を調整しても体重変化が大きい、食欲低下や嘔吐・下痢が続く、元気が落ちている場合は、自己調整を続けるより受診を優先してください。',
         'このページは健康管理の目安を整理するための情報であり、診断を行うものではありません。不安な変化が続く場合は、早めに動物病院へ相談してください。',
+      ],
+    },
+    REFERENCES: {
+      TITLE: '計算方法の参考情報',
+      BODY: [
+        'このツールでは、体重からRER（安静時エネルギー要求量）を求め、ライフステージや目標に応じた係数をかけて1日の必要カロリーの目安を算出しています。',
+        '係数はあくまで出発点です。シニア期、減量、増量では個体差が大きいため、体重推移や体調を見ながら調整し、判断に迷う場合は獣医師へ相談してください。',
+      ],
+      LINKS: [
+        {
+          LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
+          URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
+          NOTE: 'RER式と猫の維持エネルギー係数を確認する参考情報',
+        },
+        {
+          LABEL: 'Pet Nutrition Alliance: MER and RER Guide',
+          URL: 'https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf',
+          NOTE: 'RER/MERの考え方と減量時の係数を確認する参考情報',
+        },
+        {
+          LABEL: '2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats',
+          URL: 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/2021-nutrition-and-weight-management/resourcepdfs/new-2021-aaha-nutrition-and-weight-management-guidelines-with-ref.pdf',
+          NOTE: '栄養評価、BCS、個体差を踏まえた調整の参考情報',
+        },
       ],
     },
     DISCLAIMER:

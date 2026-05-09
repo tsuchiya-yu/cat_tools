@@ -83,7 +83,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     await expect(firstFaq).not.toHaveAttribute('open');
   });
 
-  test('構造化データ（FAQPage）の存在確認', async ({ page }) => {
+  test('構造化データ（FAQPage/WebApplication）の存在確認', async ({ page }) => {
     // すべての JSON-LD を取得して解析（オブジェクト/配列の両方に対応）
     const contents = await page.locator('script[type="application/ld+json"]').allTextContents();
 
@@ -91,15 +91,28 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     type FaqAnswer = { ['@type']: string; text: string };
     type FaqItem = { ['@type']: string; name: string; acceptedAnswer: FaqAnswer };
     type FaqPage = { ['@type']: string; mainEntity: FaqItem[] };
+    type WebApplication = {
+      ['@type']: string;
+      name: string;
+      applicationCategory: string;
+      operatingSystem: string;
+      inLanguage: string;
+      isAccessibleForFree: boolean;
+    };
     const isFaqPage = (v: unknown): v is FaqPage => {
       if (!v || typeof v !== 'object') return false;
       const t = (v as Record<string, unknown>)['@type'];
       const me = (v as Record<string, unknown>)['mainEntity'];
       return t === 'FAQPage' && Array.isArray(me);
     };
+    const isWebApplication = (v: unknown): v is WebApplication => {
+      if (!v || typeof v !== 'object') return false;
+      return (v as Record<string, unknown>)['@type'] === 'WebApplication';
+    };
 
     // FAQPageを含む要素を抽出
     const faqPayloads: FaqPage[] = [];
+    const webApplicationPayloads: WebApplication[] = [];
     for (const text of contents) {
       try {
         const parsed = JSON.parse(text) as unknown;
@@ -108,6 +121,9 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
           if (isFaqPage(item)) {
             faqPayloads.push(item);
           }
+          if (isWebApplication(item)) {
+            webApplicationPayloads.push(item);
+          }
         }
       } catch {
         // JSONでない場合はスキップ
@@ -115,6 +131,7 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     }
 
     expect(faqPayloads.length).toBeGreaterThanOrEqual(1);
+    expect(webApplicationPayloads.length).toBeGreaterThanOrEqual(1);
 
     // 1つ目のFAQPageの内容を確認
     const data = faqPayloads[0];
@@ -130,6 +147,13 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
       expect(entry.acceptedAnswer['@type']).toBe('Answer');
       expect(entry.acceptedAnswer.text).toBeTruthy();
     }
+
+    const webApplication = webApplicationPayloads[0];
+    expect(webApplication.name).toBe('猫のカロリー計算');
+    expect(webApplication.applicationCategory).toBe('CalculatorApplication');
+    expect(webApplication.operatingSystem).toBe('Any');
+    expect(webApplication.inLanguage).toBe('ja');
+    expect(webApplication.isAccessibleForFree).toBe(true);
   });
 
   test('補助本文セクションの存在確認', async ({ page }) => {
@@ -138,8 +162,13 @@ test.describe('猫のカロリー計算 - 基本機能テスト', () => {
     await expect(page.getByRole('heading', { level: 2, name: '計算結果を給餌量に落とし込む手順' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: 'よくある失敗と見直しポイント' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 2, name: '受診を検討したいサイン' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 2, name: '計算方法の参考情報' })).toBeVisible();
     await expect(page.getByRole('link', { name: '猫の給餌量計算ページ' })).toHaveAttribute('href', '/calculate-cat-feeding');
     await expect(page.getByRole('link', { name: '猫の年齢計算ページ' })).toHaveAttribute('href', '/calculate-cat-age');
+    await expect(page.getByRole('link', { name: '猫の必要給水量計算ページ' })).toHaveAttribute('href', '/calculate-cat-water-intake');
+    await expect(page.getByRole('link', { name: /Merck Veterinary Manual/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /Pet Nutrition Alliance/ })).toBeVisible();
+    await expect(page.getByRole('link', { name: /AAHA Nutrition and Weight Management Guidelines/ })).toBeVisible();
     await expect(
       page.getByText('本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。')
     ).toBeVisible();
