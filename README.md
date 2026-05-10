@@ -2,6 +2,8 @@
 
 猫に関する便利な計算ツールをまとめた Web アプリです。Next.js 15 + React 19 + TypeScript で実装しています。
 
+本番サイト: https://cat-tools.catnote.tokyo
+
 LLM 向けの要約ガイド: [`LLMS.txt`](./LLMS.txt)
 
 ## 機能
