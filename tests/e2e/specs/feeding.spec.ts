@@ -90,6 +90,7 @@ test.describe('猫の給餌量計算 E2E', () => {
     await expect(page.getByRole('heading', { name: 'ドライフード・ウェットフード・おやつの考え方' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '給餌量の具体例' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '関連ツール' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '計算方法の参考情報' })).toBeVisible();
 
     await expect(page.getByText('ウェットフードだけでも同じように計算できる？')).toBeVisible();
     await expect(page.getByText('フードを変えたら給餌量も変えるべき？')).toBeVisible();
@@ -97,5 +98,23 @@ test.describe('猫の給餌量計算 E2E', () => {
     const relatedToolLink = page.getByRole('link', { name: '猫のカロリー計算ページ' });
     await expect(relatedToolLink).toBeVisible();
     await expect(relatedToolLink).toHaveAttribute('href', '/calculate-cat-calorie');
+
+    const aafcoLabelLink = page.getByRole('link', { name: 'AAFCO: Reading Labels' });
+    await expect(aafcoLabelLink).toHaveAttribute('href', 'https://www.aafco.org/consumers/understanding-pet-food/reading-labels/');
+    await expect(aafcoLabelLink).toHaveAttribute('target', '_blank');
+    await expect(aafcoLabelLink).toHaveAttribute('rel', 'noopener noreferrer');
+
+    await expect(page.getByRole('link', { name: 'AAFCO: Calorie Content' })).toHaveAttribute(
+      'href',
+      'https://www.aafco.org/resources/startups/calorie-content/',
+    );
+    await expect(page.getByRole('link', { name: 'WSAVA: Global Nutrition Guidelines' })).toHaveAttribute(
+      'href',
+      'https://wsava.org/global-guidelines/global-nutrition-guidelines/',
+    );
+    await expect(page.getByRole('link', { name: 'FelineVMA / AAFP: Feline Feeding Programs' })).toHaveAttribute(
+      'href',
+      'https://catvets.com/resource/how-to-feed-how-to-feed-a-cat-consensus-statement/',
+    );
   });
 });

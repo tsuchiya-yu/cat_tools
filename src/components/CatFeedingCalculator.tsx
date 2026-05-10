@@ -248,6 +248,37 @@ function FeedingSupplementaryContent() {
           </p>
         </div>
       </section>
+
+      <section className="section mt-10" aria-labelledby="feeding-references">
+        <h2
+          id="feeding-references"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          {supplementaryText.REFERENCES.TITLE}
+        </h2>
+        <div className="space-y-3">
+          {supplementaryText.REFERENCES.BODY.map((paragraph, index) => (
+            <p key={`feeding-reference-body-${index}`} className="text-sm text-gray-700 leading-relaxed text-pretty">
+              {paragraph}
+            </p>
+          ))}
+        </div>
+        <ul className="list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed mt-4">
+          {supplementaryText.REFERENCES.LINKS.map((source) => (
+            <li key={source.URL}>
+              <a
+                href={source.URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-pink-700 hover:text-pink-800 underline underline-offset-2 break-all"
+              >
+                {source.LABEL}
+              </a>
+              <span className="text-gray-600"> — {source.NOTE}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </>
   );
 }
