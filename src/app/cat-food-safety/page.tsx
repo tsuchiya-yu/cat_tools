@@ -5,6 +5,7 @@ import { CAT_FOOD_SAFETY_PATH } from '@/constants/paths';
 import { CAT_FOOD_SAFETY_META, CAT_FOOD_SAFETY_TEXT, STRUCTURED_DATA } from '@/constants/text';
 import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 import { getAllCatFoods } from '@/lib/catFoodSafety';
+import { createWebApplicationStructuredData } from '@/lib/webApplicationStructuredData';
 
 export const metadata: Metadata = {
   title: CAT_FOOD_SAFETY_META.TITLE,
@@ -48,12 +49,24 @@ const catFoodSafetyFaqStructuredData = {
   mainEntity: STRUCTURED_DATA.CAT_FOOD_SAFETY_FAQ.ITEMS,
 };
 
+const catFoodSafetyWebApplicationStructuredData = createWebApplicationStructuredData({
+  name: '猫の食べ物安全性チェック',
+  url: CAT_FOOD_SAFETY_META.OG.URL,
+  description: '食材名から猫にとって安全・注意・危険の目安を確認できます。',
+  applicationCategory: 'ReferenceApplication',
+});
+
 export default function Page() {
   const allFoods = getAllCatFoods();
   return (
     <>
-      <JsonLdScript data={catFoodSafetyBreadcrumbStructuredData} />
-      <JsonLdScript data={catFoodSafetyFaqStructuredData} />
+      <JsonLdScript
+        data={[
+          catFoodSafetyWebApplicationStructuredData,
+          catFoodSafetyBreadcrumbStructuredData,
+          catFoodSafetyFaqStructuredData,
+        ]}
+      />
       <CatFoodSafetyChecker allFoods={allFoods} />
     </>
   );

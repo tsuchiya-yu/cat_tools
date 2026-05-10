@@ -7,6 +7,7 @@ import {
 } from '@/constants/text';
 import { CALCULATE_CAT_WATER_INTAKE_PATH } from '@/constants/paths';
 import { createPageBreadcrumbList } from '@/lib/breadcrumbStructuredData';
+import { createWebApplicationStructuredData } from '@/lib/webApplicationStructuredData';
 import CatWaterIntakeCalculator from './CatWaterIntakeCalculator';
 
 const waterIntakeFaqStructuredData = {
@@ -18,6 +19,13 @@ const waterIntakeFaqStructuredData = {
 const waterIntakeBreadcrumbStructuredData = createPageBreadcrumbList({
   name: WATER_INTAKE_UI_TEXT.BREADCRUMBS.WATER_INTAKE_CALCULATOR,
   path: CALCULATE_CAT_WATER_INTAKE_PATH,
+});
+
+const waterIntakeWebApplicationStructuredData = createWebApplicationStructuredData({
+  name: '猫の必要給水量計算',
+  url: WATER_INTAKE_META.OG.URL,
+  description: '体重とフード量から、総水分目標・食事由来水分・器からの飲水目標を計算します。',
+  applicationCategory: 'UtilitiesApplication',
 });
 
 export const metadata: Metadata = {
@@ -54,7 +62,13 @@ export const metadata: Metadata = {
 export default function Page() {
   return (
     <>
-      <JsonLdScript data={[waterIntakeFaqStructuredData, waterIntakeBreadcrumbStructuredData]} />
+      <JsonLdScript
+        data={[
+          waterIntakeWebApplicationStructuredData,
+          waterIntakeFaqStructuredData,
+          waterIntakeBreadcrumbStructuredData,
+        ]}
+      />
       <CatWaterIntakeCalculator />
     </>
   );
