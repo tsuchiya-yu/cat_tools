@@ -944,6 +944,35 @@ export const FEEDING_UI_TEXT = {
       BODY:
         '「必要カロリーを知るページ」と「給餌量をグラムに換算するページ」をあわせて使うことで、毎日の食事管理がしやすくなります。',
     },
+    REFERENCES: {
+      TITLE: '計算方法の参考情報',
+      BODY: [
+        'このページの給餌量計算は、1日の必要カロリーとフードのカロリー密度をもとにグラムへ換算する考え方を採用しています。',
+        'フードのラベル表示や体型変化もあわせて確認し、計算結果を固定値にせず、必要に応じて少しずつ調整してください。',
+      ],
+      LINKS: [
+        {
+          LABEL: 'AAFCO: Reading Labels',
+          URL: 'https://www.aafco.org/consumers/understanding-pet-food/reading-labels/',
+          NOTE: 'ペットフードラベル、給餌量表示、カロリー表示を確認する参考情報',
+        },
+        {
+          LABEL: 'AAFCO: Calorie Content',
+          URL: 'https://www.aafco.org/resources/startups/calorie-content/',
+          NOTE: 'ペットフードのカロリー表示と単位換算を確認する参考情報',
+        },
+        {
+          LABEL: 'WSAVA: Global Nutrition Guidelines',
+          URL: 'https://wsava.org/global-guidelines/global-nutrition-guidelines/',
+          NOTE: 'BCS、栄養評価、個体差を踏まえた調整の参考情報',
+        },
+        {
+          LABEL: 'FelineVMA / AAFP: Feline Feeding Programs',
+          URL: 'https://catvets.com/resource/how-to-feed-how-to-feed-a-cat-consensus-statement/',
+          NOTE: '食事回数、食べ方、環境、複数猫家庭での給餌設計の参考情報',
+        },
+      ],
+    },
     DISCLAIMER:
       'このページの計算結果や説明は、一般的な目安として使える内容をまとめたものです。実際に必要な量は、猫の体格や体調、活動量、食欲によって変わります。急な食欲低下や体重変化がある場合は、計算値だけで判断せず、日々の様子もあわせて確認してください。',
   },
@@ -1144,6 +1173,25 @@ export const WATER_INTAKE_UI_TEXT = {
         '食欲に変化がある',
         '以前より元気がない',
         '毛づやの変化が気になる',
+      ],
+    },
+    REFERENCES: {
+      TITLE: '計算方法の参考情報',
+      BODY: [
+        'このページの給水量計算は、体重あたりの総水分目安と、フードに含まれる水分量を分けて考える構成です。',
+        '表示値は一般的な目安として扱い、普段の飲水傾向や体調変化とあわせて確認してください。',
+      ],
+      LINKS: [
+        {
+          LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
+          URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
+          NOTE: '犬猫の水分必要量、食事・環境・活動量・健康状態による個体差、ドライ/缶詰フードの水分量差の参考情報',
+        },
+        {
+          LABEL: 'Cornell Feline Health Center: Hydration',
+          URL: 'https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/hydration',
+          NOTE: '猫の水分摂取、ウェットフードとドライフードによる飲水量差、脱水サインの参考情報',
+        },
       ],
     },
     DISCLAIMER:
