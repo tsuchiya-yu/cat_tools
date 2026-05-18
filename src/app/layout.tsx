@@ -173,14 +173,13 @@ export default function RootLayout({
                     </Link>
                   </li>
                   <li>
-                    <a 
-                      href="https://cat-link.catnote.tokyo/privacy" 
-                      target="_blank" 
-                      rel="noopener noreferrer"
+                    <Link
+                      href="/privacy"
+                      prefetch={false}
                       className="hover:text-pink-600 transition-colors"
                     >
                       プライバシーポリシー
-                    </a>
+                    </Link>
                   </li>
                 </ul>
               </div>
