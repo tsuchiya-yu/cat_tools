@@ -188,7 +188,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <a 
-                      href="https://x.com/CATLINK_PR" 
+                      href="https://x.com/catnote_tokyo"
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="hover:text-pink-600 transition-colors"
