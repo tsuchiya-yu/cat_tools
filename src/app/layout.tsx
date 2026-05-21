@@ -7,11 +7,14 @@ import GoogleAnalyticsScript from '@/components/GoogleAnalyticsScript';
 import JsonLdScript from '@/components/JsonLdScript';
 import { SITE_CONFIG } from '@/config/site';
 import {
+  ABOUT_PATH,
   CALCULATE_CAT_AGE_PATH,
   CALCULATE_CAT_CALORIE_PATH,
   CALCULATE_CAT_FEEDING_PATH,
   CALCULATE_CAT_WATER_INTAKE_PATH,
   CAT_FOOD_SAFETY_PATH,
+  CONTACT_FORM_URL,
+  X_PROFILE_URL,
 } from '@/constants/paths';
 import { FOOTER_TEXT } from '@/constants/text';
 
@@ -114,9 +117,9 @@ export default function RootLayout({
         {children}
         <footer className="section text-gray-500 text-sm mt-10 pb-10">
           <div className="container max-w-3xl mx-auto px-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="flex flex-col gap-8 md:flex-row md:justify-between md:gap-6">
               {/* ツール */}
-              <div>
+              <div className="md:flex-1">
                 <h2 className="font-bold mb-2">{FOOTER_TEXT.TOOLS.TITLE}</h2>
                 <ul className="space-y-2">
                   <li>
@@ -148,9 +151,18 @@ export default function RootLayout({
               </div>
 
               {/* 規約 */}
-              <div>
+              <div className="md:flex-1">
                 <h2 className="font-bold mb-2">規約</h2>
                 <ul className="space-y-2">
+                  <li>
+                    <Link
+                      href={ABOUT_PATH}
+                      prefetch={false}
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      ねこツールズについて
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       href="/terms"
@@ -173,12 +185,12 @@ export default function RootLayout({
               </div>
 
               {/* お問い合わせ・SNS */}
-              <div>
+              <div className="md:flex-1">
                 <h2 className="font-bold mb-2">お問い合わせ・SNS</h2>
                 <ul className="space-y-2">
                   <li>
                     <a 
-                      href="https://docs.google.com/forms/d/e/1FAIpQLSeGH6AykLYDuxFasGFDUGGuCv72Ejfm1P1SDfPh2Q2RZVOzkg/viewform" 
+                      href={CONTACT_FORM_URL}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="hover:text-pink-600 transition-colors"
@@ -188,7 +200,7 @@ export default function RootLayout({
                   </li>
                   <li>
                     <a 
-                      href="https://x.com/catnote_tokyo"
+                      href={X_PROFILE_URL}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="hover:text-pink-600 transition-colors"
