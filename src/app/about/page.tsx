@@ -6,7 +6,7 @@ import { ABOUT_PATH, CONTACT_FORM_URL, X_PROFILE_URL } from '@/constants/paths';
 import TsukushiImage from './TsukushiImage';
 
 export const metadata: Metadata = {
-  title: 'サイトについて',
+  title: 'ねこツールズについて｜運営者・サイトの目的',
   description:
     'ねこツールズを作った理由、運営者「つくしの飼い主」について、サイトで大切にしていること、ご利用時の注意点を紹介します。',
   alternates: {
@@ -30,14 +30,14 @@ const aboutStructuredData = {
   '@graph': [
     {
       '@type': 'AboutPage',
-      name: 'サイトについて',
+      name: 'ねこツールズについて',
       url: `${SITE_CONFIG.URL}${ABOUT_PATH}`,
       description: aboutPageDescription,
       mainEntity: operatorStructuredData,
     },
     {
       '@type': 'ProfilePage',
-      name: 'つくしの飼い主について',
+      name: 'ねこツールズについて',
       url: `${SITE_CONFIG.URL}${ABOUT_PATH}`,
       description: aboutPageDescription,
       mainEntity: operatorStructuredData,
@@ -58,7 +58,7 @@ const breadcrumbStructuredData = {
     {
       '@type': 'ListItem',
       position: 2,
-      name: 'サイトについて',
+      name: 'ねこツールズについて',
       item: `${SITE_CONFIG.URL}${ABOUT_PATH}`,
     },
   ],
@@ -139,7 +139,7 @@ function Breadcrumb() {
           /
         </li>
         <li aria-current="page" className="text-gray-700">
-          サイトについて
+          ねこツールズについて
         </li>
       </ol>
     </nav>

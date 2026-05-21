@@ -7,4 +7,4 @@ export const CALCULATE_CAT_WATER_INTAKE_PATH = '/calculate-cat-water-intake';
 
 export const CONTACT_FORM_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLSeGH6AykLYDuxFasGFDUGGuCv72Ejfm1P1SDfPh2Q2RZVOzkg/viewform';
-export const X_PROFILE_URL = 'https://x.com/CATLINK_PR';
+export const X_PROFILE_URL = 'https://x.com/catnote_tokyo';

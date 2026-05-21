@@ -160,7 +160,7 @@ export default function RootLayout({
                       prefetch={false}
                       className="hover:text-pink-600 transition-colors"
                     >
-                      サイトについて
+                      ねこツールズについて
                     </Link>
                   </li>
                   <li>
