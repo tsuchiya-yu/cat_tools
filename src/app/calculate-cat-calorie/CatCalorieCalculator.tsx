@@ -14,15 +14,75 @@ import { LIFE_STAGES, GOALS } from '@/constants/options';
 import CalorieInput from '@/components/CalorieInput';
 import CalorieResult from '@/components/CalorieResult';
 import CalorieFAQ from '@/components/CalorieFAQ';
-import GuideSection from '@/components/GuideSection';
 import Breadcrumbs from '@/components/Breadcrumbs';
+
+function CalorieOverviewCard() {
+  return (
+    <section
+      className="mt-10 rounded-2xl border border-pink-100 bg-pink-50/70 p-4 sm:p-5"
+      aria-labelledby="calorie-overview-title"
+    >
+      <h2 id="calorie-overview-title" className="text-base font-bold text-gray-900">
+        {CALORIE_UI_TEXT.OVERVIEW.TITLE}
+      </h2>
+      <ul className="mt-3 flex flex-col gap-2 text-sm text-gray-700 leading-relaxed">
+        {CALORIE_UI_TEXT.OVERVIEW.ITEMS.map((item) => (
+          <li key={item} className="flex gap-2">
+            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-pink-500" aria-hidden="true" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-3 border-t border-pink-100 pt-3">
+        <h3 className="text-sm font-bold text-gray-900">{CALORIE_UI_TEXT.OVERVIEW.USAGE_TITLE}</h3>
+        <p className="mt-1 text-sm text-gray-700 leading-relaxed text-pretty">
+          {CALORIE_UI_TEXT.OVERVIEW.USAGE_DESCRIPTION}
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function CalorieNextActions({ isVisible }: { isVisible: boolean }) {
+  if (!isVisible) return null;
+
+  return (
+    <section className="section mt-6" aria-labelledby="calorie-next-actions">
+      <div className="rounded-2xl border border-pink-100 bg-white p-4 sm:p-5 shadow-sm">
+        <h2 id="calorie-next-actions" className="text-base font-bold text-gray-900">
+          {CALORIE_UI_TEXT.NEXT_ACTIONS.TITLE}
+        </h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div>
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {CALORIE_UI_TEXT.NEXT_ACTIONS.FEEDING.DESCRIPTION}
+            </p>
+            <Link href={CALCULATE_CAT_FEEDING_PATH} className="mt-2 inline-block text-sm font-bold text-pink-600">
+              {CALORIE_UI_TEXT.NEXT_ACTIONS.FEEDING.LABEL}
+            </Link>
+          </div>
+          <div className="border-t border-pink-100 pt-3 sm:border-l sm:border-t-0 sm:pl-4 sm:pt-0">
+            <p className="text-sm text-gray-700 leading-relaxed">
+              {CALORIE_UI_TEXT.NEXT_ACTIONS.AGE.DESCRIPTION}
+            </p>
+            <Link href={CALCULATE_CAT_AGE_PATH} className="mt-2 inline-block text-sm font-bold text-pink-600">
+              {CALORIE_UI_TEXT.NEXT_ACTIONS.AGE.LABEL}
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function CalorieSupplementaryContent() {
   const supplementaryText = CALORIE_UI_TEXT.SUPPLEMENTARY;
 
   return (
     <>
-      <section className="section mt-10" aria-labelledby="calorie-result-guide">
+      <CalorieOverviewCard />
+
+      <section className="section mt-8" aria-labelledby="calorie-result-guide">
         <h2
           id="calorie-result-guide"
           className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
@@ -348,19 +408,12 @@ export default function CatCalorieCalculator() {
         isVisible={!!result}
         shareUrl={typeof window !== 'undefined' ? buildShareUrl() : undefined}
       />
+      <CalorieNextActions isVisible={!!result} />
 
       <CalorieSupplementaryContent />
 
       {/* FAQ Section */}
       <CalorieFAQ />
-
-      <GuideSection
-        className="mt-8"
-        whatTitle={CALORIE_UI_TEXT.GUIDE.WHAT_TITLE}
-        whatDescription={CALORIE_UI_TEXT.GUIDE.WHAT_DESCRIPTION}
-        usageTitle={CALORIE_UI_TEXT.GUIDE.USAGE_TITLE}
-        usageItems={CALORIE_UI_TEXT.GUIDE.USAGE_ITEMS}
-      />
 
       <section className="section mt-8" aria-label="免責事項">
         <p className="text-sm text-gray-600 leading-relaxed text-pretty">
