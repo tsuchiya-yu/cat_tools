@@ -31,7 +31,8 @@ const toolPages = [
     path: '/calculate-cat-calorie',
     name: '猫のカロリー計算',
     url: 'https://cat-tools.catnote.tokyo/calculate-cat-calorie',
-    description: '体重と条件から猫の1日の必要カロリーの目安を計算します。',
+    description:
+      '猫の体重、ライフステージ、去勢/避妊、維持・減量・増量の目標から、1日に必要なカロリー（kcal/日）を自動計算。標準値と参考幅を表示し、フード量を見直す目安として使えます。',
     applicationCategory: 'UtilitiesApplication',
     hasFaq: true,
   },
