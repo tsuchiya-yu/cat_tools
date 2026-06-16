@@ -19,7 +19,7 @@ import Breadcrumbs from '@/components/Breadcrumbs';
 function CalorieOverviewCard() {
   return (
     <section
-      className="rounded-2xl border border-pink-100 bg-pink-50/70 p-4 sm:p-5 mb-6"
+      className="mt-10 rounded-2xl border border-pink-100 bg-pink-50/70 p-4 sm:p-5"
       aria-labelledby="calorie-overview-title"
     >
       <h2 id="calorie-overview-title" className="text-base font-bold text-gray-900">
@@ -80,7 +80,9 @@ function CalorieSupplementaryContent() {
 
   return (
     <>
-      <section className="section mt-10" aria-labelledby="calorie-result-guide">
+      <CalorieOverviewCard />
+
+      <section className="section mt-8" aria-labelledby="calorie-result-guide">
         <h2
           id="calorie-result-guide"
           className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
@@ -386,8 +388,6 @@ export default function CatCalorieCalculator() {
         <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed">
           {CALORIE_UI_TEXT.HEADER.DESCRIPTION}
         </p>
-
-        <CalorieOverviewCard />
 
         <CalorieInput
           weight={weight}
