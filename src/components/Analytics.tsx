@@ -12,7 +12,7 @@ export default function Analytics() {
   const pathname = usePathname();
 
   useEffect(() => {
-    if (!isGAEnabled()) return;
+    if (!isGAEnabled() || !pathname) return;
 
     pageview(pathname);
   }, [pathname]);

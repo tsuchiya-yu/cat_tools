@@ -66,4 +66,12 @@ describe('Analytics', () => {
 
     expect(pageview).not.toHaveBeenCalled();
   });
+
+  it('does not send a pageview when pathname is null', () => {
+    usePathname.mockReturnValue(null);
+
+    render(<Analytics />);
+
+    expect(pageview).not.toHaveBeenCalled();
+  });
 });
