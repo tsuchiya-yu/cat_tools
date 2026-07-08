@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { usePathname, useSearchParams } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { pageview, isGAEnabled } from '@/lib/gtag';
 
 /**
@@ -10,15 +10,12 @@ import { pageview, isGAEnabled } from '@/lib/gtag';
  */
 export default function Analytics() {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!isGAEnabled()) return;
+    if (!isGAEnabled() || !pathname) return;
 
-    const query = searchParams.toString();
-    const url = query ? `${pathname}?${query}` : pathname;
-    pageview(url);
-  }, [pathname, searchParams]);
+    pageview(pathname);
+  }, [pathname]);
 
   return null;
 }
