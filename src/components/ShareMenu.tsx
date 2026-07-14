@@ -5,6 +5,8 @@ import { SHARE_UI_TEXT } from '@/constants/text';
 import { IoShareOutline, IoLinkOutline } from 'react-icons/io5';
 import { FaXTwitter } from 'react-icons/fa6';
 
+export type ShareMethod = 'native' | 'copy_link' | 'x';
+
 interface ShareMenuProps {
   shareText: string;
   shareUrl?: string;
@@ -13,6 +15,7 @@ interface ShareMenuProps {
   menuClassName?: string;
   buttonId?: string;
   menuId?: string;
+  onShareSuccess?: (method: ShareMethod) => void;
 }
 
 const TOAST_DURATION_MS = 1600;
@@ -29,6 +32,7 @@ export default function ShareMenu({
   menuClassName,
   buttonId,
   menuId,
+  onShareSuccess,
 }: ShareMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showToast, setShowToast] = useState(false);
@@ -67,12 +71,13 @@ export default function ShareMenu({
         text: shareText,
         url: resolvedShareUrl || undefined,
       });
+      onShareSuccess?.('native');
     } catch {
       // ignore cancellation
     } finally {
       toggleShare(false);
     }
-  }, [resolvedShareTitle, shareText, resolvedShareUrl, toggleShare]);
+  }, [resolvedShareTitle, shareText, resolvedShareUrl, toggleShare, onShareSuccess]);
 
   const handleCopyLink = useCallback(async () => {
     const target = resolvedShareUrl;
@@ -89,6 +94,7 @@ export default function ShareMenu({
         throw new Error('Clipboard API not available');
       }
       await navigator.clipboard.writeText(target);
+      onShareSuccess?.('copy_link');
       setToastMessage(SHARE_UI_TEXT.TOAST.SUCCESS);
     } catch (error) {
       console.error('Failed to copy link:', error);
@@ -97,7 +103,7 @@ export default function ShareMenu({
       setShowToast(true);
       toggleShare(false);
     }
-  }, [resolvedShareUrl, toggleShare]);
+  }, [resolvedShareUrl, toggleShare, onShareSuccess]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -179,7 +185,10 @@ export default function ShareMenu({
             rel="noopener noreferrer"
             role="menuitem"
             className="share-item flex items-center gap-2.5 w-full px-3 py-2.5 rounded-lg bg-white text-gray-900 cursor-pointer hover:bg-gray-50"
-            onClick={() => toggleShare(false)}
+            onClick={() => {
+              onShareSuccess?.('x');
+              toggleShare(false);
+            }}
           >
             <FaXTwitter className="w-[18px] h-[18px]" aria-hidden="true" />
             <span>{SHARE_UI_TEXT.MENU_ITEMS.X_SHARE}</span>

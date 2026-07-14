@@ -1,9 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { CatCalorieResult } from '@/types';
 import { CALORIE_UI_TEXT } from '@/constants/text';
+import { event } from '@/lib/gtag';
 import ShareMenu from './ShareMenu';
+import type { ShareMethod } from './ShareMenu';
 
 interface CalorieResultProps {
   result: CatCalorieResult | null;
@@ -16,6 +18,16 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
     if (!result) return '';
     return CALORIE_UI_TEXT.SHARE.SHARE_TEXT(result.kcal.toString(), result.range);
   }, [result]);
+
+  const handleShareSuccess = useCallback((method: ShareMethod) => {
+    event({
+      action: 'share',
+      params: {
+        tool_id: 'cat_calorie',
+        method,
+      },
+    });
+  }, []);
 
   if (!isVisible || !result) return null;
 
@@ -46,6 +58,7 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
           menuId="shareMenu"
           buttonClassName="absolute right-0 top-0 -translate-y-3/5"
           menuClassName="top-12 border-gray-300 min-w-[220px]"
+          onShareSuccess={handleShareSuccess}
         />
 
         {/* モバイルでは縦並び、PCでは横並び */}

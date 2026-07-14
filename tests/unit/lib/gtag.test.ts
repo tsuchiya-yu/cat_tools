@@ -71,4 +71,28 @@ describe('gtag utilities', () => {
       value: 1,
     });
   });
+
+  it('sends GA4 custom event parameters', async () => {
+    const { event, GA_MEASUREMENT_ID } = await import('@/lib/gtag');
+    const gtagMock = jest.fn();
+    window.gtag = gtagMock;
+
+    event({
+      action: 'calculation_complete',
+      params: {
+        tool_id: 'cat_calorie',
+        method: 'copy_link',
+      },
+    });
+
+    expect(gtagMock).toHaveBeenCalledTimes(1);
+    expect(gtagMock).toHaveBeenCalledWith('event', 'calculation_complete', {
+      tool_id: 'cat_calorie',
+      method: 'copy_link',
+      event_category: undefined,
+      event_label: undefined,
+      value: undefined,
+    });
+    expect(GA_MEASUREMENT_ID).toBe('G-TEST123');
+  });
 });
