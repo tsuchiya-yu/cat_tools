@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import CatCalorieCalculator from '@/app/calculate-cat-calorie/CatCalorieCalculator';
 import { event } from '@/lib/gtag';
 
@@ -9,25 +9,53 @@ jest.mock('@/lib/gtag', () => ({
 describe('CatCalorieCalculator analytics', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useFakeTimers();
     window.history.replaceState({}, '', '/calculate-cat-calorie');
   });
 
-  it('sends calculation_complete once when a valid result is shown', async () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('debounces continuous input and sends calculation_complete once', () => {
     const { rerender } = render(<CatCalorieCalculator />);
+
+    fireEvent.change(screen.getByLabelText('体重(kg)'), {
+      target: { value: '4' },
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
+
+    fireEvent.change(screen.getByLabelText('体重(kg)'), {
+      target: { value: '4.' },
+    });
+
+    act(() => {
+      jest.advanceTimersByTime(500);
+    });
 
     fireEvent.change(screen.getByLabelText('体重(kg)'), {
       target: { value: '4.2' },
     });
 
-    await waitFor(() => {
-      expect(event).toHaveBeenCalledWith({
-        action: 'calculation_complete',
-        params: {
-          tool_id: 'cat_calorie',
-        },
-      });
+    act(() => {
+      jest.advanceTimersByTime(999);
     });
 
+    expect(event).not.toHaveBeenCalled();
+
+    act(() => {
+      jest.advanceTimersByTime(1);
+    });
+
+    expect(event).toHaveBeenCalledWith({
+      action: 'calculation_complete',
+      params: {
+        tool_id: 'cat_calorie',
+      },
+    });
     expect(event).toHaveBeenCalledTimes(1);
 
     rerender(<CatCalorieCalculator />);
@@ -35,14 +63,18 @@ describe('CatCalorieCalculator analytics', () => {
     expect(event).toHaveBeenCalledTimes(1);
   });
 
-  it('does not send calculation_complete when input is invalid', async () => {
+  it('does not send calculation_complete when input is invalid', () => {
     render(<CatCalorieCalculator />);
 
     fireEvent.change(screen.getByLabelText('体重(kg)'), {
       target: { value: '0.1' },
     });
 
-    await screen.findByRole('alert');
+    expect(screen.getByRole('alert')).toBeInTheDocument();
+
+    act(() => {
+      jest.advanceTimersByTime(1000);
+    });
 
     expect(event).not.toHaveBeenCalled();
   });

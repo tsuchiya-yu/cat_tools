@@ -19,6 +19,7 @@ import GuideSection from '@/components/GuideSection';
 import Breadcrumbs from '@/components/Breadcrumbs';
 
 const CAT_CALORIE_TOOL_ID = 'cat_calorie';
+const CALCULATION_COMPLETE_DEBOUNCE_MS = 1000;
 
 const trackRelatedToolClick = (targetTool: string, placement: string) => {
   event({
@@ -346,13 +347,17 @@ export default function CatCalorieCalculator() {
 
     if (lastTrackedCalculationSignatureRef.current === calculationSignature) return;
 
-    lastTrackedCalculationSignatureRef.current = calculationSignature;
-    event({
-      action: 'calculation_complete',
-      params: {
-        tool_id: CAT_CALORIE_TOOL_ID,
-      },
-    });
+    const timer = window.setTimeout(() => {
+      lastTrackedCalculationSignatureRef.current = calculationSignature;
+      event({
+        action: 'calculation_complete',
+        params: {
+          tool_id: CAT_CALORIE_TOOL_ID,
+        },
+      });
+    }, CALCULATION_COMPLETE_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timer);
   }, [result, weight, lifeStage, goal, neutered]);
 
   return (
