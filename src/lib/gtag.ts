@@ -8,13 +8,15 @@ type GtagConfigParams = {
   event_category?: string;
   event_label?: string;
   value?: number;
+  [key: string]: string | number | boolean | undefined;
 };
 
 type GtagEventParams = {
   action: string;
-  category: string;
+  category?: string;
   label?: string;
   value?: number;
+  params?: Record<string, string | number | boolean | undefined>;
 };
 
 // GA4測定ID
@@ -33,8 +35,9 @@ const sendPageview = (url: string) => {
   });
 };
 
-const sendEvent = ({ action, category, label, value }: GtagEventParams) => {
+const sendEvent = ({ action, category, label, value, params }: GtagEventParams) => {
   window.gtag('event', action, {
+    ...params,
     event_category: category,
     event_label: label,
     value: value,
@@ -81,10 +84,10 @@ export const pageview = (url: string) => {
 };
 
 // イベントをトラッキング
-export const event = ({ action, category, label, value }: GtagEventParams) => {
+export const event = ({ action, category, label, value, params }: GtagEventParams) => {
   if (!isGAEnabled()) return;
 
-  const eventParams = { action, category, label, value };
+  const eventParams = { action, category, label, value, params };
   if (!hasGtag()) {
     queuedEvents.push(eventParams);
     return;
