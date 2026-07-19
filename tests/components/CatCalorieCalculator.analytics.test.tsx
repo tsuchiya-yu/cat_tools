@@ -79,6 +79,41 @@ describe('CatCalorieCalculator analytics', () => {
     expect(event).not.toHaveBeenCalled();
   });
 
+  it('shows the result CTA with kcal and sends related_tool_click', () => {
+    render(<CatCalorieCalculator />);
+
+    expect(
+      screen.queryByRole('link', {
+        name: '猫の給餌量計算で、1日に与えるグラム数を確認する',
+      }),
+    ).not.toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('体重(kg)'), {
+      target: { value: '4.2' },
+    });
+
+    const resultCta = screen.getByRole('link', {
+      name: '猫の給餌量計算で、1日に与えるグラム数を確認する',
+    });
+
+    expect(resultCta).toHaveAttribute(
+      'href',
+      '/calculate-cat-feeding?kcal=246.4',
+    );
+
+    fireEvent.click(resultCta);
+
+    expect(event).toHaveBeenCalledTimes(1);
+    expect(event).toHaveBeenCalledWith({
+      action: 'related_tool_click',
+      params: {
+        source_tool: 'cat_calorie',
+        target_tool: 'cat_feeding',
+        placement: 'calorie_result_cta',
+      },
+    });
+  });
+
   it('sends related_tool_click for in-page related tool links', () => {
     render(<CatCalorieCalculator />);
 

@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
+import Link from 'next/link';
 import { CatCalorieResult } from '@/types';
 import { CALORIE_UI_TEXT } from '@/constants/text';
+import { CALCULATE_CAT_FEEDING_PATH } from '@/constants/paths';
 import { event } from '@/lib/gtag';
 import ShareMenu from './ShareMenu';
 import type { ShareMethod } from './ShareMenu';
@@ -29,7 +31,20 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
     });
   }, []);
 
+  const handleFeedingClick = useCallback(() => {
+    event({
+      action: 'related_tool_click',
+      params: {
+        source_tool: 'cat_calorie',
+        target_tool: 'cat_feeding',
+        placement: 'calorie_result_cta',
+      },
+    });
+  }, []);
+
   if (!isVisible || !result) return null;
+
+  const feedingHref = `${CALCULATE_CAT_FEEDING_PATH}?kcal=${encodeURIComponent(result.kcal.toString())}`;
 
   return (
     <section className="section mt-10" aria-live="polite">
@@ -95,6 +110,22 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
               {result.note}
             </div>
           </div>
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-pink-200 bg-pink-50 p-5 text-left">
+          <p className="text-sm font-bold text-pink-700">
+            {CALORIE_UI_TEXT.NEXT_ACTIONS.TITLE}
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-gray-700">
+            {CALORIE_UI_TEXT.NEXT_ACTIONS.FEEDING.DESCRIPTION}
+          </p>
+          <Link
+            href={feedingHref}
+            onClick={handleFeedingClick}
+            className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-pink-600 px-5 py-3 text-center text-sm font-bold text-white transition-colors hover:bg-pink-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 focus-visible:ring-offset-2"
+          >
+            {CALORIE_UI_TEXT.NEXT_ACTIONS.FEEDING.LABEL}
+          </Link>
         </div>
       </div>
     </section>
