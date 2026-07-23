@@ -23,20 +23,18 @@ describe('Analytics', () => {
     window.history.replaceState({}, '', '/cat-age');
   });
 
-  it('sends the pathname once on initial render', () => {
+  it('does not send a pageview on initial render', () => {
     render(<Analytics />);
 
-    expect(pageview).toHaveBeenCalledWith('/cat-age');
-    expect(pageview).toHaveBeenCalledTimes(1);
+    expect(pageview).not.toHaveBeenCalled();
   });
 
-  it('sends only the pathname when the initial URL has a query string', () => {
+  it('does not send a pageview when the initial URL has a query string', () => {
     window.history.replaceState({}, '', '/cat-age?foo=1&bar=2');
 
     render(<Analytics />);
 
-    expect(pageview).toHaveBeenCalledWith('/cat-age');
-    expect(pageview).toHaveBeenCalledTimes(1);
+    expect(pageview).not.toHaveBeenCalled();
   });
 
   it('does not send another pageview when only the query string changes', () => {
@@ -45,7 +43,7 @@ describe('Analytics', () => {
     window.history.pushState({}, '', '/cat-age?foo=1');
     rerender(<Analytics />);
 
-    expect(pageview).toHaveBeenCalledTimes(1);
+    expect(pageview).not.toHaveBeenCalled();
   });
 
   it('sends one pageview when the pathname changes', () => {
@@ -54,15 +52,17 @@ describe('Analytics', () => {
     usePathname.mockReturnValue('/calculate-cat-calorie');
     rerender(<Analytics />);
 
-    expect(pageview).toHaveBeenNthCalledWith(1, '/cat-age');
-    expect(pageview).toHaveBeenNthCalledWith(2, '/calculate-cat-calorie');
-    expect(pageview).toHaveBeenCalledTimes(2);
+    expect(pageview).toHaveBeenCalledWith('/calculate-cat-calorie');
+    expect(pageview).toHaveBeenCalledTimes(1);
   });
 
-  it('does not send a pageview when GA is disabled', () => {
+  it('does not send a pageview on pathname changes when GA is disabled', () => {
     (isGAEnabled as jest.Mock).mockReturnValue(false);
 
-    render(<Analytics />);
+    const { rerender } = render(<Analytics />);
+
+    usePathname.mockReturnValue('/calculate-cat-calorie');
+    rerender(<Analytics />);
 
     expect(pageview).not.toHaveBeenCalled();
   });
@@ -71,6 +71,16 @@ describe('Analytics', () => {
     usePathname.mockReturnValue(null);
 
     render(<Analytics />);
+
+    expect(pageview).not.toHaveBeenCalled();
+  });
+
+  it('does not send a pageview when the initial null pathname resolves', () => {
+    usePathname.mockReturnValue(null);
+    const { rerender } = render(<Analytics />);
+
+    usePathname.mockReturnValue('/cat-age');
+    rerender(<Analytics />);
 
     expect(pageview).not.toHaveBeenCalled();
   });
