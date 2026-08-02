@@ -13,9 +13,7 @@ export default function GoogleAnalyticsScript() {
           window.dataLayer = window.dataLayer || [];
           window.gtag = window.gtag || function(){window.dataLayer.push(arguments);};
           window.gtag('js', new Date());
-          window.gtag('config', '${GA_MEASUREMENT_ID}', {
-            send_page_view: false,
-          });
+          window.gtag('config', '${GA_MEASUREMENT_ID}');
         `}
       </Script>
       <Script

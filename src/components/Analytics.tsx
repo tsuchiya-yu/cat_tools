@@ -1,18 +1,25 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { pageview, isGAEnabled } from '@/lib/gtag';
 
 /**
  * Google Analytics ページビュー追跡コンポーネント
- * App Routerでのクライアントサイドナビゲーションを追跡
+ * 初回ページビューはGoogleAnalyticsScriptに任せ、
+ * App Routerでのクライアントサイドナビゲーションのみ追跡する
  */
 export default function Analytics() {
   const pathname = usePathname();
+  const previousPathname = useRef(pathname);
 
   useEffect(() => {
-    if (!isGAEnabled() || !pathname) return;
+    if (!pathname) return;
+
+    const previousPath = previousPathname.current;
+    previousPathname.current = pathname;
+
+    if (!isGAEnabled() || !previousPath || previousPath === pathname) return;
 
     pageview(pathname);
   }, [pathname]);
