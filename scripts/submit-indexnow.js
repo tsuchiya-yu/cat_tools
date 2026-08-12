@@ -1,11 +1,14 @@
 const SITE_URL = 'https://cat-tools.catnote.tokyo';
 const INDEXNOW_KEY = '8541fb6911ebee21baedd14e76f5e0db';
 const KEY_LOCATION = `${SITE_URL}/${INDEXNOW_KEY}.txt`;
+const DEPLOYMENT_MARKER_URL = `${SITE_URL}/deployment-sha.txt`;
 const SITEMAP_URL = `${SITE_URL}/sitemap.xml`;
 const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 const MAX_URLS_PER_REQUEST = 10_000;
 const KEY_CHECK_ATTEMPTS = 12;
 const KEY_CHECK_INTERVAL_MS = 5_000;
+const DEPLOYMENT_CHECK_ATTEMPTS = 24;
+const DEPLOYMENT_CHECK_INTERVAL_MS = 5_000;
 const INDEXNOW_ATTEMPTS = 3;
 const INDEXNOW_RETRY_INTERVAL_MS = 2_000;
 
@@ -30,47 +33,6 @@ function extractLocs(xml) {
   return [...xml.matchAll(/<loc>\s*([^<]+?)\s*<\/loc>/giu)].map((match) =>
     decodeXml(match[1].trim())
   );
-}
-
-/**
- * @param {string | undefined} deploymentUrl
- * @returns {string}
- */
-function getSitemapUrl(deploymentUrl) {
-  const sourceUrl = new URL(deploymentUrl?.trim() || SITE_URL);
-  if (sourceUrl.protocol !== 'https:') {
-    throw new Error(`The sitemap source must use HTTPS: ${sourceUrl.href}`);
-  }
-
-  return new URL('/sitemap.xml', sourceUrl.origin).href;
-}
-
-/**
- * next-sitemap writes canonical production URLs into the sitemap index even
- * when the file is served from a Vercel deployment URL. Preserve the nested
- * path, but fetch it from the same deployment as the index.
- *
- * @param {string} nestedUrl
- * @param {string} sitemapSourceOrigin
- * @param {string} siteUrl
- * @returns {string}
- */
-function resolveNestedSitemapUrl(
-  nestedUrl,
-  sitemapSourceOrigin,
-  siteUrl = SITE_URL
-) {
-  const nested = new URL(nestedUrl);
-  const source = new URL(sitemapSourceOrigin);
-  const site = new URL(siteUrl);
-
-  if (nested.origin !== source.origin && nested.origin !== site.origin) {
-    throw new Error(
-      `Refusing to fetch a nested sitemap outside ${source.origin} or ${site.origin}: ${nestedUrl}`
-    );
-  }
-
-  return new URL(`${nested.pathname}${nested.search}`, source.origin).href;
 }
 
 /**
@@ -110,14 +72,19 @@ async function collectSitemapUrls(
 
   if (/<sitemapindex\b/iu.test(xml)) {
     const nestedUrls = await Promise.all(
-      locs.map((loc) =>
-        collectSitemapUrls(
-          resolveNestedSitemapUrl(loc, sitemapSourceOrigin),
+      locs.map((loc) => {
+        if (new URL(loc).origin !== new URL(sitemapSourceOrigin).origin) {
+          throw new Error(
+            `Refusing to fetch a nested sitemap outside ${new URL(sitemapSourceOrigin).origin}: ${loc}`
+          );
+        }
+        return collectSitemapUrls(
+          loc,
           fetchImpl,
           visitedSitemaps,
           sitemapSourceOrigin
-        )
-      )
+        );
+      })
     );
     return [...new Set(nestedUrls.flat())];
   }
@@ -159,6 +126,54 @@ function validateSubmittedUrls(urls, siteUrl = SITE_URL) {
  */
 function sleep(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+/**
+ * @param {{ expectedSha?: string, fetchImpl?: typeof fetch, attempts?: number, intervalMs?: number, sleepImpl?: typeof sleep }} options
+ * @returns {Promise<void>}
+ */
+async function waitForExpectedDeployment({
+  expectedSha = process.env.EXPECTED_DEPLOYMENT_SHA,
+  fetchImpl = fetch,
+  attempts = DEPLOYMENT_CHECK_ATTEMPTS,
+  intervalMs = DEPLOYMENT_CHECK_INTERVAL_MS,
+  sleepImpl = sleep,
+} = {}) {
+  const normalizedExpectedSha = expectedSha?.trim();
+  if (!normalizedExpectedSha) {
+    return;
+  }
+  if (!/^[0-9a-f]{40}$/iu.test(normalizedExpectedSha)) {
+    throw new Error('EXPECTED_DEPLOYMENT_SHA must be a full 40-character Git SHA.');
+  }
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const markerUrl = new URL(DEPLOYMENT_MARKER_URL);
+      markerUrl.searchParams.set('expected', normalizedExpectedSha);
+      markerUrl.searchParams.set('attempt', String(attempt));
+      const response = await fetchImpl(markerUrl, {
+        cache: 'no-store',
+        headers: { 'cache-control': 'no-cache' },
+      });
+      if (
+        response.ok &&
+        (await response.text()).trim() === normalizedExpectedSha
+      ) {
+        return;
+      }
+    } catch {
+      // The production alias or marker may not be ready yet.
+    }
+
+    if (attempt < attempts) {
+      await sleepImpl(intervalMs);
+    }
+  }
+
+  throw new Error(
+    `Production did not publish deployment ${normalizedExpectedSha} at ${DEPLOYMENT_MARKER_URL}`
+  );
 }
 
 /**
@@ -237,20 +252,24 @@ async function postIndexNow(
 }
 
 /**
- * @param {{ fetchImpl?: typeof fetch, deploymentUrl?: string, sleepImpl?: typeof sleep, indexNowAttempts?: number, indexNowRetryIntervalMs?: number }} options
+ * @param {{ fetchImpl?: typeof fetch, expectedDeploymentSha?: string, sleepImpl?: typeof sleep, indexNowAttempts?: number, indexNowRetryIntervalMs?: number }} options
  * @returns {Promise<{ status: number, urlCount: number }>}
  */
 async function submitIndexNow({
   fetchImpl = fetch,
-  deploymentUrl = process.env.DEPLOYMENT_URL,
+  expectedDeploymentSha = process.env.EXPECTED_DEPLOYMENT_SHA,
   sleepImpl = sleep,
   indexNowAttempts = INDEXNOW_ATTEMPTS,
   indexNowRetryIntervalMs = INDEXNOW_RETRY_INTERVAL_MS,
 } = {}) {
+  await waitForExpectedDeployment({
+    expectedSha: expectedDeploymentSha,
+    fetchImpl,
+    sleepImpl,
+  });
   await waitForPublishedKey({ fetchImpl, sleepImpl });
 
-  const sitemapUrl = getSitemapUrl(deploymentUrl);
-  const sitemapUrls = await collectSitemapUrls(sitemapUrl, fetchImpl);
+  const sitemapUrls = await collectSitemapUrls(SITEMAP_URL, fetchImpl);
   const urlList = validateSubmittedUrls(sitemapUrls);
   const site = new URL(SITE_URL);
 
@@ -287,16 +306,16 @@ if (require.main === module) {
 }
 
 module.exports = {
+  DEPLOYMENT_MARKER_URL,
   INDEXNOW_KEY,
   INDEXNOW_ENDPOINT,
   KEY_LOCATION,
   SITEMAP_URL,
   collectSitemapUrls,
   extractLocs,
-  getSitemapUrl,
   postIndexNow,
-  resolveNestedSitemapUrl,
   submitIndexNow,
   validateSubmittedUrls,
+  waitForExpectedDeployment,
   waitForPublishedKey,
 };

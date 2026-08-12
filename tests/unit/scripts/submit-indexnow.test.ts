@@ -1,15 +1,16 @@
 import * as submitIndexNowModule from '../../../scripts/submit-indexnow';
 const {
+  DEPLOYMENT_MARKER_URL,
   INDEXNOW_KEY,
   INDEXNOW_ENDPOINT,
   KEY_LOCATION,
   SITEMAP_URL,
   collectSitemapUrls,
   extractLocs,
-  getSitemapUrl,
   postIndexNow,
   submitIndexNow,
   validateSubmittedUrls,
+  waitForExpectedDeployment,
   waitForPublishedKey,
 } = submitIndexNowModule;
 
@@ -53,43 +54,6 @@ describe('submit-indexnow', () => {
     ]);
   });
 
-  test('Vercel固有URLからsitemap indexとnested sitemapを取得する', async () => {
-    const deploymentUrl = 'https://cat-tools-example.vercel.app';
-    const deploymentSitemapUrl = `${deploymentUrl}/sitemap.xml`;
-    const deploymentNestedUrl = `${deploymentUrl}/sitemap-0.xml`;
-    const fetchImpl = jest.fn(async (url: string | URL | Request) => {
-      const value = String(url);
-      if (value === deploymentSitemapUrl) {
-        return response(`
-          <sitemapindex>
-            <sitemap><loc>https://cat-tools.catnote.tokyo/sitemap-0.xml</loc></sitemap>
-          </sitemapindex>
-        `);
-      }
-      if (value === deploymentNestedUrl) {
-        return response(`
-          <urlset>
-            <url><loc>https://cat-tools.catnote.tokyo/new-page</loc></url>
-          </urlset>
-        `);
-      }
-      return response('unexpected URL', 500);
-    });
-
-    await expect(
-      collectSitemapUrls(deploymentSitemapUrl, fetchImpl as typeof fetch)
-    ).resolves.toEqual(['https://cat-tools.catnote.tokyo/new-page']);
-    expect(fetchImpl).toHaveBeenNthCalledWith(
-      2,
-      deploymentNestedUrl,
-      expect.any(Object)
-    );
-    expect(fetchImpl).not.toHaveBeenCalledWith(
-      'https://cat-tools.catnote.tokyo/sitemap-0.xml',
-      expect.anything()
-    );
-  });
-
   test('許可されないoriginのnested sitemapはfetch前に拒否する', async () => {
     const fetchImpl = jest.fn(async () =>
       response(`
@@ -103,11 +67,6 @@ describe('submit-indexnow', () => {
       collectSitemapUrls(SITEMAP_URL, fetchImpl as typeof fetch)
     ).rejects.toThrow('Refusing to fetch a nested sitemap outside');
     expect(fetchImpl).toHaveBeenCalledTimes(1);
-  });
-
-  test('DEPLOYMENT_URLがなければProduction sitemapへfallbackする', () => {
-    expect(getSitemapUrl(undefined)).toBe(SITEMAP_URL);
-    expect(getSitemapUrl('')).toBe(SITEMAP_URL);
   });
 
   test('サイト外URLの送信を拒否する', () => {
@@ -134,13 +93,38 @@ describe('submit-indexnow', () => {
     expect(sleepImpl).toHaveBeenCalledTimes(1);
   });
 
-  test('今回デプロイされたsitemapのProduction URLをIndexNowへ一括送信する', async () => {
-    const deploymentUrl = 'https://cat-tools-example.vercel.app';
-    const deploymentSitemapUrl = `${deploymentUrl}/sitemap.xml`;
+  test('markerが期待SHAと一致するまでProduction aliasを再確認する', async () => {
+    const expectedSha = 'a'.repeat(40);
+    const fetchImpl = jest
+      .fn()
+      .mockResolvedValueOnce(response('b'.repeat(40)))
+      .mockResolvedValueOnce(response(expectedSha));
+    const sleepImpl = jest.fn().mockResolvedValue(undefined);
+
+    await expect(
+      waitForExpectedDeployment({
+        expectedSha,
+        fetchImpl: fetchImpl as typeof fetch,
+        attempts: 2,
+        intervalMs: 0,
+        sleepImpl,
+      })
+    ).resolves.toBeUndefined();
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+    expect(String(fetchImpl.mock.calls[0][0])).toContain(
+      `${DEPLOYMENT_MARKER_URL}?expected=${expectedSha}&attempt=1`
+    );
+    expect(String(fetchImpl.mock.calls[1][0])).toContain('attempt=2');
+    expect(sleepImpl).toHaveBeenCalledTimes(1);
+  });
+
+  test('marker一致後にProduction sitemapのURLをIndexNowへ一括送信する', async () => {
+    const expectedSha = 'a'.repeat(40);
     const fetchImpl = jest.fn(async (url: string | URL | Request, init?: RequestInit) => {
       const value = String(url);
+      if (value.startsWith(DEPLOYMENT_MARKER_URL)) return response(expectedSha);
       if (value === KEY_LOCATION) return response(INDEXNOW_KEY);
-      if (value === deploymentSitemapUrl) {
+      if (value === SITEMAP_URL) {
         return response(`
           <urlset>
             <url><loc>https://cat-tools.catnote.tokyo/</loc></url>
@@ -167,10 +151,42 @@ describe('submit-indexnow', () => {
     await expect(
       submitIndexNow({
         fetchImpl: fetchImpl as typeof fetch,
-        deploymentUrl,
+        expectedDeploymentSha: expectedSha,
         sleepImpl: jest.fn().mockResolvedValue(undefined),
       })
     ).resolves.toEqual({ status: 202, urlCount: 2 });
+    const fetchedUrls = fetchImpl.mock.calls.map(([url]) => String(url));
+    expect(fetchedUrls).toContain(SITEMAP_URL);
+    expect(fetchedUrls.some((url) => url.includes('.vercel.app'))).toBe(false);
+  });
+
+  test('EXPECTED_DEPLOYMENT_SHAがなければmarker待ちを省略する', async () => {
+    const fetchImpl = jest.fn(async (url: string | URL | Request) => {
+      const value = String(url);
+      if (value === KEY_LOCATION) return response(INDEXNOW_KEY);
+      if (value === SITEMAP_URL) {
+        return response(`
+          <urlset>
+            <url><loc>https://cat-tools.catnote.tokyo/</loc></url>
+          </urlset>
+        `);
+      }
+      if (value === INDEXNOW_ENDPOINT) return response('', 200);
+      return response('unexpected URL', 500);
+    });
+
+    await expect(
+      submitIndexNow({
+        fetchImpl: fetchImpl as typeof fetch,
+        expectedDeploymentSha: '',
+        sleepImpl: jest.fn().mockResolvedValue(undefined),
+      })
+    ).resolves.toEqual({ status: 200, urlCount: 1 });
+    expect(
+      fetchImpl.mock.calls.some(([url]) =>
+        String(url).startsWith(DEPLOYMENT_MARKER_URL)
+      )
+    ).toBe(false);
   });
 
   test('IndexNowの429と5xxを待機して再試行する', async () => {
