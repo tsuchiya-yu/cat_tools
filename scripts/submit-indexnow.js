@@ -6,6 +6,8 @@ const INDEXNOW_ENDPOINT = 'https://api.indexnow.org/indexnow';
 const MAX_URLS_PER_REQUEST = 10_000;
 const KEY_CHECK_ATTEMPTS = 12;
 const KEY_CHECK_INTERVAL_MS = 5_000;
+const INDEXNOW_ATTEMPTS = 3;
+const INDEXNOW_RETRY_INTERVAL_MS = 2_000;
 
 /**
  * @param {string} value
@@ -31,16 +33,66 @@ function extractLocs(xml) {
 }
 
 /**
+ * @param {string | undefined} deploymentUrl
+ * @returns {string}
+ */
+function getSitemapUrl(deploymentUrl) {
+  const sourceUrl = new URL(deploymentUrl?.trim() || SITE_URL);
+  if (sourceUrl.protocol !== 'https:') {
+    throw new Error(`The sitemap source must use HTTPS: ${sourceUrl.href}`);
+  }
+
+  return new URL('/sitemap.xml', sourceUrl.origin).href;
+}
+
+/**
+ * next-sitemap writes canonical production URLs into the sitemap index even
+ * when the file is served from a Vercel deployment URL. Preserve the nested
+ * path, but fetch it from the same deployment as the index.
+ *
+ * @param {string} nestedUrl
+ * @param {string} sitemapSourceOrigin
+ * @param {string} siteUrl
+ * @returns {string}
+ */
+function resolveNestedSitemapUrl(
+  nestedUrl,
+  sitemapSourceOrigin,
+  siteUrl = SITE_URL
+) {
+  const nested = new URL(nestedUrl);
+  const source = new URL(sitemapSourceOrigin);
+  const site = new URL(siteUrl);
+
+  if (nested.origin !== source.origin && nested.origin !== site.origin) {
+    throw new Error(
+      `Refusing to fetch a nested sitemap outside ${source.origin} or ${site.origin}: ${nestedUrl}`
+    );
+  }
+
+  return new URL(`${nested.pathname}${nested.search}`, source.origin).href;
+}
+
+/**
  * @param {string} sitemapUrl
  * @param {typeof fetch} fetchImpl
  * @param {Set<string>} visitedSitemaps
+ * @param {string} sitemapSourceOrigin
  * @returns {Promise<string[]>}
  */
 async function collectSitemapUrls(
   sitemapUrl,
   fetchImpl = fetch,
-  visitedSitemaps = new Set()
+  visitedSitemaps = new Set(),
+  sitemapSourceOrigin = new URL(sitemapUrl).origin
 ) {
+  const currentUrl = new URL(sitemapUrl);
+  if (currentUrl.origin !== new URL(sitemapSourceOrigin).origin) {
+    throw new Error(
+      `Refusing to fetch a sitemap outside ${new URL(sitemapSourceOrigin).origin}: ${sitemapUrl}`
+    );
+  }
+
   if (visitedSitemaps.has(sitemapUrl)) {
     return [];
   }
@@ -58,7 +110,14 @@ async function collectSitemapUrls(
 
   if (/<sitemapindex\b/iu.test(xml)) {
     const nestedUrls = await Promise.all(
-      locs.map((loc) => collectSitemapUrls(loc, fetchImpl, visitedSitemaps))
+      locs.map((loc) =>
+        collectSitemapUrls(
+          resolveNestedSitemapUrl(loc, sitemapSourceOrigin),
+          fetchImpl,
+          visitedSitemaps,
+          sitemapSourceOrigin
+        )
+      )
     );
     return [...new Set(nestedUrls.flat())];
   }
@@ -131,33 +190,84 @@ async function waitForPublishedKey({
 }
 
 /**
- * @param {{ fetchImpl?: typeof fetch }} options
- * @returns {Promise<{ status: number, urlCount: number }>}
+ * @param {number} status
+ * @returns {boolean}
  */
-async function submitIndexNow({ fetchImpl = fetch } = {}) {
-  await waitForPublishedKey({ fetchImpl });
+function isRetryableIndexNowStatus(status) {
+  return status === 429 || (status >= 500 && status <= 599);
+}
 
-  const sitemapUrls = await collectSitemapUrls(SITEMAP_URL, fetchImpl);
-  const urlList = validateSubmittedUrls(sitemapUrls);
-  const site = new URL(SITE_URL);
+/**
+ * @param {object} payload
+ * @param {{ fetchImpl?: typeof fetch, attempts?: number, intervalMs?: number, sleepImpl?: typeof sleep }} options
+ * @returns {Promise<Response>}
+ */
+async function postIndexNow(
+  payload,
+  {
+    fetchImpl = fetch,
+    attempts = INDEXNOW_ATTEMPTS,
+    intervalMs = INDEXNOW_RETRY_INTERVAL_MS,
+    sleepImpl = sleep,
+  } = {}
+) {
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const response = await fetchImpl(INDEXNOW_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json; charset=utf-8' },
+      body: JSON.stringify(payload),
+    });
 
-  const response = await fetchImpl(INDEXNOW_ENDPOINT, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json; charset=utf-8' },
-    body: JSON.stringify({
-      host: site.host,
-      key: INDEXNOW_KEY,
-      keyLocation: KEY_LOCATION,
-      urlList,
-    }),
-  });
+    if (response.status === 200 || response.status === 202) {
+      return response;
+    }
 
-  if (response.status !== 200 && response.status !== 202) {
+    if (isRetryableIndexNowStatus(response.status) && attempt < attempts) {
+      await sleepImpl(intervalMs);
+      continue;
+    }
+
     const responseBody = (await response.text()).slice(0, 500);
     throw new Error(
       `IndexNow submission failed (${response.status})${responseBody ? `: ${responseBody}` : ''}`
     );
   }
+
+  throw new Error('IndexNow submission failed after all retry attempts.');
+}
+
+/**
+ * @param {{ fetchImpl?: typeof fetch, deploymentUrl?: string, sleepImpl?: typeof sleep, indexNowAttempts?: number, indexNowRetryIntervalMs?: number }} options
+ * @returns {Promise<{ status: number, urlCount: number }>}
+ */
+async function submitIndexNow({
+  fetchImpl = fetch,
+  deploymentUrl = process.env.DEPLOYMENT_URL,
+  sleepImpl = sleep,
+  indexNowAttempts = INDEXNOW_ATTEMPTS,
+  indexNowRetryIntervalMs = INDEXNOW_RETRY_INTERVAL_MS,
+} = {}) {
+  await waitForPublishedKey({ fetchImpl, sleepImpl });
+
+  const sitemapUrl = getSitemapUrl(deploymentUrl);
+  const sitemapUrls = await collectSitemapUrls(sitemapUrl, fetchImpl);
+  const urlList = validateSubmittedUrls(sitemapUrls);
+  const site = new URL(SITE_URL);
+
+  const response = await postIndexNow(
+    {
+      host: site.host,
+      key: INDEXNOW_KEY,
+      keyLocation: KEY_LOCATION,
+      urlList,
+    },
+    {
+      fetchImpl,
+      attempts: indexNowAttempts,
+      intervalMs: indexNowRetryIntervalMs,
+      sleepImpl,
+    }
+  );
 
   return { status: response.status, urlCount: urlList.length };
 }
@@ -183,6 +293,9 @@ module.exports = {
   SITEMAP_URL,
   collectSitemapUrls,
   extractLocs,
+  getSitemapUrl,
+  postIndexNow,
+  resolveNestedSitemapUrl,
   submitIndexNow,
   validateSubmittedUrls,
   waitForPublishedKey,

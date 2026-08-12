@@ -29,4 +29,6 @@ jobs:
           node-version: '20'
 
       - name: Submit production sitemap URLs
+        env:
+          DEPLOYMENT_URL: ${{ github.event.deployment_status.environment_url }}
         run: node scripts/submit-indexnow.js
