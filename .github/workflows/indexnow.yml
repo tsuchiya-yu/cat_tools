@@ -1,0 +1,34 @@
+name: Submit URLs to IndexNow
+
+on:
+  deployment_status:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: indexnow-production
+  cancel-in-progress: false
+
+jobs:
+  submit-indexnow:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+      github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout deployed commit
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Submit production sitemap URLs
+        env:
+          EXPECTED_DEPLOYMENT_SHA: ${{ github.event.deployment.sha }}
+        run: node scripts/submit-indexnow.js
