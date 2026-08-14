@@ -24,4 +24,31 @@ describe('searchCatFood', () => {
   it('returns empty array when no food is found', async () => {
     expect(await searchCatFood('存在しない食材')).toHaveLength(0);
   });
+
+  it('犬で確認された毒性と猫での限定的な知見を区別する', async () => {
+    const [grape] = await searchCatFood('ぶどう・レーズン');
+    const [xylitol] = await searchCatFood('人工甘味料（キシリトール）');
+    const [macadamia] = await searchCatFood('マカダミアナッツ');
+
+    expect(grape).toMatchObject({ status: '危険' });
+    expect(grape.description).toContain('主に犬で報告');
+    expect(grape.description).toContain('猫では');
+
+    expect(xylitol).toMatchObject({ status: '注意' });
+    expect(xylitol.description).toContain('犬で重い低血糖や肝障害');
+    expect(xylitol.description).toContain('健康な猫6匹');
+
+    expect(macadamia).toMatchObject({ status: '注意' });
+    expect(macadamia.description).toContain('犬で報告');
+    expect(macadamia.description).toContain('猫で同じ症状が確認された報告はありません');
+  });
+
+  it('加工食品で犬のキシリトール中毒を猫の症状として扱わない', async () => {
+    const [gumAndCandy] = await searchCatFood('ガム・キャンディ');
+
+    expect(gumAndCandy).toMatchObject({ status: '危険' });
+    expect(gumAndCandy.description).toContain('犬で知られています');
+    expect(gumAndCandy.description).toContain('猫で同じ影響は確認されていません');
+    expect(gumAndCandy.description).not.toContain('猫に低血糖や肝障害');
+  });
 });

@@ -423,7 +423,7 @@ export const CAT_FOOD_SAFETY_TEXT = {
     SOURCES: {
       TITLE: '出典',
       INTRO:
-        '掲載情報は、公的機関の飼い主向け資料を中心に、動物中毒対応で広く参照される専門機関の情報を補助的に確認して作成しています。',
+        '掲載情報は、公的機関の飼い主向け資料に加え、猫と犬の種差を確認できる研究論文・獣医専門資料を参照しています。一般的な「ペット向け」の予防情報と、特定の動物種で確認された中毒知見を区別して記載しています。',
       GROUPS: [
         {
           TITLE: '危険・注意が必要な食べ物の参考',
@@ -445,6 +445,35 @@ export const CAT_FOOD_SAFETY_TEXT = {
               URL: 'https://www.aspca.org/pet-care/aspca-poison-control/people-foods-avoid-feeding-your-pets',
               KIND: '専門機関',
               NOTE: '避けるべき人の食べ物の例',
+            },
+          ],
+        },
+        {
+          TITLE: '猫と犬の種差に関する参考',
+          LINKS: [
+            {
+              LABEL: 'PubMed: Effects of p.o. administered xylitol in cats',
+              URL: 'https://pubmed.ncbi.nlm.nih.gov/29430681/',
+              KIND: '研究論文',
+              NOTE: '健康な猫6匹へのキシリトール投与後の血糖値・血液検査値を調べた小規模研究',
+            },
+            {
+              LABEL: 'Merck Veterinary Manual: Xylitol Toxicosis in Dogs',
+              URL: 'https://www.merckvetmanual.com/toxicology/food-hazards/xylitol-toxicosis-in-dogs',
+              KIND: '獣医専門資料',
+              NOTE: 'キシリトールによる低血糖・肝障害について犬と猫の種差を説明',
+            },
+            {
+              LABEL: 'Merck Veterinary Manual: Grape, Raisin, and Tamarind Toxicosis in Dogs',
+              URL: 'https://www.merckvetmanual.com/toxicology/food-hazards/grape-raisin-and-tamarind-vitis-spp-tamarindus-spp-toxicosis-in-dogs',
+              KIND: '獣医専門資料',
+              NOTE: '犬での腎障害と、猫では公開症例報告がないことを説明',
+            },
+            {
+              LABEL: 'Merck Veterinary Manual: Macadamia Nut Toxicosis in Dogs',
+              URL: 'https://www.merckvetmanual.com/toxicology/food-hazards/macadamia-nut-toxicosis-in-dogs',
+              KIND: '獣医専門資料',
+              NOTE: '特有の臨床症状が報告されているのは犬のみと説明',
             },
           ],
         },
