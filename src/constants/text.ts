@@ -374,7 +374,7 @@ export const CAT_FOOD_SAFETY_TEXT = {
     CAUTION_FOODS: {
       TITLE: '猫に与えるときに注意が必要な食材',
       INTRO:
-        '「注意」に分類される食材は、量、頻度、体質、調理法によってリスクが変わります。少量でも合わない猫がいるため、初めて与えるときは慎重に判断してください。',
+        '「注意」には、量、頻度、体質、調理法によってリスクが変わる食材に加え、猫での安全性に関する根拠が限られるため、予防的に積極的な給餌を勧めないものも含まれます。「少量なら与えてよい」という意味ではありません。検索結果の個別の説明・注意点を確認してください。',
       NOTE:
         '人間向け味付け・加工食品は別問題です。素材自体が「注意」や「安全」でも、塩分、糖分、香辛料、油分が加わると不向きになることがあります。',
       EMPTY: '代表例は現在準備中です。検索欄から個別の食材名で確認してください。',
@@ -405,7 +405,8 @@ export const CAT_FOOD_SAFETY_TEXT = {
         },
         {
           LABEL: '注意',
-          DESCRIPTION: '量や調理法、体調次第でリスクがあります。異変があれば中止して相談してください。',
+          DESCRIPTION:
+            '量や調理法、体調によってリスクが変わるものや、猫での安全性に関する根拠が限られ、積極的な給餌を勧めないものです。「少量なら与えてよい」という判定ではないため、個別の説明・注意点を確認してください。',
         },
         {
           LABEL: '安全',
@@ -467,7 +468,14 @@ export const CAT_FOOD_SAFETY_TEXT = {
               LABEL: 'Merck Veterinary Manual: Grape, Raisin, and Tamarind Toxicosis in Dogs',
               URL: 'https://www.merckvetmanual.com/toxicology/food-hazards/grape-raisin-and-tamarind-vitis-spp-tamarindus-spp-toxicosis-in-dogs',
               KIND: '獣医専門資料',
-              NOTE: '犬での腎障害と、猫では公開症例報告がないことを説明',
+              NOTE: '犬での腎障害と、猫での報告が限られることを説明',
+            },
+            {
+              LABEL:
+                'Journal of Small Animal Practice: Incidence of Vitis fruit-induced clinical signs and acute kidney injury in dogs and cats',
+              URL: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC9303671/',
+              KIND: '研究論文',
+              NOTE: 'ぶどう・レーズン類を摂取した猫13頭中2頭に症状がみられたが、急性腎障害は確認されなかった小規模研究',
             },
             {
               LABEL: 'Merck Veterinary Manual: Macadamia Nut Toxicosis in Dogs',
