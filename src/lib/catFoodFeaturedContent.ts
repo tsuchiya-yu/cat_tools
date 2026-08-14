@@ -8,16 +8,15 @@ export const FEATURED_DANGER_FOOD_NAMES = [
   'チョコレート',
   'コーヒー・紅茶・緑茶',
   'ぶどう・レーズン',
-  '人工甘味料（キシリトール）',
 ] as const;
 
 export const FEATURED_CAUTION_FOOD_NAMES = [
+  '人工甘味料（キシリトール）',
+  'マカダミアナッツ',
   '牛乳・乳製品',
   '生肉・生魚・生卵',
   'ナッツ類（アーモンド、クルミ、ピーナッツなど）',
   'アボカド',
-  'マグロ（ツナ缶）',
-  'ほうれん草',
 ] as const;
 
 export function pickFeaturedCatFoods(

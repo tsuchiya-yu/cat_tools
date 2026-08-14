@@ -20,6 +20,8 @@ test.describe('猫の食べ物安全性チェック', () => {
     await expect(page.getByText('自己判断で吐かせない')).toBeVisible();
     await expect(page.getByText('ネギ類は加熱しても危険')).toBeVisible();
     await expect(page.getByText('人間向け味付け・加工食品は別問題')).toBeVisible();
+    await expect(page.getByText(/「少量なら与えてよい」という意味ではありません/)).toBeVisible();
+    await expect(page.getByText(/「少量なら与えてよい」という判定ではないため/)).toBeVisible();
     const h2Texts = await page.locator('main h2').allTextContents();
     const faqIndex = h2Texts.indexOf('よくある質問');
     const guideIndex = h2Texts.indexOf('このツールでできること');
@@ -32,6 +34,7 @@ test.describe('猫の食べ物安全性チェック', () => {
     }
 
     await expect(page.getByRole('heading', { level: 3, name: '危険・注意が必要な食べ物の参考' })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: '猫と犬の種差に関する参考' })).toBeVisible();
     await expect(page.getByRole('heading', { level: 3, name: '誤食時の対応の参考' })).toBeVisible();
     await expect(
       page.getByRole('link', { name: /環境省: 飼い主のためのペットフード・ガイドライン/ })
@@ -44,6 +47,23 @@ test.describe('猫の食べ物安全性チェック', () => {
     ).toBeVisible();
     await expect(
       page.getByRole('link', { name: /ASPCA: What to Do if Your Pet Is Poisoned/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /PubMed: Effects of p\.o\. administered xylitol in cats/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Merck Veterinary Manual: Xylitol Toxicosis in Dogs/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Merck Veterinary Manual: Grape, Raisin, and Tamarind Toxicosis in Dogs/ })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', {
+        name: /Journal of Small Animal Practice: Incidence of Vitis fruit-induced clinical signs and acute kidney injury in dogs and cats/,
+      })
+    ).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: /Merck Veterinary Manual: Macadamia Nut Toxicosis in Dogs/ })
     ).toBeVisible();
     await expect(page.locator('a[href=\"https://www.aspca.org/pet-care/aspca-poison-control\"]')).toHaveCount(0);
     await expect(
@@ -76,6 +96,36 @@ test.describe('猫の食べ物安全性チェック', () => {
     const firstResult = page.locator('article').first();
     await expect(firstResult.getByRole('heading', { name: '玉ねぎ', exact: true })).toBeVisible();
     await expect(firstResult.getByText('●危険', { exact: true })).toBeVisible();
+  });
+
+  test('種差を反映した代表表示と検索結果を表示する', async ({ page }) => {
+    await page.goto('/cat-food-safety');
+
+    const xylitolHeading = page.getByRole('heading', { name: '人工甘味料（キシリトール）', exact: true });
+    const macadamiaHeading = page.getByRole('heading', { name: 'マカダミアナッツ', exact: true });
+    await expect(xylitolHeading).toBeVisible();
+    await expect(macadamiaHeading).toBeVisible();
+
+    const searchButton = page.getByRole('button', { name: '安全性を調べる' });
+    await page.getByLabel('食材名').fill('キシリトール');
+    await searchButton.click();
+
+    const firstResult = page.locator('article').first();
+    await expect(firstResult.getByRole('heading', { name: '人工甘味料（キシリトール）', exact: true })).toBeVisible();
+    await expect(firstResult.getByText('●注意', { exact: true })).toBeVisible();
+    await expect(firstResult.getByText(/健康な猫6匹を対象とした小規模な投与研究/)).toBeVisible();
+
+    await page.getByLabel('食材名').fill('マカダミアナッツ');
+    await searchButton.click();
+    await expect(firstResult.getByRole('heading', { name: 'マカダミアナッツ', exact: true })).toBeVisible();
+    await expect(firstResult.getByText('●注意', { exact: true })).toBeVisible();
+    await expect(firstResult.getByText(/マカダミアナッツ中毒は犬で報告/)).toBeVisible();
+
+    await page.getByLabel('食材名').fill('ガム・キャンディ');
+    await searchButton.click();
+    await expect(firstResult.getByRole('heading', { name: 'ガム・キャンディ', exact: true })).toBeVisible();
+    await expect(firstResult.getByText('●注意', { exact: true })).toBeVisible();
+    await expect(firstResult.getByText(/製品によって原材料や形状が大きく異なり/)).toBeVisible();
   });
 
   test('データにない食材では未検出メッセージを表示する', async ({ page }) => {
