@@ -9,6 +9,11 @@ import { CALCULATE_CAT_WATER_INTAKE_PATH } from '@/constants/paths';
 import { WATER_INTAKE_UI_TEXT } from '@/constants/text';
 import { calculateCatWaterIntake, formatMl } from '@/lib/catWaterIntake';
 
+const WATER_INTAKE_REFERENCE_ROWS = [2, 3, 4, 5, 6, 7, 8].map((weightKg) => ({
+  weightKg,
+  totalWaterMl: calculateCatWaterIntake({ weightKg }).totalWaterMl,
+}));
+
 function parsePositiveOrZero(value: string) {
   const parsed = Number.parseFloat(value);
   if (!value.trim()) return null;
@@ -19,6 +24,62 @@ function parseRequiredPositive(value: string) {
   const parsed = Number.parseFloat(value);
   if (!value.trim()) return null;
   return Number.isFinite(parsed) ? parsed : Number.NaN;
+}
+
+function WaterIntakeReferenceTable() {
+  const tableText = WATER_INTAKE_UI_TEXT.REFERENCE_TABLE;
+
+  return (
+    <section className="mt-8" aria-labelledby="water-intake-reference-table-title">
+      <h2
+        id="water-intake-reference-table-title"
+        className="text-xl md:text-2xl font-extrabold text-gray-900 text-balance"
+      >
+        {tableText.TITLE}
+      </h2>
+      <p className="mt-3 text-sm text-gray-700 leading-relaxed text-pretty">
+        {tableText.DESCRIPTION}
+      </p>
+
+      <div className="mt-5 overflow-x-auto">
+        <table className="w-full min-w-[32rem] border-collapse text-sm text-left tabular-nums">
+          <caption className="sr-only">{tableText.CAPTION}</caption>
+          <thead>
+            <tr className="border-b-2 border-pink-200 bg-pink-50">
+              <th scope="col" className="px-3 py-3 font-bold text-gray-900 whitespace-nowrap">
+                {tableText.HEADERS.WEIGHT}
+              </th>
+              <th scope="col" className="px-3 py-3 font-bold text-gray-900 whitespace-nowrap">
+                {tableText.HEADERS.RANGE}
+              </th>
+              <th scope="col" className="px-3 py-3 font-bold text-gray-900 whitespace-nowrap">
+                {tableText.HEADERS.MID}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {WATER_INTAKE_REFERENCE_ROWS.map(({ weightKg, totalWaterMl }) => (
+              <tr key={weightKg} className="border-b border-gray-200">
+                <th scope="row" className="px-3 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                  {weightKg}kg
+                </th>
+                <td className="px-3 py-3 text-gray-700 whitespace-nowrap">
+                  {formatMl(totalWaterMl.min)}〜{formatMl(totalWaterMl.max)}mL/日
+                </td>
+                <td className="px-3 py-3 font-semibold text-gray-900 whitespace-nowrap">
+                  {formatMl(totalWaterMl.mid)}mL/日
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p className="mt-4 rounded-xl border border-pink-200 bg-pink-50 p-4 text-sm text-pink-900 leading-relaxed text-pretty">
+        {tableText.NOTE}
+      </p>
+    </section>
+  );
 }
 
 function WaterIntakeSupplementaryContent() {
@@ -324,59 +385,73 @@ export default function CatWaterIntakeCalculator() {
           {WATER_INTAKE_UI_TEXT.HEADER.DESCRIPTION}
         </p>
 
-        <div className="surface border-none overflow-hidden border-b border-gray-200">
-          <div className="row flex flex-col gap-4">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="weightInput" className="text-base font-bold text-gray-900">
-                {WATER_INTAKE_UI_TEXT.INPUT.WEIGHT_LABEL}
-              </label>
-              <input
-                id="weightInput"
-                type="text"
-                inputMode="decimal"
-                placeholder="例: 4.2"
-                value={weight}
-                onChange={(e) => onWeightChange(e.target.value)}
-                className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
-              />
-              <div className="text-red-700 text-xs mt-1 min-h-[1.2em]" aria-live="polite">{errors.weight}</div>
-            </div>
+        <WaterIntakeReferenceTable />
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="dryFoodInput" className="text-base font-bold text-gray-900">
-                {WATER_INTAKE_UI_TEXT.INPUT.DRY_FOOD_LABEL}
-              </label>
-              <input
-                id="dryFoodInput"
-                type="text"
-                inputMode="decimal"
-                placeholder="例: 40"
-                value={dryFood}
-                onChange={(e) => onDryFoodChange(e.target.value)}
-                className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
-              />
-              <div className="text-xs text-gray-500">{WATER_INTAKE_UI_TEXT.INPUT.OPTIONAL_HINT}</div>
-              <div className="text-red-700 text-xs mt-1 min-h-[1.2em]" aria-live="polite">{errors.dryFood}</div>
-            </div>
+        <section className="mt-10" aria-labelledby="water-intake-calculator-title">
+          <h2
+            id="water-intake-calculator-title"
+            className="text-xl md:text-2xl font-extrabold text-gray-900 text-balance"
+          >
+            {WATER_INTAKE_UI_TEXT.CALCULATOR.TITLE}
+          </h2>
+          <p className="mt-3 text-sm text-gray-700 leading-relaxed text-pretty">
+            {WATER_INTAKE_UI_TEXT.CALCULATOR.DESCRIPTION}
+          </p>
 
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="wetFoodInput" className="text-base font-bold text-gray-900">
-                {WATER_INTAKE_UI_TEXT.INPUT.WET_FOOD_LABEL}
-              </label>
-              <input
-                id="wetFoodInput"
-                type="text"
-                inputMode="decimal"
-                placeholder="例: 80"
-                value={wetFood}
-                onChange={(e) => onWetFoodChange(e.target.value)}
-                className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
-              />
-              <div className="text-xs text-gray-500">{WATER_INTAKE_UI_TEXT.INPUT.OPTIONAL_HINT}</div>
-              <div className="text-red-700 text-xs mt-1 min-h-[1.2em]" aria-live="polite">{errors.wetFood}</div>
+          <div className="surface mt-5 border-none overflow-hidden border-b border-gray-200">
+            <div className="row flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="weightInput" className="text-base font-bold text-gray-900">
+                  {WATER_INTAKE_UI_TEXT.INPUT.WEIGHT_LABEL}
+                </label>
+                <input
+                  id="weightInput"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="例: 4.2"
+                  value={weight}
+                  onChange={(e) => onWeightChange(e.target.value)}
+                  className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
+                />
+                <div className="text-red-700 text-xs mt-1 min-h-[1.2em]" aria-live="polite">{errors.weight}</div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="dryFoodInput" className="text-base font-bold text-gray-900">
+                  {WATER_INTAKE_UI_TEXT.INPUT.DRY_FOOD_LABEL}
+                </label>
+                <input
+                  id="dryFoodInput"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="例: 40"
+                  value={dryFood}
+                  onChange={(e) => onDryFoodChange(e.target.value)}
+                  className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
+                />
+                <div className="text-xs text-gray-500">{WATER_INTAKE_UI_TEXT.INPUT.OPTIONAL_HINT}</div>
+                <div className="text-red-700 text-xs mt-1 min-h-[1.2em]" aria-live="polite">{errors.dryFood}</div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label htmlFor="wetFoodInput" className="text-base font-bold text-gray-900">
+                  {WATER_INTAKE_UI_TEXT.INPUT.WET_FOOD_LABEL}
+                </label>
+                <input
+                  id="wetFoodInput"
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="例: 80"
+                  value={wetFood}
+                  onChange={(e) => onWetFoodChange(e.target.value)}
+                  className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
+                />
+                <div className="text-xs text-gray-500">{WATER_INTAKE_UI_TEXT.INPUT.OPTIONAL_HINT}</div>
+                <div className="text-red-700 text-xs mt-1 min-h-[1.2em]" aria-live="polite">{errors.wetFood}</div>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
       </section>
 
       {result && (
