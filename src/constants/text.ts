@@ -1106,6 +1106,24 @@ export const WATER_INTAKE_UI_TEXT = {
     DESCRIPTION:
       '体重から1日の総水分目標（参考幅）を算出し、フード量を入力した場合は食事由来の水分量（ドライ10%、ウェット78%）を差し引いて、器からの飲水目安を表示します。',
   },
+  REFERENCE_TABLE: {
+    TITLE: '猫の体重別・1日の総水分量早見表',
+    DESCRIPTION:
+      '本ツールで採用している計算基準に基づき、猫の1日の総水分量を、体重1kgあたり40〜60mL、中央目安50mLとして単純換算した参考表です。食事に含まれる水分も合わせた量であり、器から飲む水の量そのものではありません。',
+    CAPTION: '猫の体重2kgから8kgまでの1日の総水分量参考表',
+    HEADERS: {
+      WEIGHT: '体重',
+      RANGE: '総水分量の参考幅',
+      MID: '中央目安',
+    },
+    NOTE:
+      'この表は健康管理のための参考値です。子猫、シニア猫、妊娠・授乳中の猫、肥満・痩せ気味の猫、持病や治療中の猫では必要量が異なることがあります。フードに含まれる水分を差し引いた「器からの飲水目安」は、下の計算機で確認してください。',
+  },
+  CALCULATOR: {
+    TITLE: '体重とフード量から詳しく計算する',
+    DESCRIPTION:
+      'ドライフードとウェットフードの1日量を入力すると、食事に含まれる水分を差し引いた、器からの飲水目安を確認できます。',
+  },
   GUIDE: {
     WHAT_TITLE: 'このツールでできること',
     WHAT_DESCRIPTION:
@@ -1155,7 +1173,7 @@ export const WATER_INTAKE_UI_TEXT = {
     BASICS: {
       TITLE: '猫の1日に必要な水分量はどう決まる？',
       BODY: [
-        '猫の必要水分量は、一般的に体重1kgあたり40〜60mL程度がひとつの目安です。ただし、実際の猫の1日の水の量は、体格だけでなく生活環境や食事内容でも変わります。',
+        '本ツールでは、体重1kgあたり40〜60mLを1日の総水分量の参考幅として採用しています。これは確定的な正常値ではなく、実際の猫の1日の水の量は、体格だけでなく生活環境や食事内容でも変わります。',
         'とくにドライフード 水分は少なく、ウェットフード 水分は多いため、器から飲むべき量は同じ猫でも食事次第で変わります。このツールは、食事由来の水分を差し引いたうえで、器からの飲水量の目安を見やすくしています。',
       ],
       FACTORS: [
@@ -1241,19 +1259,29 @@ export const WATER_INTAKE_UI_TEXT = {
     REFERENCES: {
       TITLE: '計算方法の参考情報',
       BODY: [
-        'このページの給水量計算は、体重あたりの総水分目安と、フードに含まれる水分量を分けて考える構成です。',
-        '表示値は一般的な目安として扱い、普段の飲水傾向や体調変化とあわせて確認してください。',
+        '本ツールでは、1日の総水分量を体重1kgあたり40〜60mLの参考幅で計算し、50mL/kgを中央目安として表示しています。NRC由来の50〜60mL/kg/日は一般的に紹介される推奨値ですが、犬の必要量をもとにした推定で、食事内容、環境温度、活動量などを考慮していないという限界があります。Cornellの猫向け情報は約52mL/kg/日に相当します。',
+        '40mL/kg/日はAAHAの犬猫向け輸液ガイドラインで、猫の臨床上の維持水分量として用いられる値であり、健康な猫が経口摂取すべき最低量を示すものではありません。猫における最適な最低水分量は確立されておらず、実際の必要量は食事、環境、活動量、年齢、健康状態などによって変わります。',
       ],
       LINKS: [
+        {
+          LABEL: 'Journal of Animal Science: 猫の水分摂取に関するスコーピングレビュー',
+          URL: 'https://academic.oup.com/jas/article/doi/10.1093/jas/skaf434/8379605',
+          NOTE: 'NRCの推奨値の前提、猫の総水分摂取量と尿比重の関係、最適な最低量が確立されていないことの参考情報',
+        },
+        {
+          LABEL: 'Cornell Feline Health Center: Hydration',
+          URL: 'https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/hydration',
+          NOTE: '猫の水分摂取、ウェットフードとドライフードによる飲水量差、脱水サインの参考情報',
+        },
         {
           LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
           URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
           NOTE: '犬猫の水分必要量、食事・環境・活動量・健康状態による個体差、ドライ/缶詰フードの水分量差の参考情報',
         },
         {
-          LABEL: 'Cornell Feline Health Center: Hydration',
-          URL: 'https://www.vet.cornell.edu/departments-centers-and-institutes/cornell-feline-health-center/health-information/feline-health-topics/hydration',
-          NOTE: '猫の水分摂取、ウェットフードとドライフードによる飲水量差、脱水サインの参考情報',
+          LABEL: '2024 AAHA Fluid Therapy Guidelines for Dogs and Cats',
+          URL: 'https://www.aaha.org/resources/2024-aaha-fluid-therapy-guidelines-for-dogs-and-cats/',
+          NOTE: '猫の臨床上の維持水分量と、個々の状態に応じて評価・調整する必要性の参考情報',
         },
       ],
     },
