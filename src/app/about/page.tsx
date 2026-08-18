@@ -5,17 +5,16 @@ import { SITE_CONFIG } from '@/config/site';
 import { ABOUT_PATH, CONTACT_FORM_URL, X_PROFILE_URL } from '@/constants/paths';
 import TsukushiImage from './TsukushiImage';
 
+const aboutPageDescription =
+  '猫の年齢・カロリー・給餌量・水分量・食べ物の安全性を確認できる「ねこツールズ」の目的、開発のきっかけ、運営者「つくしの飼い主」、参考情報の扱い、ご利用時の注意点を紹介します。';
+
 export const metadata: Metadata = {
   title: 'ねこツールズについて｜運営者・サイトの目的',
-  description:
-    'ねこツールズを作った理由、運営者「つくしの飼い主」について、サイトで大切にしていること、ご利用時の注意点を紹介します。',
+  description: aboutPageDescription,
   alternates: {
     canonical: ABOUT_PATH,
   },
 };
-
-const aboutPageDescription =
-  'ねこツールズを作った理由、運営者「つくしの飼い主」について、サイトで大切にしていること、ご利用時の注意点を紹介します。';
 
 const operatorStructuredData = {
   '@type': 'Person',

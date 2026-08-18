@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: '利用規約',
-  description: 'ねこツールズの利用規約です。ご利用前に内容をご確認ください。',
+  description:
+    'ねこツールズが提供する猫向け計算・チェックツールの利用条件を定めた規約です。サービス内容、医療判断に関する注意、禁止事項、知的財産権、サービス停止、免責事項、共有機能の注意などを確認できます。',
   alternates: {
     canonical: '/terms',
   },

@@ -2,7 +2,8 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'プライバシーポリシー',
-  description: 'ねこツールズにおける利用者情報の取扱いを定めたプライバシーポリシーです。',
+  description:
+    'ねこツールズで取得するお問い合わせ情報・アクセス情報とその利用目的、Google AnalyticsやCookie、外部サービス、第三者提供、情報管理、共有URLに関する注意、お問い合わせ方法を定めたプライバシーポリシーです。',
   alternates: {
     canonical: '/privacy',
   },
