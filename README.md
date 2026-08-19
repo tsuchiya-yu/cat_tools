@@ -134,6 +134,8 @@ E2E 詳細は `README-playwright.md` を参照してください。
 
 リポジトリ管理者は、PRレビュー専用のOpenRouter APIキーをRepository Secret `OPENROUTER_API_KEY`へ登録してください。キーは用途と費用を分離するため既存用途と共有せず、OpenRouter側で月額上限、利用モデル、Prompt / Response Logging、Zero Data Retentionを設定します。
 
+初期の月額上限は5 USD程度とし、最初の5〜10件のPRを試行期間として、1 PRあたりの料金、有効な指摘、誤検知、見逃し、Action失敗を確認して設定を見直します。
+
 - 初期モデル: `deepseek/deepseek-v4-flash-0731`
 - Workflow: `.github/workflows/openrouter-pr-review.yml`
 - レビューガイドライン: `.junie/guidelines.md`
