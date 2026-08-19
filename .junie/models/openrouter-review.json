@@ -2,5 +2,6 @@
   "baseUrl": "https://openrouter.ai/api/v1/chat/completions",
   "id": "deepseek/deepseek-v4-flash-0731",
   "apiType": "OpenAICompletion",
-  "apiKey": "${OPENROUTER_API_KEY}"
+  "apiKey": "${OPENROUTER_API_KEY}",
+  "temperature": 0
 }
