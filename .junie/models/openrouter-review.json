@@ -1,7 +1,6 @@
 {
   "baseUrl": "https://openrouter.ai/api/v1/chat/completions",
-  "id": "deepseek/deepseek-v4-flash-0731",
+  "id": "openai/gpt-5.6-luna",
   "apiType": "OpenAICompletion",
-  "apiKey": "${OPENROUTER_API_KEY}",
-  "temperature": 0
+  "apiKey": "${OPENROUTER_API_KEY}"
 }
