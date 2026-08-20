@@ -1,0 +1,111 @@
+name: OpenRouter PR Review
+
+on:
+  pull_request:
+    types: [opened, reopened, ready_for_review]
+  issue_comment:
+    types: [created]
+
+permissions: {}
+
+concurrency:
+  group: openrouter-pr-review-${{ github.event.pull_request.number || github.event.issue.number || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  authorize:
+    name: Authorize review request
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      allowed: ${{ steps.authorize.outputs.allowed }}
+      reason: ${{ steps.authorize.outputs.reason }}
+    steps:
+      - name: Check event and pull request
+        id: authorize
+        env:
+          COMMENT_ASSOCIATION: ${{ github.event.comment.author_association }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          EVENT_NAME: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          PR_DRAFT: ${{ github.event.pull_request.draft }}
+          PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          allowed=false
+          reason="unsupported event"
+
+          if [[ "${EVENT_NAME}" == "pull_request" ]]; then
+            if [[ "${PR_DRAFT}" == "true" ]]; then
+              reason="draft pull request"
+            elif [[ "${PR_HEAD_REPOSITORY}" != "${REPOSITORY}" ]]; then
+              reason="fork pull request"
+            else
+              allowed=true
+              reason="eligible pull request event"
+            fi
+          elif [[ "${EVENT_NAME}" == "issue_comment" ]]; then
+            if [[ "${COMMENT_BODY}" != "@junie-agent code-review" ]]; then
+              reason="comment is not an exact review command"
+            elif [[ ! "${COMMENT_ASSOCIATION}" =~ ^(OWNER|MEMBER|COLLABORATOR)$ ]]; then
+              reason="comment author is not trusted"
+            elif [[ -z "${ISSUE_NUMBER}" ]]; then
+              reason="missing pull request number"
+            else
+              pr_json="$(gh api "repos/${REPOSITORY}/pulls/${ISSUE_NUMBER}" 2>/dev/null || true)"
+
+              if [[ -z "${pr_json}" ]]; then
+                reason="comment is not on a pull request"
+              elif [[ "$(jq -r '.draft' <<<"${pr_json}")" == "true" ]]; then
+                reason="draft pull request"
+              elif [[ "$(jq -r '.head.repo.full_name' <<<"${pr_json}")" != "${REPOSITORY}" ]]; then
+                reason="fork pull request"
+              else
+                allowed=true
+                reason="authorized manual review request"
+              fi
+            fi
+          fi
+
+          echo "allowed=${allowed}" >> "${GITHUB_OUTPUT}"
+          echo "reason=${reason}" >> "${GITHUB_OUTPUT}"
+          echo "Review authorization: ${allowed} (${reason})"
+
+  review:
+    name: Review pull request
+    needs: authorize
+    if: needs.authorize.outputs.allowed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Run Junie code review
+        id: junie-review
+        continue-on-error: true
+        uses: JetBrains/junie-github-action@c2ae82fc9fbe0eb81942ceb3d9bd3f89a6b17b95 # v1.7.4
+        with:
+          openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
+          model: custom:openrouter-review
+          prompt: code-review
+          use_single_comment: "true"
+          junie_guidelines_filename: guidelines.md
+
+      - name: Record non-blocking review failure
+        if: steps.junie-review.outcome == 'failure'
+        run: |
+          echo "::warning::Junie review failed. This advisory workflow does not block other checks or merging."
+          echo "## Junie review" >> "${GITHUB_STEP_SUMMARY}"
+          echo "The advisory review failed. Check this run's logs and OpenRouter activity." >> "${GITHUB_STEP_SUMMARY}"

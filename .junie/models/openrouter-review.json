@@ -1,0 +1,6 @@
+{
+  "baseUrl": "https://openrouter.ai/api/v1/chat/completions",
+  "id": "openai/gpt-5.6-luna",
+  "apiType": "OpenAICompletion",
+  "apiKey": "${OPENROUTER_API_KEY}"
+}

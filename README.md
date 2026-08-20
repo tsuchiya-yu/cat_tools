@@ -124,6 +124,25 @@ E2E 詳細は `README-playwright.md` を参照してください。
 - PR 作成時は関連 Issue を `Close #123` / `Ref #456` でリンク
 - 動作確認チェックリストとスクリーンショットの添付を推奨
 
+### OpenRouterを使ったPRレビュー
+
+同一リポジトリ内のPRを作成・再オープン・Draft解除したとき、Junie GitHub Actionが日本語で参考レビューを投稿します。pushだけでは再実行されません。再レビューが必要な場合は、PRへ次のコメントを完全一致で投稿してください。
+
+```text
+@junie-agent code-review
+```
+
+リポジトリ管理者は、PRレビュー専用のOpenRouter APIキーをRepository Secret `OPENROUTER_API_KEY`へ登録してください。キーは用途と費用を分離するため既存用途と共有せず、OpenRouter側で月額上限、利用モデル、Prompt / Response Logging、Zero Data Retentionを設定します。
+
+初期の月額上限は5 USD程度とし、最初の5〜10件のPRを試行期間として、1 PRあたりの料金と所要時間、正常完走・timeout・Action失敗、有効な指摘、誤検知、見逃し、P0〜P3形式とcat_tools固有ガイドラインへの追従を確認します。問題があれば、ガイドライン、レビュープロンプト、モデルの順に改善を検討し、継続利用を判断します。
+
+- 初期モデル: `openai/gpt-5.6-luna`
+- Workflow: `.github/workflows/openrouter-pr-review.yml`
+- レビューガイドライン: `.junie/guidelines.md`
+- モデル設定: `.junie/models/openrouter-review.json`
+
+外部Fork、Draft PR、権限のないユーザーによる手動実行は対象外です。レビューは必須チェックではなく、失敗しても既存CIやマージを妨げません。利用モデル、トークン、料金はOpenRouterのActivity画面で確認します。
+
 ## ライセンス / 注意事項
 
 - 本リポジトリの情報は一般的な参考情報です。愛猫の健康状態やアレルギーなどを考慮し、最終判断はかかりつけの獣医師にご相談ください。
