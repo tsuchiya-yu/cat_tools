@@ -45,6 +45,14 @@ const targetPages = [
     socialDescription: '食材名を入れるだけで、猫にとって安全かどうかを判定します。',
   },
   {
+    path: '/cat-meal-management',
+    description:
+      '猫の食事管理で確認したい必要カロリー・給餌量・水分量の違いと、ねこツールズ内の計算ツールを使う順番を案内します。',
+    canonical: `${SITE_URL}/cat-meal-management`,
+    socialDescription:
+      '猫の食事管理で確認したい必要カロリー・給餌量・水分量の違いと、ねこツールズ内の計算ツールを使う順番を案内します。',
+  },
+  {
     path: '/about',
     description:
       '猫の年齢・カロリー・給餌量・水分量・食べ物の安全性を確認できる「ねこツールズ」の目的、開発のきっかけ、運営者「つくしの飼い主」、参考情報の扱い、ご利用時の注意点を紹介します。',

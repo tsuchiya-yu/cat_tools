@@ -8,6 +8,7 @@ import FeedingFAQ from "@/components/FeedingFAQ";
 import GuideSection from "@/components/GuideSection";
 import ShareMenu from "@/components/ShareMenu";
 import { FEEDING_UI_TEXT, FEEDING_RANGE } from "@/constants/text";
+import { CAT_MEAL_MANAGEMENT_PATH } from "@/constants/paths";
 import { useRouter } from "next/navigation";
 
 type FeedingInputGroupProps = {
@@ -245,6 +246,13 @@ function FeedingSupplementaryContent() {
           </p>
           <p className="text-sm text-gray-700 leading-relaxed text-pretty">
             {supplementaryText.RELATED_TOOLS.BODY}
+          </p>
+          <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+            カロリー計算や給水量計算を含めた食事管理全体の進め方は、
+            <Link href={CAT_MEAL_MANAGEMENT_PATH} className="text-pink-600 font-bold">
+              猫の食事管理ガイド
+            </Link>
+            で詳しく解説しています。
           </p>
         </div>
       </section>
