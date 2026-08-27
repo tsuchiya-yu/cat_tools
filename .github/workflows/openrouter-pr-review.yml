@@ -8,10 +8,6 @@ on:
 
 permissions: {}
 
-concurrency:
-  group: openrouter-pr-review-${{ github.event.pull_request.number || github.event.issue.number || github.run_id }}
-  cancel-in-progress: true
-
 jobs:
   authorize:
     name: Authorize review request
@@ -79,6 +75,9 @@ jobs:
     name: Review pull request
     needs: authorize
     if: needs.authorize.outputs.allowed == 'true'
+    concurrency:
+      group: openrouter-pr-review-${{ github.event.pull_request.number || github.event.issue.number || github.run_id }}
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
@@ -100,7 +99,7 @@ jobs:
           openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
           model: custom:openrouter-review
           prompt: code-review
-          use_single_comment: "true"
+          use_single_comment: "false"
           junie_guidelines_filename: guidelines.md
 
       - name: Record non-blocking review failure
