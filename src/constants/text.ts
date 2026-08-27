@@ -46,6 +46,12 @@ export const FOOTER_TEXT = {
       CALCULATE_CAT_WATER_INTAKE: '猫の必要給水量計算',
     },
   },
+  GUIDES: {
+    TITLE: 'ガイド・読みもの',
+    LINKS: {
+      CAT_MEAL_MANAGEMENT: '猫の食事管理ガイド',
+    },
+  },
 } as const;
 
 export const UI_TEXT = {
@@ -548,7 +554,39 @@ export const WATER_INTAKE_META = {
   },
 } as const;
 
+export const MEAL_MANAGEMENT_META = {
+  TITLE: '猫の食事管理ガイド｜カロリー・給餌量・水分量の使い分け',
+  DESCRIPTION:
+    '猫の食事管理で確認したい必要カロリー・給餌量・水分量の違いと、ねこツールズ内の計算ツールを使う順番を案内します。',
+  KEYWORDS: '猫, 食事管理, カロリー計算, 給餌量, 水分量, ペット, 栄養管理',
+  OG: {
+    TITLE: '猫の食事管理ガイド｜カロリー・給餌量・水分量の使い分け',
+    DESCRIPTION:
+      '猫の食事管理で確認したい必要カロリー・給餌量・水分量の違いと、ねこツールズ内の計算ツールを使う順番を案内します。',
+    URL: 'https://cat-tools.catnote.tokyo/cat-meal-management',
+    SITE_NAME: 'ねこツールズ',
+  },
+} as const;
+
 // カロリー計算用のUI文言
+export const NUTRITION_MANAGEMENT_REFERENCES = [
+  {
+    LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
+    URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
+    NOTE: 'RER式と猫の維持エネルギー係数を確認する参考情報',
+  },
+  {
+    LABEL: 'Pet Nutrition Alliance: MER and RER Guide',
+    URL: 'https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf',
+    NOTE: 'RER/MERの考え方と減量時の係数を確認する参考情報',
+  },
+  {
+    LABEL: '2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats',
+    URL: 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/2021-nutrition-and-weight-management/resourcepdfs/new-2021-aaha-nutrition-and-weight-management-guidelines-with-ref.pdf',
+    NOTE: '栄養評価、BCS、個体差を踏まえた調整の参考情報',
+  },
+] as const;
+
 export const CALORIE_UI_TEXT = {
   HEADER: {
     EYECATCH: '猫のカロリーをかんたん計算',
@@ -735,23 +773,7 @@ export const CALORIE_UI_TEXT = {
         'このツールでは、体重からRER（安静時エネルギー要求量）を求め、ライフステージや目標に応じた係数をかけて1日の必要カロリーの目安を算出しています。',
         '係数はあくまで出発点です。シニア期、減量、増量では個体差が大きいため、体重推移や体調を見ながら調整し、判断に迷う場合は獣医師へ相談してください。',
       ],
-      LINKS: [
-        {
-          LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
-          URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
-          NOTE: 'RER式と猫の維持エネルギー係数を確認する参考情報',
-        },
-        {
-          LABEL: 'Pet Nutrition Alliance: MER and RER Guide',
-          URL: 'https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf',
-          NOTE: 'RER/MERの考え方と減量時の係数を確認する参考情報',
-        },
-        {
-          LABEL: '2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats',
-          URL: 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/2021-nutrition-and-weight-management/resourcepdfs/new-2021-aaha-nutrition-and-weight-management-guidelines-with-ref.pdf',
-          NOTE: '栄養評価、BCS、個体差を踏まえた調整の参考情報',
-        },
-      ],
+      LINKS: NUTRITION_MANAGEMENT_REFERENCES,
     },
     DISCLAIMER:
       '本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。体調不良や判断に迷う症状がある場合は、獣医師の診察を受けてください。',
@@ -1358,6 +1380,197 @@ export const CAT_FOOD_SAFETY_FAQ_ITEMS = [
       '本ツールは目安情報です。正確な判断が必要な場合は、かかりつけの獣医師に相談してください。',
   },
 ] as const;
+
+export const MEAL_MANAGEMENT_UI_TEXT = {
+  HEADER: {
+    EYECATCH: '食事管理の使い分けと手順',
+    TITLE: '猫の食事管理ガイド',
+    DESCRIPTION:
+      '猫の健康管理で欠かせない「必要カロリー」「給餌量（フード量）」「必要水分量」の3つの要素について、それぞれの違いと確認するおすすめの順番を分かりやすく整理しました。愛猫の体重や食事内容に合わせた日々のケアの目安としてお役立てください。',
+  },
+  BREADCRUMBS: {
+    HOME: COMMON_TEXT.BREADCRUMBS.HOME,
+    MEAL_MANAGEMENT: '猫の食事管理ガイド',
+  },
+  INTRO: {
+    TITLE: '3つの要素の違いと関係性',
+    DIFFERENCES: [
+      {
+        TITLE: '必要カロリー（kcal/日）',
+        BODY: '猫が1日に必要とするエネルギー量の目安です。体重やライフステージ（子猫・成猫・シニア）、去勢・避妊の有無などによって目安が変わります。',
+      },
+      {
+        TITLE: '給餌量（g/日）',
+        BODY: '1日の必要カロリーを満たすために、実際に与えるフードの重さ（グラム）です。フードの種類（ドライ・ウェット）やカロリー密度（kcal/100g）によって必要なグラム数は変わります。',
+      },
+      {
+        TITLE: '必要水分量（mL/日）',
+        BODY: '食事に含まれる水分と、器から飲む水を合わせた1日の総水分量の目安です。食事内容によって、器から飲む量の見方が変わります。',
+      },
+    ],
+    START_GUIDE:
+      '食事管理を始めるときは、まず「1日に必要なカロリー」を把握し、次に「フードの重さ（g）」へ換算し、必要に応じて「水分量」をチェックするという流れが基本です。',
+    HOW_TO_USE:
+      '計算された数値はあくまで日々の管理の「出発点」です。猫の個体差や体調、季節に合わせて、1〜2週間の体重や便の状態を観察しながら微調整していくことが大切です。',
+  },
+  PRIMARY_CARDS: {
+    TITLE: '目的に合わせた計算ツール',
+    DESCRIPTION: '知りたい内容に合わせて、該当する計算ツールをお選びください。',
+    CALORIE: {
+      TITLE: '1日に必要なカロリーを知りたい',
+      DESCRIPTION:
+        '猫の体重、ライフステージ、去勢/避妊の有無、体型目標から、1日に必要なエネルギー（kcal/日）の標準値と参考幅を計算します。',
+      ACTION: '猫のカロリー計算で必要カロリーを調べる →',
+    },
+    FEEDING: {
+      TITLE: 'フードを何g与えればよいか知りたい',
+      DESCRIPTION:
+        '1日の必要カロリーとフードの代謝エネルギー（kcal/100g）から、1日に与える目安量（g）と朝・夜の配分を計算します。',
+      ACTION: '猫の給餌量計算で1日の給餌量を調べる →',
+    },
+    WATER_INTAKE: {
+      TITLE: '必要水分量の目安を知りたい',
+      DESCRIPTION:
+        '体重から1日の総水分目標を計算し、ドライ・ウェットフードの量から食事由来の水分を差し引いた器からの飲水目標を確認できます。',
+      ACTION: '猫の必要給水量計算で飲水目安を調べる →',
+    },
+  },
+  SEQUENCE: {
+    TITLE: '猫の食事管理 6つの基本ステップ',
+    INTRO:
+      '食事管理に迷ったときは、次の6つのステップに沿って順番に確認していくとスムーズに整理できます。',
+    STEPS: [
+      {
+        STEP: 'STEP 1',
+        TITLE: '体重とライフステージの確認',
+        BODY: 'まずは猫の現在の体重、月齢・年齢（子猫・成猫・シニア）、去勢・避妊の有無、体型目標（維持・減量・増量）を把握します。',
+      },
+      {
+        STEP: 'STEP 2',
+        TITLE: '1日の必要カロリーの算出',
+        BODY: '「猫のカロリー計算」を使い、安静時エネルギー要求量（RER）をもとに1日に必要なエネルギー量（kcal/日）の標準値と参考幅を算出します。',
+      },
+      {
+        STEP: 'STEP 3',
+        TITLE: 'フードのカロリー密度から給餌量（g）に換算',
+        BODY: '「猫の給餌量計算」でフード袋に記載された代謝エネルギー（kcal/100g）をもとに、1日に与える給餌量（g）と朝夕の目安量を計算します。',
+      },
+      {
+        STEP: 'STEP 4',
+        TITLE: 'ウェットフードやおやつの調整',
+        BODY: 'ウェットフードやおやつも1日の総カロリーに含め、主食全体とのバランスを見ながら量を調整します。',
+      },
+      {
+        STEP: 'STEP 5',
+        TITLE: '必要に応じて水分量の目安を確認',
+        BODY: '「猫の必要給水量計算」を使い、フードに含まれる水分量を差し引いた器からの飲水目安を確認し、普段の飲み方と比べます。',
+      },
+      {
+        STEP: 'STEP 6',
+        TITLE: '1〜2週間の体重・体調推移を見て微調整',
+        BODY: '計算結果は固定せず、週1〜2回の体重測定や便の状態、元気さを見ながら、必要に応じて5〜10%ずつ与える量を微調整します。',
+      },
+    ],
+  },
+  EXAMPLE: {
+    TITLE: '実際に3つのツールを使うときの流れ',
+    INTRO:
+      '例として「4kg・去勢済みの成猫」の1日の食事を考える場合、3つのツールを次のようにつなげて使います。ここでは順番だけを示し、詳しい条件や計算方法は各ツールで確認します。',
+    STEPS: [
+      {
+        TITLE: '猫の条件を整理する',
+        BODY: '現在の体重が4kgであること、成猫で去勢済みであること、体重を維持したいかなどを確認します。',
+        HREF: null,
+        LINK_LABEL: null,
+      },
+      {
+        TITLE: '必要カロリーの目安を確認する',
+        BODY: '整理した条件を「猫のカロリー計算」に入力し、1日に必要なカロリーの目安を確認します。',
+        HREF: '/calculate-cat-calorie',
+        LINK_LABEL: '猫のカロリー計算を開く',
+      },
+      {
+        TITLE: 'フードの表示を確認する',
+        BODY: '普段使っているフードのパッケージで、kcal/100gとドライ・ウェットそれぞれの内容を確認します。',
+        HREF: null,
+        LINK_LABEL: null,
+      },
+      {
+        TITLE: '1日のフード量へ換算する',
+        BODY: '必要カロリーとフードのkcal/100gを「猫の給餌量計算」に入力し、1日に与えるグラム数の目安へ換算します。',
+        HREF: '/calculate-cat-feeding',
+        LINK_LABEL: '猫の給餌量計算を開く',
+      },
+      {
+        TITLE: '食事内容に応じて水分量も確認する',
+        BODY: 'ドライ・ウェットの量をもとに、必要に応じて「猫の必要給水量計算」で食事由来の水分と器から飲む量の目安を確認します。',
+        HREF: '/calculate-cat-water-intake',
+        LINK_LABEL: '猫の必要給水量計算を開く',
+      },
+      {
+        TITLE: 'その後の変化を観察する',
+        BODY: '計算結果を固定値とせず、体重・食欲・便・元気など普段との変化を継続して見ながら調整します。',
+        HREF: null,
+        LINK_LABEL: null,
+      },
+    ],
+  },
+  CASES: {
+    TITLE: 'よくあるお悩みとツールの使い分け',
+    INTRO: '状況に応じて、どこから計算を始めるか選ぶとスムーズです。',
+    ITEMS: [
+      {
+        TITLE: '1日の必要カロリーの目安が分からない場合',
+        BODY: 'まずは「猫のカロリー計算」で体重とライフステージから1日の必要カロリー（標準値・参考幅）を確認しましょう。給餌量を考える出発点になります。',
+      },
+      {
+        TITLE: '必要カロリーは分かるが、与えるグラム数が分からない場合',
+        BODY: 'フードパッケージの「kcal/100g」を確認し、「猫の給餌量計算」で1日の給餌グラム数と朝・夜の1回量を算出しましょう。フードを切り替えた際にも便利です。',
+      },
+      {
+        TITLE: 'ドライとウェットを併用している・飲水量が気になる場合',
+        BODY: '「猫の必要給水量計算」でフード由来の水分を差し引いた器からの飲水目安を確認し、普段の飲み方との違いを観察しましょう。',
+      },
+    ],
+  },
+  CAUTION: {
+    TITLE: 'ご利用にあたっての注意事項',
+    ITEMS: [
+      '本ガイドおよび各ツールの計算結果は日々の食事管理の目安であり、病気の診断や治療を目的としたものではありません。',
+      '急激な体重の増減、食欲不振、嘔吐・下痢、元気がないなどの異変が見られる場合は、自己判断で食事調整を続けず、速やかに動物病院で獣医師にご相談ください。',
+      '詳しい計算根拠や個別の注意事項については、各ツールのページをご確認ください。',
+    ],
+  },
+  REFERENCES: {
+    TITLE: '参考情報',
+    INTRO:
+      'このページでは、各計算ツールで使用している一般的な栄養管理の考え方をもとに、食事管理の流れを整理しています。詳しい計算根拠や注意点は各ツールのページでご確認ください。',
+    LINKS: NUTRITION_MANAGEMENT_REFERENCES,
+  },
+  AUXILIARY: {
+    TITLE: 'その他の関連ツール・サイト情報',
+    ITEMS: [
+      {
+        TITLE: '猫の年齢計算',
+        DESCRIPTION: '誕生日から猫の実年齢を人間年齢に換算し、ライフステージを確認できます。',
+        HREF: '/calculate-cat-age',
+        ACTION: '年齢計算ツールを開く →',
+      },
+      {
+        TITLE: '猫の食べ物安全性チェック',
+        DESCRIPTION: '玉ねぎやチョコレートなど200種類以上の食材の安全性（安全・注意・危険）を判定します。',
+        HREF: '/cat-food-safety',
+        ACTION: '食べ物安全性チェックを開く →',
+      },
+      {
+        TITLE: 'ねこツールズについて',
+        DESCRIPTION: 'サイトの開設理由、運営者「つくしの飼い主」について、ご利用時の注意点を紹介します。',
+        HREF: '/about',
+        ACTION: 'サイトについて見る →',
+      },
+    ],
+  },
+} as const;
 
 // カロリー計算用のFAQ
 export const CALORIE_FAQ_ITEMS = [

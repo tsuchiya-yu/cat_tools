@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import JsonLdScript from '@/components/JsonLdScript';
+import { CAT_MEAL_MANAGEMENT_PATH } from '@/constants/paths';
 import { HOME_ABOUT_TEXT, TOOLS } from '@/constants/text';
 import { createHomeBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 
@@ -39,6 +40,31 @@ export default function Home() {
               </span>
             </Link>
           ))}
+        </section>
+
+        {/* Guides */}
+        <section
+          className="section mt-8"
+          aria-labelledby="guides-title"
+        >
+          <h2 id="guides-title" className="text-xl font-bold text-[var(--text)]">
+            ガイド・読みもの
+          </h2>
+          <Link
+            href={CAT_MEAL_MANAGEMENT_PATH}
+            aria-label="猫の食事管理ガイドを読む"
+            className="mt-3 block rounded-xl border border-[var(--border)] bg-gray-50/60 p-4 no-underline transition-colors hover:border-pink-200 hover:bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600"
+          >
+            <h3 className="text-base font-bold text-[var(--text)]">
+              猫の食事管理ガイド
+            </h3>
+            <p className="text-sm text-gray-600 mt-1.5 leading-relaxed">
+              必要カロリー・給餌量・水分量の違いと、確認するおすすめの順番をまとめています。
+            </p>
+            <span className="inline-block mt-2 text-sm text-pink-600 font-semibold">
+              読む →
+            </span>
+          </Link>
         </section>
 
         <section

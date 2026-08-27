@@ -9,6 +9,7 @@ import {
   CALCULATE_CAT_AGE_PATH,
   CALCULATE_CAT_FEEDING_PATH,
   CALCULATE_CAT_WATER_INTAKE_PATH,
+  CAT_MEAL_MANAGEMENT_PATH,
 } from '@/constants/paths';
 import { CALORIE_UI_TEXT } from '@/constants/text';
 import { LIFE_STAGES, GOALS } from '@/constants/options';
@@ -130,6 +131,16 @@ function CalorieSupplementaryContent() {
             {supplementaryText.FEEDING_STEPS.WATER_INTAKE_LINK.LABEL}
           </Link>
           {supplementaryText.FEEDING_STEPS.WATER_INTAKE_LINK.TEXT_AFTER}
+        </p>
+        <p className="mt-4 text-sm text-gray-700 leading-relaxed text-pretty">
+          カロリー計算・給餌量・水分量の全体的な使い方や順番を整理したいときは、
+          <Link
+            href={CAT_MEAL_MANAGEMENT_PATH}
+            className="text-pink-600 font-bold"
+          >
+            猫の食事管理ガイド
+          </Link>
+          も参考にしてください。
         </p>
       </section>
 

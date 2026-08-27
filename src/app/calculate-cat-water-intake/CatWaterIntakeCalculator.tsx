@@ -1,11 +1,12 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import GuideSection from '@/components/GuideSection';
 import WaterIntakeFAQ from '@/components/WaterIntakeFAQ';
-import { CALCULATE_CAT_WATER_INTAKE_PATH } from '@/constants/paths';
+import { CALCULATE_CAT_WATER_INTAKE_PATH, CAT_MEAL_MANAGEMENT_PATH } from '@/constants/paths';
 import { WATER_INTAKE_UI_TEXT } from '@/constants/text';
 import { calculateCatWaterIntake, formatMl } from '@/lib/catWaterIntake';
 
@@ -221,6 +222,22 @@ function WaterIntakeSupplementaryContent() {
             ))}
           </ul>
         </div>
+      </section>
+
+      <section className="section mt-10" aria-labelledby="water-intake-related-guide">
+        <h2
+          id="water-intake-related-guide"
+          className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+        >
+          食事管理と水分補給の流れ
+        </h2>
+        <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+          カロリー計算・給餌量計算とあわせた食事管理全体の進め方は、
+          <Link href={CAT_MEAL_MANAGEMENT_PATH} className="text-pink-600 font-bold">
+            猫の食事管理ガイド
+          </Link>
+          で詳しく解説しています。
+        </p>
       </section>
 
       <section className="section mt-10" aria-labelledby="water-intake-references">

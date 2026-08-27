@@ -13,6 +13,7 @@ import {
   CALCULATE_CAT_FEEDING_PATH,
   CALCULATE_CAT_WATER_INTAKE_PATH,
   CAT_FOOD_SAFETY_PATH,
+  CAT_MEAL_MANAGEMENT_PATH,
   CONTACT_FORM_URL,
   X_PROFILE_URL,
 } from '@/constants/paths';
@@ -145,6 +146,22 @@ export default function RootLayout({
                   <li>
                     <Link href={CALCULATE_CAT_WATER_INTAKE_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_WATER_INTAKE}
+                    </Link>
+                  </li>
+                </ul>
+              </div>
+
+              {/* ガイド・読みもの */}
+              <div className="md:flex-1">
+                <h2 className="font-bold mb-2">{FOOTER_TEXT.GUIDES.TITLE}</h2>
+                <ul className="space-y-2">
+                  <li>
+                    <Link
+                      href={CAT_MEAL_MANAGEMENT_PATH}
+                      prefetch={false}
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      {FOOTER_TEXT.GUIDES.LINKS.CAT_MEAL_MANAGEMENT}
                     </Link>
                   </li>
                 </ul>
