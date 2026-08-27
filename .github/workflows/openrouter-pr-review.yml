@@ -9,7 +9,17 @@ on:
 permissions: {}
 
 concurrency:
-  group: openrouter-pr-review-${{ github.event.pull_request.number || github.event.issue.number || github.run_id }}
+  group: >-
+    openrouter-pr-review-${{
+      (github.event_name == 'pull_request' ||
+      (github.event_name == 'issue_comment' &&
+      github.event.comment.body == '@junie-agent code-review' &&
+      (github.event.comment.author_association == 'OWNER' ||
+      github.event.comment.author_association == 'MEMBER' ||
+      github.event.comment.author_association == 'COLLABORATOR'))) &&
+      (github.event.pull_request.number || github.event.issue.number) ||
+      github.run_id
+    }}
   cancel-in-progress: true
 
 jobs:
@@ -100,7 +110,7 @@ jobs:
           openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
           model: custom:openrouter-review
           prompt: code-review
-          use_single_comment: "true"
+          use_single_comment: "false"
           junie_guidelines_filename: guidelines.md
 
       - name: Record non-blocking review failure
