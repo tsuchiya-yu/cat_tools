@@ -24,6 +24,8 @@ test.describe('猫の食事管理ガイド (/cat-meal-management)', () => {
     expect(html).toContain('href="/calculate-cat-calorie"');
     expect(html).toContain('href="/calculate-cat-feeding"');
     expect(html).toContain('href="/calculate-cat-water-intake"');
+    expect(html).toContain('実際に3つのツールを使うときの流れ');
+    expect(html).toContain('参考情報');
   });
 
   test('ページが正しく表示され、h1と3つの主要カードが存在する', async ({ page }) => {
@@ -145,6 +147,29 @@ test.describe('猫の食事管理ガイド (/cat-meal-management)', () => {
     await expect(aboutAuxLink).toHaveAttribute('href', '/about');
   });
 
+  test('具体的な利用例と代表的な参考情報が表示される', async ({ page }) => {
+    await page.goto('/cat-meal-management');
+
+    const exampleSection = page.locator('section[aria-labelledby="usage-example-title"]');
+    await expect(
+      exampleSection.getByRole('heading', { name: '実際に3つのツールを使うときの流れ' }),
+    ).toBeVisible();
+    await expect(exampleSection).toContainText('4kg・去勢済みの成猫');
+    await expect(exampleSection.getByRole('listitem')).toHaveCount(6);
+
+    const referencesSection = page.locator('section[aria-labelledby="references-title"]');
+    await expect(referencesSection.getByRole('heading', { name: '参考情報' })).toBeVisible();
+    await expect(
+      referencesSection.getByRole('link', { name: /Merck Veterinary Manual/ }),
+    ).toBeVisible();
+    await expect(
+      referencesSection.getByRole('link', { name: /Pet Nutrition Alliance/ }),
+    ).toBeVisible();
+    await expect(
+      referencesSection.getByRole('link', { name: /AAHA Nutrition and Weight Management Guidelines/ }),
+    ).toBeVisible();
+  });
+
   test('主要カードからカロリー計算ページへ遷移できる', async ({ page }) => {
     await page.goto('/cat-meal-management');
     const calorieCard = page.getByRole('link', { name: /1日に必要なカロリーを知りたい/ });
@@ -154,39 +179,62 @@ test.describe('猫の食事管理ガイド (/cat-meal-management)', () => {
 });
 
 test.describe('トップページおよび計算機からの食事管理ガイド導線', () => {
-  test('トップページのツール一覧外に食事管理ガイドセクションが存在し遷移できる', async ({ page }) => {
+  test('トップページのツール一覧外にガイド・読みものセクションが存在し遷移できる', async ({ page }) => {
     await page.goto('/');
 
     const toolsSection = page.locator('section[aria-label="ツール一覧"]');
-    const guideHeading = page.getByRole('heading', { name: '猫の食事管理に迷ったら', level: 2 });
+    const guideHeading = page.locator('main').getByRole('heading', {
+      name: 'ガイド・読みもの',
+      level: 2,
+    });
     await expect(guideHeading).toBeVisible();
 
     // ツール一覧の外にあること
-    await expect(toolsSection.locator('text=猫の食事管理に迷ったら')).toHaveCount(0);
+    await expect(toolsSection.getByRole('link', { name: '猫の食事管理ガイドを読む' })).toHaveCount(0);
 
-    const guideLink = page.getByRole('link', { name: '猫の食事管理ガイドを見る' });
+    const guideLink = page.getByRole('link', { name: '猫の食事管理ガイドを読む' });
     await expect(guideLink).toHaveAttribute('href', '/cat-meal-management');
     await guideLink.click();
     await expect(page).toHaveURL(/\/cat-meal-management$/);
   });
 
+  test('トップページの初期HTMLにツール一覧と分離したガイドリンクが含まれる', async ({ request }) => {
+    const response = await request.get('/');
+    expect(response.ok()).toBeTruthy();
+
+    const html = await response.text();
+    expect(html).toContain('ガイド・読みもの');
+    expect(html).toContain('href="/cat-meal-management"');
+  });
+
+  test('フッターにガイド・読みものカテゴリと食事管理ガイドへのリンクが存在する', async ({ page }) => {
+    await page.goto('/');
+
+    const footer = page.locator('footer');
+    await expect(footer.getByRole('heading', { name: 'ガイド・読みもの' })).toBeVisible();
+    await expect(footer.getByRole('link', { name: '猫の食事管理ガイド' })).toHaveAttribute(
+      'href',
+      '/cat-meal-management',
+    );
+  });
+
   test('カロリー計算ページから食事管理ガイドへの文脈リンクが存在する', async ({ page }) => {
     await page.goto('/calculate-cat-calorie');
-    const guideLink = page.getByRole('link', { name: '猫の食事管理ガイド' });
+    const guideLink = page.locator('main').getByRole('link', { name: '猫の食事管理ガイド' });
     await expect(guideLink).toBeVisible();
     await expect(guideLink).toHaveAttribute('href', '/cat-meal-management');
   });
 
   test('給餌量計算ページから食事管理ガイドへの文脈リンクが存在する', async ({ page }) => {
     await page.goto('/calculate-cat-feeding');
-    const guideLink = page.getByRole('link', { name: '猫の食事管理ガイド' });
+    const guideLink = page.locator('main').getByRole('link', { name: '猫の食事管理ガイド' });
     await expect(guideLink).toBeVisible();
     await expect(guideLink).toHaveAttribute('href', '/cat-meal-management');
   });
 
   test('給水量計算ページから食事管理ガイドへの文脈リンクが存在する', async ({ page }) => {
     await page.goto('/calculate-cat-water-intake');
-    const guideLink = page.getByRole('link', { name: '猫の食事管理ガイド' });
+    const guideLink = page.locator('main').getByRole('link', { name: '猫の食事管理ガイド' });
     await expect(guideLink).toBeVisible();
     await expect(guideLink).toHaveAttribute('href', '/cat-meal-management');
   });

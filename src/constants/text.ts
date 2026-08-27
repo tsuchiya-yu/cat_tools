@@ -46,6 +46,12 @@ export const FOOTER_TEXT = {
       CALCULATE_CAT_WATER_INTAKE: '猫の必要給水量計算',
     },
   },
+  GUIDES: {
+    TITLE: 'ガイド・読みもの',
+    LINKS: {
+      CAT_MEAL_MANAGEMENT: '猫の食事管理ガイド',
+    },
+  },
 } as const;
 
 export const UI_TEXT = {
@@ -563,6 +569,24 @@ export const MEAL_MANAGEMENT_META = {
 } as const;
 
 // カロリー計算用のUI文言
+export const NUTRITION_MANAGEMENT_REFERENCES = [
+  {
+    LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
+    URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
+    NOTE: 'RER式と猫の維持エネルギー係数を確認する参考情報',
+  },
+  {
+    LABEL: 'Pet Nutrition Alliance: MER and RER Guide',
+    URL: 'https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf',
+    NOTE: 'RER/MERの考え方と減量時の係数を確認する参考情報',
+  },
+  {
+    LABEL: '2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats',
+    URL: 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/2021-nutrition-and-weight-management/resourcepdfs/new-2021-aaha-nutrition-and-weight-management-guidelines-with-ref.pdf',
+    NOTE: '栄養評価、BCS、個体差を踏まえた調整の参考情報',
+  },
+] as const;
+
 export const CALORIE_UI_TEXT = {
   HEADER: {
     EYECATCH: '猫のカロリーをかんたん計算',
@@ -749,23 +773,7 @@ export const CALORIE_UI_TEXT = {
         'このツールでは、体重からRER（安静時エネルギー要求量）を求め、ライフステージや目標に応じた係数をかけて1日の必要カロリーの目安を算出しています。',
         '係数はあくまで出発点です。シニア期、減量、増量では個体差が大きいため、体重推移や体調を見ながら調整し、判断に迷う場合は獣医師へ相談してください。',
       ],
-      LINKS: [
-        {
-          LABEL: 'Merck Veterinary Manual: Nutritional Requirements of Small Animals',
-          URL: 'https://www.merckvetmanual.com/management-and-nutrition/nutrition-small-animals/nutritional-requirements-of-small-animals',
-          NOTE: 'RER式と猫の維持エネルギー係数を確認する参考情報',
-        },
-        {
-          LABEL: 'Pet Nutrition Alliance: MER and RER Guide',
-          URL: 'https://petnutritionalliance.org/wp-content/uploads/2023/03/MER.RER_.PNA_.pdf',
-          NOTE: 'RER/MERの考え方と減量時の係数を確認する参考情報',
-        },
-        {
-          LABEL: '2021 AAHA Nutrition and Weight Management Guidelines for Dogs and Cats',
-          URL: 'https://www.aaha.org/wp-content/uploads/globalassets/02-guidelines/2021-nutrition-and-weight-management/resourcepdfs/new-2021-aaha-nutrition-and-weight-management-guidelines-with-ref.pdf',
-          NOTE: '栄養評価、BCS、個体差を踏まえた調整の参考情報',
-        },
-      ],
+      LINKS: NUTRITION_MANAGEMENT_REFERENCES,
     },
     DISCLAIMER:
       '本コンテンツは一般的な情報提供であり、診断・治療を行うものではありません。体調不良や判断に迷う症状がある場合は、獣医師の診察を受けてください。',
@@ -1464,6 +1472,49 @@ export const MEAL_MANAGEMENT_UI_TEXT = {
       },
     ],
   },
+  EXAMPLE: {
+    TITLE: '実際に3つのツールを使うときの流れ',
+    INTRO:
+      '例として「4kg・去勢済みの成猫」の1日の食事を考える場合、3つのツールを次のようにつなげて使います。ここでは順番だけを示し、詳しい条件や計算方法は各ツールで確認します。',
+    STEPS: [
+      {
+        TITLE: '猫の条件を整理する',
+        BODY: '現在の体重が4kgであること、成猫で去勢済みであること、体重を維持したいかなどを確認します。',
+        HREF: null,
+        LINK_LABEL: null,
+      },
+      {
+        TITLE: '必要カロリーの目安を確認する',
+        BODY: '整理した条件を「猫のカロリー計算」に入力し、1日に必要なカロリーの目安を確認します。',
+        HREF: '/calculate-cat-calorie',
+        LINK_LABEL: '猫のカロリー計算を開く',
+      },
+      {
+        TITLE: 'フードの表示を確認する',
+        BODY: '普段使っているフードのパッケージで、kcal/100gとドライ・ウェットそれぞれの内容を確認します。',
+        HREF: null,
+        LINK_LABEL: null,
+      },
+      {
+        TITLE: '1日のフード量へ換算する',
+        BODY: '必要カロリーとフードのkcal/100gを「猫の給餌量計算」に入力し、1日に与えるグラム数の目安へ換算します。',
+        HREF: '/calculate-cat-feeding',
+        LINK_LABEL: '猫の給餌量計算を開く',
+      },
+      {
+        TITLE: '食事内容に応じて水分量も確認する',
+        BODY: 'ドライ・ウェットの量をもとに、必要に応じて「猫の必要給水量計算」で食事由来の水分と器から飲む量の目安を確認します。',
+        HREF: '/calculate-cat-water-intake',
+        LINK_LABEL: '猫の必要給水量計算を開く',
+      },
+      {
+        TITLE: 'その後の変化を観察する',
+        BODY: '計算結果を固定値とせず、体重・食欲・便・元気など普段との変化を継続して見ながら調整します。',
+        HREF: null,
+        LINK_LABEL: null,
+      },
+    ],
+  },
   CASES: {
     TITLE: 'よくあるお悩みとツールの使い分け',
     INTRO: '状況に応じて、どこから計算を始めるか選ぶとスムーズです。',
@@ -1489,6 +1540,12 @@ export const MEAL_MANAGEMENT_UI_TEXT = {
       '急激な体重の増減、食欲不振、嘔吐・下痢、元気がないなどの異変が見られる場合は、自己判断で食事調整を続けず、速やかに動物病院で獣医師にご相談ください。',
       '詳しい計算根拠や個別の注意事項については、各ツールのページをご確認ください。',
     ],
+  },
+  REFERENCES: {
+    TITLE: '参考情報',
+    INTRO:
+      'このページでは、各計算ツールで使用している一般的な栄養管理の考え方をもとに、食事管理の流れを整理しています。詳しい計算根拠や注意点は各ツールのページでご確認ください。',
+    LINKS: NUTRITION_MANAGEMENT_REFERENCES,
   },
   AUXILIARY: {
     TITLE: 'その他の関連ツール・サイト情報',

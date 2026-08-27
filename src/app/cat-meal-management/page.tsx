@@ -151,6 +151,52 @@ export default function MealManagementPage() {
           </div>
         </section>
 
+        {/* Cross-tool Example */}
+        <section className="section mt-10" aria-labelledby="usage-example-title">
+          <h2
+            id="usage-example-title"
+            className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+          >
+            {uiText.EXAMPLE.TITLE}
+          </h2>
+          <p className="text-sm text-gray-700 leading-relaxed text-pretty mb-5">
+            {uiText.EXAMPLE.INTRO}
+          </p>
+          <ol className="space-y-4">
+            {uiText.EXAMPLE.STEPS.map((step, index) => (
+              <li
+                key={step.TITLE}
+                className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm"
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-pink-100 text-sm font-bold text-pink-700"
+                    aria-hidden="true"
+                  >
+                    {index + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-base font-bold text-gray-900 text-balance">
+                      {step.TITLE}
+                    </h3>
+                    <p className="mt-1.5 text-sm text-gray-700 leading-relaxed text-pretty">
+                      {step.BODY}
+                    </p>
+                    {step.HREF && step.LINK_LABEL ? (
+                      <Link
+                        href={step.HREF}
+                        className="mt-2 inline-block text-sm font-semibold text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
+                      >
+                        {step.LINK_LABEL} →
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </section>
+
         {/* Common Cases */}
         <section className="section mt-10" aria-labelledby="common-cases-title">
           <h2
@@ -195,6 +241,34 @@ export default function MealManagementPage() {
               </p>
             ))}
           </div>
+        </section>
+
+        {/* References */}
+        <section className="section mt-10" aria-labelledby="references-title">
+          <h2
+            id="references-title"
+            className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance"
+          >
+            {uiText.REFERENCES.TITLE}
+          </h2>
+          <p className="text-sm text-gray-700 leading-relaxed text-pretty">
+            {uiText.REFERENCES.INTRO}
+          </p>
+          <ul className="mt-4 space-y-3 text-sm">
+            {uiText.REFERENCES.LINKS.map((source) => (
+              <li key={source.URL}>
+                <a
+                  href={source.URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-semibold text-pink-600 underline underline-offset-2 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
+                >
+                  {source.LABEL}
+                </a>
+                <span className="text-gray-600"> — {source.NOTE}</span>
+              </li>
+            ))}
+          </ul>
         </section>
 
         {/* Auxiliary Links */}
