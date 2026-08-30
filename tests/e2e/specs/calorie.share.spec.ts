@@ -149,12 +149,15 @@ test.describe('猫のカロリー計算 - 共有機能テスト', () => {
       const url = new URL(href!);
       const text = url.searchParams.get('text');
       const shareUrl = url.searchParams.get('url');
+      const hashtags = url.searchParams.get('hashtags');
 
       expect(text).toContain('うちの猫の必要カロリーは');
       expect(text).toMatch(/304\.3/); // 計算結果のkcalが含まれる
+      expect(text).not.toContain('#ねこツールズ');
       expect(shareUrl).toMatch(/w=5\.0/);
       expect(shareUrl).toMatch(/s=kitten/);
       expect(shareUrl).toMatch(/g=gain/);
+      expect(hashtags).toBe('ねこツールズ,猫のカロリー計算');
     });
 
     test('Xシェアリンクのクリック', async ({ page }) => {

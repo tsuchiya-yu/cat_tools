@@ -69,6 +69,7 @@ export default function CalorieResult({ result, isVisible, shareUrl }: CalorieRe
           shareText={shareText}
           shareUrl={shareUrl}
           shareTitle={CALORIE_UI_TEXT.HEADER.TITLE}
+          xHashtags={CALORIE_UI_TEXT.SHARE.X_HASHTAGS}
           buttonId="shareBtn"
           menuId="shareMenu"
           buttonClassName="absolute right-0 top-0 -translate-y-3/5"

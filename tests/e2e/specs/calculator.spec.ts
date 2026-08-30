@@ -79,6 +79,27 @@ test.describe('猫の年齢計算機', () => {
     await expect(page.locator('#error, .error')).toContainText('未来');
   });
 
+  test('X共有はURLを一度だけ渡し、年齢計算用のタグを付ける', async ({ page }) => {
+    await page.goto('/calculate-cat-age?dob=2020-01-01');
+    await expect(page.getByTestId('calculation-result')).toBeVisible({ timeout: VISIBILITY_TIMEOUT });
+
+    await page.getByRole('button', { name: '共有メニューを開く' }).click();
+
+    const xShareLink = page.getByRole('menuitem', { name: 'Xでシェア' });
+    const href = await xShareLink.getAttribute('href');
+    expect(href).toBeTruthy();
+
+    const intentUrl = new URL(href!);
+    const text = intentUrl.searchParams.get('text');
+    const shareUrl = intentUrl.searchParams.get('url');
+
+    expect(text).toContain('人間に換算したら');
+    expect(text).not.toMatch(/https?:\/\//);
+    expect(text).not.toContain('#');
+    expect(shareUrl).toBe('https://cat-tools.catnote.tokyo/calculate-cat-age?dob=2020-01-01');
+    expect(intentUrl.searchParams.get('hashtags')).toBe('ねこツールズ,猫の年齢計算');
+  });
+
   test('レスポンシブ表示の確認', async ({ page }) => {
     // モバイルサイズに変更
     await page.setViewportSize({ width: 375, height: 667 });

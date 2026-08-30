@@ -45,6 +45,7 @@ export default function AgeResult({
           shareText={shareText}
           shareUrl={shareUrl}
           shareTitle={shareTitle ?? UI_TEXT.HEADER.TITLE}
+          xHashtags={UI_TEXT.SHARE.X_HASHTAGS}
           buttonClassName="absolute right-0 top-8 -translate-y-1/2"
           menuClassName="top-8 -translate-y-1/10 min-w-[200px]"
         />
