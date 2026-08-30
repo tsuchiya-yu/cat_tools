@@ -107,13 +107,10 @@ export const UI_TEXT = {
   SHARE: {
     BUTTON_LABEL: '共有メニューを開く',
     MENU_LABEL: '共有メニュー',
-    SHARE_TEXT: (years: number, months: number, baseUrl: string) => 
+    SHARE_TEXT: (years: number, months: number) =>
       `うちの猫ちゃん、人間に換算したら${years}歳${months}か月でした🐱✨
-みんなの猫ちゃんは何歳かにゃ？🐾
-
-${baseUrl}
-
-#猫の年齢計算 #ねこ好きさんと繋がりたい #猫のいる暮らし #ねこツールズ`,
+みんなの猫ちゃんは何歳かにゃ？🐾`,
+    X_HASHTAGS: ['#ねこツールズ', '#猫の年齢計算'] as const,
     MENU_ITEMS: {
       SHARE: '結果を共有',
       X_SHARE: 'Xでシェア',
@@ -354,7 +351,8 @@ export const CAT_FOOD_SAFETY_TEXT = {
   SHARE: {
     DEFAULT_TEXT: (baseUrl: string) => `猫の食べ物安全性チェックを使っています🐾\n${baseUrl}`,
     FORMAT_TEXT: (keyword: string, lines: string[], baseUrl: string) =>
-      `「${keyword}」の安全性チェック結果\n${lines.join('\n')}\n\n${baseUrl}\n\n#猫 #猫の健康 #ねこツールズ`,
+      `「${keyword}」の安全性チェック結果\n${lines.join('\n')}\n\n${baseUrl}`,
+    X_HASHTAGS: ['#ねこツールズ', '#猫の食べ物安全性'] as const,
   },
   CONTENT: {
     EMERGENCY: {
@@ -784,6 +782,7 @@ export const CALORIE_UI_TEXT = {
     SHARE_TEXT: (kcal: string, range: string) => 
       `うちの猫の必要カロリーは「${kcal}（${range}）」でした🐾`,
     DEFAULT_SHARE_TEXT: '猫のカロリーを計算しました🐾',
+    X_HASHTAGS: ['#ねこツールズ', '#猫のカロリー計算'] as const,
     MENU_ITEMS: {
       SHARE: 'この結果を共有',
       X_SHARE: 'Xでシェア',
@@ -868,6 +867,7 @@ export const FEEDING_UI_TEXT = {
   SHARE: {
     TEXT: (total: number, morning: number, night: number) =>
       `うちの猫の給餌量は 1日 ${total} g（朝 ${morning} g / 夜 ${night} g）でした🐾`,
+    X_HASHTAGS: ['#ねこツールズ', '#猫の給餌量計算'] as const,
   },
   SUPPLEMENTARY: {
     BASICS: {

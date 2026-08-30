@@ -11,6 +11,7 @@ interface ShareMenuProps {
   shareText: string;
   shareUrl?: string;
   shareTitle?: string;
+  xHashtags?: readonly string[];
   buttonClassName?: string;
   menuClassName?: string;
   buttonId?: string;
@@ -19,15 +20,26 @@ interface ShareMenuProps {
 }
 
 const TOAST_DURATION_MS = 1600;
+const EMPTY_X_HASHTAGS: readonly string[] = [];
 const BUTTON_BASE_CLASS =
   'share-btn w-10 h-10 rounded-full border border-gray-300 bg-white inline-grid place-items-center cursor-pointer hover:border-gray-400';
 const MENU_BASE_CLASS =
   'share-menu absolute right-0 z-20 bg-white border border-gray-200 rounded-xl shadow-lg p-1.5 min-w-[200px]';
 
+const normalizeXHashtags = (hashtags: readonly string[]) =>
+  Array.from(
+    new Set(
+      hashtags
+        .map((hashtag) => hashtag.trim().replace(/^#+/, '').replace(/\s+/g, ''))
+        .filter(Boolean),
+    ),
+  );
+
 export default function ShareMenu({
   shareText,
   shareUrl,
   shareTitle,
+  xHashtags = EMPTY_X_HASHTAGS,
   buttonClassName,
   menuClassName,
   buttonId,
@@ -56,8 +68,12 @@ export default function ShareMenu({
     if (resolvedShareUrl) {
       params.set('url', resolvedShareUrl);
     }
+    const normalizedHashtags = normalizeXHashtags(xHashtags);
+    if (normalizedHashtags.length > 0) {
+      params.set('hashtags', normalizedHashtags.join(','));
+    }
     return `https://x.com/intent/post?${params.toString()}`;
-  }, [shareText, resolvedShareUrl]);
+  }, [shareText, resolvedShareUrl, xHashtags]);
 
   const handleShare = useCallback(async () => {
     if (typeof navigator === 'undefined' || !('share' in navigator)) {

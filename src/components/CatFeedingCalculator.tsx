@@ -475,6 +475,7 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
                 shareText={FEEDING_UI_TEXT.SHARE.TEXT(split.totalInt, split.morning, split.night)}
                 shareUrl={shareUrl}
                 shareTitle={FEEDING_UI_TEXT.HEADER.TITLE}
+                xHashtags={FEEDING_UI_TEXT.SHARE.X_HASHTAGS}
                 buttonId="shareBtn"
                 menuId="shareMenu"
                 buttonClassName="absolute right-0 top-0 -translate-y-3/5"

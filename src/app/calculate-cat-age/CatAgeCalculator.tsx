@@ -96,22 +96,10 @@ export default function CatAgeCalculator() {
 
   const shareUrl = useMemo(() => buildShareUrl(birthDate), [birthDate]);
 
-  const shareBaseUrl = useMemo(() => {
-    try {
-      const url = new URL(shareUrl);
-      url.search = '';
-      url.hash = '';
-      return url.toString();
-    } catch {
-      // shareUrlが予期せず不正な形式だった場合に備え、そのまま返す
-      return shareUrl;
-    }
-  }, [shareUrl]);
-
   const shareText = useMemo(() => {
     if (!result) return '';
-    return UI_TEXT.SHARE.SHARE_TEXT(result.humanAgeYears, result.humanAgeMonths, shareBaseUrl);
-  }, [result, shareBaseUrl]);
+    return UI_TEXT.SHARE.SHARE_TEXT(result.humanAgeYears, result.humanAgeMonths);
+  }, [result]);
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">

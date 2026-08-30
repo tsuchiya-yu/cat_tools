@@ -425,6 +425,7 @@ export default function CatFoodSafetyChecker({ allFoods }: CatFoodSafetyCheckerP
                       shareText={itemShareText}
                       shareUrl={itemShareUrl}
                       shareTitle={item.name}
+                      xHashtags={CAT_FOOD_SAFETY_TEXT.SHARE.X_HASHTAGS}
                       buttonClassName="ml-1 !static !right-auto !top-auto !translate-y-0"
                       menuClassName="top-full mt-2 right-0 !translate-y-0"
                     />
