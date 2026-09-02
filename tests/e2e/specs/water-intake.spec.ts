@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 const PAGE = '/calculate-cat-water-intake';
+const SHARE_TEXT = 'うちの猫の器からの飲水目安は、1日93.6〜173.6mLでした🐾';
 
 test.describe('猫の必要給水量計算 E2E', () => {
   test('入力前に体重別の総水分量早見表が表示される', async ({ page }) => {
@@ -80,6 +81,8 @@ test.describe('猫の必要給水量計算 E2E', () => {
   test('入力・計算結果・URL同期が従来どおり動作する', async ({ page }) => {
     await page.goto(PAGE);
 
+    await expect(page.getByRole('button', { name: '共有メニューを開く' })).toHaveCount(0);
+
     await page.locator('#weightInput').fill('4');
     await expect(page).toHaveURL(/weight=4/);
     await page.locator('#dryFoodInput').fill('40');
@@ -91,5 +94,85 @@ test.describe('猫の必要給水量計算 E2E', () => {
     await expect(page.getByText('中央目安 200 mL', { exact: true })).toBeVisible();
     await expect(page.locator('#foodWaterResult')).toContainText('66.4 mL');
     await expect(page.locator('#drinkTargetResult')).toContainText('93.6〜173.6');
+    await expect(page.getByRole('button', { name: '共有メニューを開く' })).toBeVisible();
+  });
+
+  test('復元した結果をXへ正しい文面・URL・ハッシュタグで共有できる', async ({ page }) => {
+    await page.goto(`${PAGE}?weight=4&dry=40&wet=80`);
+
+    await expect(page.locator('#drinkTargetResult')).toContainText('93.6〜173.6');
+    await page.getByRole('button', { name: '共有メニューを開く' }).click();
+
+    const xShare = page.getByRole('menuitem', { name: 'Xでシェア' });
+    const href = await xShare.getAttribute('href');
+    expect(href).not.toBeNull();
+
+    const intentUrl = new URL(href!);
+    expect(intentUrl.origin + intentUrl.pathname).toBe('https://x.com/intent/post');
+    expect(intentUrl.searchParams.get('text')).toBe(SHARE_TEXT);
+    expect(intentUrl.searchParams.get('url')).toBe(
+      'http://127.0.0.1:3000/calculate-cat-water-intake?weight=4&dry=40&wet=80',
+    );
+    expect(intentUrl.searchParams.get('hashtags')).toBe('ねこツールズ,猫の給水量計算');
+    expect(intentUrl.searchParams.getAll('text')).toHaveLength(1);
+    expect(intentUrl.searchParams.getAll('url')).toHaveLength(1);
+    expect(intentUrl.searchParams.getAll('hashtags')).toHaveLength(1);
+  });
+
+  test('Web Share APIにはハッシュタグを含めず、コピーはURLだけを渡す', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'share', {
+        configurable: true,
+        value: (data: ShareData) => {
+          (window as typeof window & { __shareData?: ShareData }).__shareData = data;
+          return Promise.resolve();
+        },
+      });
+      Object.defineProperty(navigator, 'clipboard', {
+        configurable: true,
+        value: {
+          writeText: (value: string) => {
+            (window as typeof window & { __copiedText?: string }).__copiedText = value;
+            return Promise.resolve();
+          },
+        },
+      });
+    });
+    await page.goto(`${PAGE}?weight=4`);
+
+    const shareButton = page.getByRole('button', { name: '共有メニューを開く' });
+    await shareButton.click();
+    await page.getByRole('menuitem', { name: '共有する' }).click();
+
+    const nativePayload = await page.evaluate(() =>
+      (window as typeof window & { __shareData?: ShareData }).__shareData,
+    );
+    expect(nativePayload).toEqual({
+      title: '猫の必要給水量計算',
+      text: 'うちの猫の器からの飲水目安は、1日160〜240mLでした🐾',
+      url: 'http://127.0.0.1:3000/calculate-cat-water-intake?weight=4',
+    });
+    expect(nativePayload?.text).not.toContain('#');
+
+    await shareButton.click();
+    await page.getByRole('menuitem', { name: 'リンクをコピー' }).click();
+    const copiedText = await page.evaluate(() =>
+      (window as typeof window & { __copiedText?: string }).__copiedText,
+    );
+    expect(copiedText).toBe('http://127.0.0.1:3000/calculate-cat-water-intake?weight=4');
+  });
+
+  test('共有メニューが画面幅からはみ出さない', async ({ page }) => {
+    await page.goto(`${PAGE}?weight=4&dry=40&wet=80`);
+    await page.getByRole('button', { name: '共有メニューを開く' }).click();
+
+    const menu = page.getByRole('menu', { name: '共有メニュー' });
+    await expect(menu).toBeVisible();
+    const box = await menu.boundingBox();
+    const viewport = page.viewportSize();
+    expect(box).not.toBeNull();
+    expect(viewport).not.toBeNull();
+    expect(box!.x).toBeGreaterThanOrEqual(0);
+    expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width);
   });
 });

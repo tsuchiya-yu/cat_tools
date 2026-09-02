@@ -3,6 +3,7 @@ import {
   CAT_FOOD_SAFETY_TEXT,
   FEEDING_UI_TEXT,
   UI_TEXT,
+  WATER_INTAKE_UI_TEXT,
 } from '@/constants/text';
 
 describe('X share hashtags', () => {
@@ -10,6 +11,7 @@ describe('X share hashtags', () => {
     ['猫の年齢計算', UI_TEXT.SHARE.X_HASHTAGS, ['#ねこツールズ', '#猫の年齢計算']],
     ['猫のカロリー計算', CALORIE_UI_TEXT.SHARE.X_HASHTAGS, ['#ねこツールズ', '#猫のカロリー計算']],
     ['猫の給餌量計算', FEEDING_UI_TEXT.SHARE.X_HASHTAGS, ['#ねこツールズ', '#猫の給餌量計算']],
+    ['猫の必要給水量計算', WATER_INTAKE_UI_TEXT.SHARE.X_HASHTAGS, ['#ねこツールズ', '#猫の給水量計算']],
     [
       '猫の食べ物安全性チェック',
       CAT_FOOD_SAFETY_TEXT.SHARE.X_HASHTAGS,
@@ -34,6 +36,13 @@ describe('X share hashtags', () => {
       'https://example.com/cat-food-safety?food=%E7%8E%89%E3%81%AD%E3%81%8E',
     );
 
+    expect(shareText).not.toContain('#');
+  });
+
+  it('formats the water intake share text without X-only hashtags', () => {
+    const shareText = WATER_INTAKE_UI_TEXT.SHARE.TEXT('93.6', '173.6');
+
+    expect(shareText).toBe('うちの猫の器からの飲水目安は、1日93.6〜173.6mLでした🐾');
     expect(shareText).not.toContain('#');
   });
 });
