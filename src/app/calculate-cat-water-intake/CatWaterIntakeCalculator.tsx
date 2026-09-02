@@ -386,6 +386,7 @@ export default function CatWaterIntakeCalculator() {
   }, [weightNum, dryFoodNum, wetFoodNum]);
 
   const hasFoodInput = dryFood.trim() !== '' || wetFood.trim() !== '';
+  const canShare = result !== null && !errors.weight && !errors.dryFood && !errors.wetFood;
 
   return (
     <main className="container max-w-3xl mx-auto px-6 pb-10">
@@ -480,19 +481,21 @@ export default function CatWaterIntakeCalculator() {
       {result && (
         <section className="section mt-6" aria-live="polite">
           <div className="result relative text-center py-2 pb-6 border-b border-gray-200">
-            <ShareMenu
-              shareText={WATER_INTAKE_UI_TEXT.SHARE.TEXT(
-                formatMl(result.drinkTargetMl.min),
-                formatMl(result.drinkTargetMl.max),
-              )}
-              shareUrl={shareUrl}
-              shareTitle={WATER_INTAKE_UI_TEXT.HEADER.TITLE}
-              xHashtags={WATER_INTAKE_UI_TEXT.SHARE.X_HASHTAGS}
-              buttonId="shareBtn"
-              menuId="shareMenu"
-              buttonClassName="absolute right-0 top-0 -translate-y-3/5"
-              menuClassName="top-12 border-gray-300 min-w-[220px]"
-            />
+            {canShare && (
+              <ShareMenu
+                shareText={WATER_INTAKE_UI_TEXT.SHARE.TEXT(
+                  formatMl(result.drinkTargetMl.min),
+                  formatMl(result.drinkTargetMl.max),
+                )}
+                shareUrl={shareUrl}
+                shareTitle={WATER_INTAKE_UI_TEXT.HEADER.TITLE}
+                xHashtags={WATER_INTAKE_UI_TEXT.SHARE.X_HASHTAGS}
+                buttonId="shareBtn"
+                menuId="shareMenu"
+                buttonClassName="absolute right-0 top-0 -translate-y-3/5"
+                menuClassName="top-12 border-gray-300 min-w-[220px]"
+              />
+            )}
             <div className="text-gray-600 mb-1.5 tracking-wide text-sm">
               {WATER_INTAKE_UI_TEXT.RESULT.DRINK_TARGET_TITLE}
             </div>

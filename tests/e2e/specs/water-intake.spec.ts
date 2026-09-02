@@ -97,6 +97,15 @@ test.describe('猫の必要給水量計算 E2E', () => {
     await expect(page.getByRole('button', { name: '共有メニューを開く' })).toBeVisible();
   });
 
+  test('任意のフード量が不正な場合は共有ボタンを表示しない', async ({ page }) => {
+    await page.goto(`${PAGE}?weight=4&dry=abc`);
+
+    await expect(page.locator('#dryFoodInput')).toHaveValue('abc');
+    await expect(page.getByText('数値を入力してください。', { exact: true })).toBeVisible();
+    await expect(page.locator('#drinkTargetResult')).toBeVisible();
+    await expect(page.getByRole('button', { name: '共有メニューを開く' })).toHaveCount(0);
+  });
+
   test('復元した結果をXへ正しい文面・URL・ハッシュタグで共有できる', async ({ page }) => {
     await page.goto(`${PAGE}?weight=4&dry=40&wet=80`);
 
