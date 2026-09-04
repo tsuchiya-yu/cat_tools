@@ -170,6 +170,12 @@ function normalizeReviewResult(value) {
   };
 }
 
+function parseReviewJson(result) {
+  const trimmed = result.trim();
+  const fenced = /^```(?:json)?\s*\n([\s\S]*?)\n```$/i.exec(trimmed);
+  return JSON.parse(fenced ? fenced[1] : trimmed);
+}
+
 function parseJunieOutput(rawOutput, exitCode, stderr = '') {
   if (rawOutput === undefined) {
     return { ok: false, failure: classifyFailure({ exitCode, stderr, outputState: 'missing' }) };
@@ -194,7 +200,7 @@ function parseJunieOutput(rawOutput, exitCode, stderr = '') {
   }
 
   try {
-    const review = normalizeReviewResult(JSON.parse(output.result));
+    const review = normalizeReviewResult(parseReviewJson(output.result));
     return { ok: true, review };
   } catch {
     return {

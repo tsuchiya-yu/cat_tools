@@ -104,6 +104,22 @@ describe('Junie output normalization', () => {
     expect(parsed).toEqual({ ok: true, review: cleanReview });
   });
 
+  test('accepts a single JSON code fence emitted around a structured result', () => {
+    const parsed = parseJunieOutput(
+      JSON.stringify({ errors: [], result: `\`\`\`json\n${JSON.stringify(cleanReview)}\n\`\`\`` }),
+      0,
+    );
+    expect(parsed).toEqual({ ok: true, review: cleanReview });
+  });
+
+  test('does not extract JSON from surrounding prose', () => {
+    const parsed = parseJunieOutput(
+      JSON.stringify({ errors: [], result: `review result:\n${JSON.stringify(cleanReview)}` }),
+      0,
+    );
+    expect(parsed).toMatchObject({ ok: false, failure: { code: 'malformed_response' } });
+  });
+
   test.each([undefined, ''])('treats a successful empty response as transient', (output) => {
     const parsed = parseJunieOutput(output, 0);
     expect(parsed.ok).toBe(false);
