@@ -1,5 +1,11 @@
 [
   {
+    "href": "/cat-bcs-check",
+    "ariaLabel": "猫の肥満度チェック（BCS）を開く",
+    "title": "猫の肥満度チェック（BCS）",
+    "description": "肋骨・腰・お腹の観察から、猫の体型（BCS）の目安を家庭で確認できます。"
+  },
+  {
     "href": "/cat-food-safety",
     "ariaLabel": "猫の食べ物安全性チェックを開く",
     "title": "猫の食べ物安全性チェック",

@@ -5,18 +5,19 @@ test.describe('Home (/)', () => {
     await page.goto('/');
   });
 
-  test('ヒーローと5つのカードが表示される（順序: 食の安全→年齢→カロリー→給餌量→給水量）', async ({ page }) => {
+  test('ヒーローと6つのカードが表示される（順序: BCS→食の安全→年齢→カロリー→給餌量→給水量）', async ({ page }) => {
     // h1: タイトル
     await expect(page.locator('main h1')).toHaveText('ねこツールズ');
 
     // h2: カード見出し（順序を確認）
     const h2 = page.locator('section[aria-label="ツール一覧"] h2');
-    await expect(h2).toHaveCount(5);
-    await expect(h2.nth(0)).toHaveText('猫の食べ物安全性チェック');
-    await expect(h2.nth(1)).toHaveText('猫の年齢計算');
-    await expect(h2.nth(2)).toHaveText('猫のカロリー計算');
-    await expect(h2.nth(3)).toHaveText('猫の給餌量計算');
-    await expect(h2.nth(4)).toHaveText('猫の必要給水量計算');
+    await expect(h2).toHaveCount(6);
+    await expect(h2.nth(0)).toHaveText('猫の肥満度チェック（BCS）');
+    await expect(h2.nth(1)).toHaveText('猫の食べ物安全性チェック');
+    await expect(h2.nth(2)).toHaveText('猫の年齢計算');
+    await expect(h2.nth(3)).toHaveText('猫のカロリー計算');
+    await expect(h2.nth(4)).toHaveText('猫の給餌量計算');
+    await expect(h2.nth(5)).toHaveText('猫の必要給水量計算');
   });
 
   test('食べ物安全性チェックカードはクリックで遷移できる', async ({ page }) => {
@@ -51,7 +52,7 @@ test.describe('Home (/)', () => {
 
   test('見出し階層: h1→h2 の降順', async ({ page }) => {
     await expect(page.locator('main h1')).toHaveCount(1);
-    await expect(page.locator('section[aria-label="ツール一覧"] h2')).toHaveCount(5);
+    await expect(page.locator('section[aria-label="ツール一覧"] h2')).toHaveCount(6);
     await expect(page.getByRole('heading', { level: 2, name: 'このサイトについて' })).toBeVisible();
   });
 });

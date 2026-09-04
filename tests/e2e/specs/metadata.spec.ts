@@ -45,6 +45,13 @@ const targetPages = [
     socialDescription: '食材名を入れるだけで、猫にとって安全かどうかを判定します。',
   },
   {
+    path: '/cat-bcs-check',
+    description:
+      '肋骨・腰・お腹の3つの観察で、猫の体型（BCS）の目安を確認できます。環境省の5段階BCSを参考にした家庭向けチェックです。診断ではなく観察の目安としてご利用ください。',
+    canonical: `${SITE_URL}/cat-bcs-check`,
+    socialDescription: '肋骨・腰・お腹の観察から、猫の体型（BCS）の目安を家庭で確認できます。',
+  },
+  {
     path: '/cat-meal-management',
     description:
       '猫の食事管理で確認したい必要カロリー・給餌量・水分量の違いと、ねこツールズ内の計算ツールを使う順番を案内します。',
