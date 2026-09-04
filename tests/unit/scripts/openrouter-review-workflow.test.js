@@ -9,7 +9,11 @@ const workflow = readFileSync(
 
 describe('OpenRouter review workflow security boundary', () => {
   test('runs trusted tooling separately from the pull request checkout', () => {
-    expect(workflow).toContain('ref: ${{ github.workflow_sha }}');
+    expect(workflow).toContain('tooling_sha="${PR_BASE_SHA}"');
+    expect(workflow).toContain('tooling_sha="$(jq -r \'.base.sha\' <<<"${pr_json}")"');
+    expect(workflow).toContain('tooling_sha="${WORKFLOW_SHA}"');
+    expect(workflow).toContain('ref: ${{ needs.authorize.outputs.tooling_sha }}');
+    expect(workflow).not.toContain('ref: ${{ github.workflow_sha }}');
     expect(workflow).toContain('path: review-tools');
     expect(workflow).toContain('path: review-target');
     expect(workflow).toContain(

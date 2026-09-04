@@ -2,7 +2,7 @@
 
 The review workflow generates findings without a GitHub write credential. A short-lived GitHub App token is created only after generation and validation have completed, and is used only to publish one pull request review.
 
-The workflow installs Junie CLI `3013.5` and checks out trusted review tooling from `github.workflow_sha` separately from the pull request head. It disables Junie's default project configuration, MCP, model, skill, command, and agent discovery, and loads the model profiles and guidelines only from the trusted tooling checkout. Never change the workflow to execute runner or publisher scripts from the pull request checkout.
+The workflow installs Junie CLI `3013.5` and checks out trusted review tooling separately from the pull request head. Automatic pull request and authorized comment events pin tooling to the pull request base SHA. An explicitly started `workflow_dispatch` canary pins tooling to the selected workflow ref. The workflow disables Junie's default project configuration, MCP, model, skill, command, and agent discovery, and loads the model profiles and guidelines only from that trusted tooling checkout. Never change the workflow to execute runner or publisher scripts from the pull request checkout.
 
 ## GitHub App
 
