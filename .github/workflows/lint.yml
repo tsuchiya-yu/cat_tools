@@ -10,7 +10,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     env:
-      SITE_URL: ${{ vars.SITE_URL }}
+      SITE_URL: ${{ vars.SITE_URL || 'https://cat-tools.catnote.tokyo' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
