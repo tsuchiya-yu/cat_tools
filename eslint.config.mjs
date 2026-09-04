@@ -27,7 +27,11 @@ const eslintConfig = [
     ],
   },
   {
-    files: ["next-sitemap.config.js"],
+    files: [
+      "next-sitemap.config.js",
+      "scripts/openrouter-review/**/*.js",
+      "tests/unit/scripts/openrouter-review-*.test.js",
+    ],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
     },
