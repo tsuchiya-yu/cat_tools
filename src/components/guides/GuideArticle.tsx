@@ -53,10 +53,7 @@ export default async function GuideArticle({ guide }: GuideArticleProps) {
         <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0">
           {metadata.title}
         </h1>
-        <p className="lead text-sm text-gray-600 mt-2.5 mb-4 leading-relaxed">
-          {metadata.description}
-        </p>
-        <p className="text-xs text-gray-500 leading-relaxed">
+        <p className="mt-2 text-xs text-gray-500 leading-relaxed">
           公開日: {formatGuideDate(metadata.publishedAt)}
           {showUpdated ? ` ／ 更新日: ${formatGuideDate(metadata.updatedAt)}` : ''}
           {' ／ '}
@@ -68,6 +65,9 @@ export default async function GuideArticle({ guide }: GuideArticleProps) {
           >
             {author.name}
           </Link>
+        </p>
+        <p className="lead text-sm text-gray-600 mt-3 mb-0 leading-relaxed">
+          {metadata.description}
         </p>
       </header>
 

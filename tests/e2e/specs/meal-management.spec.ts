@@ -205,6 +205,7 @@ test.describe('トップページおよび計算機からの食事管理ガイ�
     const html = await response.text();
     expect(html).toContain('ガイド・読みもの');
     expect(html).toContain('href="/cat-meal-management"');
+    expect(html).toContain('href="/guides/cat-food-amount"');
   });
 
   test('フッターにガイド・読みものカテゴリと食事管理ガイドへのリンクが存在する', async ({ page }) => {
