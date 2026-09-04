@@ -74,14 +74,31 @@ function isValidIsoDate(value) {
 }
 
 /**
- * Production (VERCEL_ENV=production) では fixture を読まない。
- * INCLUDE_GUIDE_FIXTURES=0/1 で明示上書き可能。
+ * Fixture inclusion policy (production is fail-closed):
+ * 1. VERCEL_ENV=production → never (INCLUDE_GUIDE_FIXTURES=1 cannot override)
+ * 2. CAT_TOOLS_PRODUCTION=1 → never (non-Vercel production)
+ * 3. INCLUDE_GUIDE_FIXTURES=0 → never
+ * 4. INCLUDE_GUIDE_FIXTURES=1 → yes (only when not blocked by 1-2)
+ * 5. VERCEL_ENV=preview|development → yes
+ * 6. NODE_ENV=production (without preview/dev) → never
+ * 7. otherwise (local dev) → yes
+ *
+ * Local/CI `next build` で fixture を含める場合は INCLUDE_GUIDE_FIXTURES=1 を明示する。
  * @returns {boolean}
  */
 function shouldIncludeGuideFixtures() {
+  if (process.env.VERCEL_ENV === 'production') return false;
+  if (process.env.CAT_TOOLS_PRODUCTION === '1') return false;
+
   if (process.env.INCLUDE_GUIDE_FIXTURES === '0') return false;
   if (process.env.INCLUDE_GUIDE_FIXTURES === '1') return true;
-  if (process.env.VERCEL_ENV === 'production') return false;
+
+  if (process.env.VERCEL_ENV === 'preview' || process.env.VERCEL_ENV === 'development') {
+    return true;
+  }
+
+  if (process.env.NODE_ENV === 'production') return false;
+
   return true;
 }
 
@@ -138,11 +155,12 @@ const frontmatterSchema = z
     publishedAt: z.string().refine(isValidIsoDate, 'must be YYYY-MM-DD'),
     updatedAt: z.string().refine(isValidIsoDate, 'must be YYYY-MM-DD'),
     author: z.string().min(1),
-    relatedTools: z.array(z.string()).default([]),
-    relatedGuides: z.array(z.string()).default([]),
-    references: z.array(referenceSchema).default([]),
-    draft: z.boolean().default(false),
+    relatedTools: z.array(z.string()),
+    relatedGuides: z.array(z.string()),
+    references: z.array(referenceSchema),
+    draft: z.boolean(),
   })
+  .strict()
   .superRefine((value, ctx) => {
     if (value.updatedAt < value.publishedAt) {
       ctx.addIssue({
@@ -212,7 +230,16 @@ function resolveGuideFilePath(slug, directories) {
  */
 function loadGuideFromFile({ slug, filePath, content = true }) {
   const raw = fs.readFileSync(filePath, 'utf8');
-  const parsed = matter(raw);
+  let parsed;
+  try {
+    parsed = matter(raw);
+  } catch (error) {
+    throw createGuideError(
+      `failed to parse frontmatter: ${error instanceof Error ? error.message : String(error)}`,
+      filePath,
+      'frontmatter',
+    );
+  }
   const metadata = parseFrontmatter(normalizeFrontmatterData(parsed.data), filePath);
 
   return {

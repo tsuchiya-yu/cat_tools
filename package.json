@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "prebuild": "node scripts/validate-site-url.js && node scripts/generate-deployment-marker.js",
     "build": "next build --turbopack",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap && node scripts/verify-guides-sitemap.js",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",

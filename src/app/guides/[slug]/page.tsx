@@ -23,6 +23,9 @@ export function generateStaticParams() {
   }));
 }
 
+/** 公開slug以外はルーター層で404（filesystem loaderを走らせない） */
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: GuidePageProps): Promise<Metadata> {
   const { slug } = await params;
   if (!isSafeSlug(slug)) {

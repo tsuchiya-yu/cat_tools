@@ -27,7 +27,11 @@ const eslintConfig = [
     ],
   },
   {
-    files: ["next-sitemap.config.js", "src/lib/guides/meta.cjs"],
+    files: [
+      "next-sitemap.config.js",
+      "src/lib/guides/meta.cjs",
+      "scripts/verify-guides-sitemap.js",
+    ],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
     },

@@ -1,24 +1,21 @@
 import Link from 'next/link';
 import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import RelatedTool, { GuideNote } from '@/components/guides/RelatedTool';
-
-function isExternalHref(href: string | undefined): boolean {
-  if (!href) return false;
-  return /^https?:\/\//i.test(href) || href.startsWith('//');
-}
+import { classifyGuideHref } from '@/lib/guides/guideHref';
 
 function GuideLink({ href, children, ...props }: ComponentPropsWithoutRef<'a'>) {
-  const resolvedHref = href ?? '#';
+  const resolvedHref = href ?? '';
+  const kind = classifyGuideHref(resolvedHref);
 
-  if (resolvedHref.startsWith('javascript:')) {
-    return <span className="text-gray-700">{children}</span>;
+  if (kind === 'invalid') {
+    return <span className="text-gray-700 break-all">{children}</span>;
   }
 
-  if (isExternalHref(resolvedHref)) {
+  if (kind === 'external') {
     return (
       <a
         {...props}
-        href={resolvedHref}
+        href={resolvedHref.trim()}
         target="_blank"
         rel="noopener noreferrer"
         className="text-pink-600 underline underline-offset-2 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded break-all"
@@ -30,7 +27,7 @@ function GuideLink({ href, children, ...props }: ComponentPropsWithoutRef<'a'>) 
 
   return (
     <Link
-      href={resolvedHref}
+      href={resolvedHref.trim()}
       prefetch={false}
       className="text-pink-600 underline underline-offset-2 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded break-all"
     >

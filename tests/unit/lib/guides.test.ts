@@ -101,6 +101,54 @@ describe('guides meta loader', () => {
     expect(() => meta.loadAllGuides({ directories: [tempDir] })).toThrow(/field=title/);
   });
 
+  it.each([
+    ['draft', 'missing-draft'],
+    ['relatedTools', 'missing-related-tools'],
+    ['relatedGuides', 'missing-related-guides'],
+    ['references', 'missing-references'],
+  ] as const)('%s 欠落で失敗する', (field, slug) => {
+    const lines = baseFrontmatter().split('\n');
+    const filtered: string[] = [];
+    let skipping = false;
+    for (const line of lines) {
+      if (line === `${field}:` || line.startsWith(`${field}:`)) {
+        skipping = line.endsWith(':') && !line.slice(field.length + 1).trim();
+        if (!skipping) continue;
+        continue;
+      }
+      if (skipping) {
+        if (line.startsWith('  ') || line.trim() === '[]') continue;
+        skipping = false;
+      }
+      filtered.push(line);
+    }
+
+    writeGuide(tempDir, slug, filtered.join('\n'));
+    expect(() => meta.loadAllGuides({ directories: [tempDir] })).toThrow(
+      new RegExp(`field=${field}`),
+    );
+  });
+
+  it('未知の frontmatter キーで失敗する', () => {
+    writeGuide(
+      tempDir,
+      'unknown-key',
+      `${baseFrontmatter()}\ndraff: true`,
+    );
+    expect(() => meta.loadAllGuides({ directories: [tempDir] })).toThrow(/Unrecognized key|draff/);
+  });
+
+  it('malformed YAML でもファイル名付きで失敗する', () => {
+    fs.writeFileSync(
+      path.join(tempDir, 'broken.mdx'),
+      `---\ntitle: [unclosed\n---\n\nbody\n`,
+      'utf8',
+    );
+    expect(() => meta.loadAllGuides({ directories: [tempDir] })).toThrow(
+      /file=.*broken\.mdx.*field=frontmatter/,
+    );
+  });
+
   it('不正 category で失敗する', () => {
     writeGuide(tempDir, 'bad-category', baseFrontmatter({ category: 'unknown' }));
     expect(() => meta.loadAllGuides({ directories: [tempDir] })).toThrow(/field=category/);

@@ -13,6 +13,7 @@ import {
   getPublishedGuides,
   type Guide,
 } from '@/lib/guides';
+import { guideMdxRemoteOptions } from '@/lib/guides/mdxOptions';
 
 type GuideArticleProps = {
   guide: Guide;
@@ -71,7 +72,11 @@ export default async function GuideArticle({ guide }: GuideArticleProps) {
       </header>
 
       <div className="guide-prose section mt-8">
-        <MDXRemote source={content} components={guideMdxComponents} />
+        <MDXRemote
+          source={content}
+          components={guideMdxComponents}
+          options={guideMdxRemoteOptions}
+        />
       </div>
 
       <GuideReferences references={metadata.references} />
