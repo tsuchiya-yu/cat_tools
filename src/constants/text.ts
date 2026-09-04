@@ -50,6 +50,7 @@ export const FOOTER_TEXT = {
   GUIDES: {
     TITLE: 'ガイド・読みもの',
     LINKS: {
+      GUIDES_INDEX: 'ガイド一覧',
       CAT_MEAL_MANAGEMENT: '猫の食事管理ガイド',
     },
   },

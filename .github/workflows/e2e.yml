@@ -10,7 +10,8 @@ jobs:
   e2e-test:
     runs-on: ubuntu-latest
     env:
-      SITE_URL: ${{ vars.SITE_URL }}
+      # repository variable が未設定でも postbuild(next-sitemap) が落ちないようにする
+      SITE_URL: ${{ vars.SITE_URL || 'https://cat-tools.catnote.tokyo' }}
     
     strategy:
       matrix:
@@ -44,6 +45,9 @@ jobs:
       
     - name: Build application
       run: npm run build
+      env:
+        # E2E でガイド fixture を検証するため。Vercel production では無効化される。
+        INCLUDE_GUIDE_FIXTURES: '1'
       
     - name: Run E2E tests
       run: npm run test:e2e
