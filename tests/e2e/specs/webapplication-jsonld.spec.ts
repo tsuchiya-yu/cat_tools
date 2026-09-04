@@ -60,6 +60,14 @@ const toolPages = [
     applicationCategory: 'ReferenceApplication',
     hasFaq: true,
   },
+  {
+    path: '/cat-bcs-check',
+    name: '猫の肥満度チェック（BCS）',
+    url: 'https://cat-tools.catnote.tokyo/cat-bcs-check',
+    description: '肋骨・腰・お腹の観察から、猫の体型（BCS）の目安を家庭で確認できます。',
+    applicationCategory: 'UtilitiesApplication',
+    hasFaq: true,
+  },
 ] as const;
 
 function flattenJsonLd(payload: unknown): JsonLdObject[] {

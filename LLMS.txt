@@ -1,8 +1,8 @@
 LLMS.txt - Cat Tools LLM Guide
 
 1. Project Summary / プロジェクト概要
-Cat Tools is a web app that provides practical calculators and checkers for cat owners, including age conversion, calorie estimation, feeding amount support, and food safety lookup.
-ねこツールズは、猫の年齢計算・必要カロリー計算・給餌量目安計算・食べ物安全性チェックを提供する Web アプリです。
+Cat Tools is a web app that provides practical calculators and checkers for cat owners, including age conversion, calorie estimation, feeding amount support, water intake estimation, food safety lookup, and body condition (BCS) observation support.
+ねこツールズは、猫の年齢計算・必要カロリー計算・給餌量目安計算・必要給水量計算・食べ物安全性チェック・体型（BCS）観察チェックを提供する Web アプリです。
 
 This file is a short navigation guide for AI agents. Treat this as an entry point and use linked documents for full details.
 このファイルは AI エージェント向けの導線です。詳細は参照先ドキュメントを正としてください。

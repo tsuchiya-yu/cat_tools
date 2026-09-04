@@ -1,5 +1,6 @@
 export const ABOUT_PATH = '/about';
 export const CAT_FOOD_SAFETY_PATH = '/cat-food-safety';
+export const CAT_BCS_CHECK_PATH = '/cat-bcs-check';
 export const CALCULATE_CAT_AGE_PATH = '/calculate-cat-age';
 export const CALCULATE_CAT_CALORIE_PATH = '/calculate-cat-calorie';
 export const CALCULATE_CAT_FEEDING_PATH = '/calculate-cat-feeding';
