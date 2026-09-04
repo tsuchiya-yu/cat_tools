@@ -22,41 +22,31 @@ function toAbsoluteUrl(path: string) {
   return new URL(path, getSiteUrl()).toString();
 }
 
-export function createHomeBreadcrumbList(): BreadcrumbListStructuredData {
+export function createBreadcrumbList(
+  items: BreadcrumbItemInput[],
+): BreadcrumbListStructuredData {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: HOME_LABEL,
-        item: toAbsoluteUrl("/"),
-      },
-    ],
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: toAbsoluteUrl(item.path),
+    })),
   };
+}
+
+export function createHomeBreadcrumbList(): BreadcrumbListStructuredData {
+  return createBreadcrumbList([{ name: HOME_LABEL, path: "/" }]);
 }
 
 export function createPageBreadcrumbList({
   name,
   path,
 }: BreadcrumbItemInput): BreadcrumbListStructuredData {
-  return {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: HOME_LABEL,
-        item: toAbsoluteUrl("/"),
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name,
-        item: toAbsoluteUrl(path),
-      },
-    ],
-  };
+  return createBreadcrumbList([
+    { name: HOME_LABEL, path: "/" },
+    { name, path },
+  ]);
 }

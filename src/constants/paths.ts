@@ -5,6 +5,7 @@ export const CALCULATE_CAT_CALORIE_PATH = '/calculate-cat-calorie';
 export const CALCULATE_CAT_FEEDING_PATH = '/calculate-cat-feeding';
 export const CALCULATE_CAT_WATER_INTAKE_PATH = '/calculate-cat-water-intake';
 export const CAT_MEAL_MANAGEMENT_PATH = '/cat-meal-management';
+export const GUIDES_PATH = '/guides';
 
 export const CONTACT_FORM_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLSeGH6AykLYDuxFasGFDUGGuCv72Ejfm1P1SDfPh2Q2RZVOzkg/viewform';

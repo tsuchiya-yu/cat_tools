@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import JsonLdScript from '@/components/JsonLdScript';
-import { CAT_MEAL_MANAGEMENT_PATH } from '@/constants/paths';
+import { CAT_MEAL_MANAGEMENT_PATH, GUIDES_PATH } from '@/constants/paths';
 import { HOME_ABOUT_TEXT, TOOLS } from '@/constants/text';
 import { createHomeBreadcrumbList } from '@/lib/breadcrumbStructuredData';
 
@@ -65,6 +65,15 @@ export default function Home() {
               読む →
             </span>
           </Link>
+          <p className="mt-4">
+            <Link
+              href={GUIDES_PATH}
+              aria-label="すべてのガイドを見る"
+              className="inline-flex text-sm font-semibold text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
+            >
+              すべてのガイドを見る →
+            </Link>
+          </p>
         </section>
 
         <section
