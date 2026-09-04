@@ -7,12 +7,12 @@ test.describe('ナビゲーション', () => {
     await expect(page.locator('main h1')).toHaveText('ねこツールズ');
     const h2 = page.locator('section[aria-label="ツール一覧"] h2');
     await expect(h2).toHaveCount(6);
-    await expect(h2.nth(0)).toHaveText('猫の肥満度チェック（BCS）');
-    await expect(h2.nth(1)).toHaveText('猫の食べ物安全性チェック');
-    await expect(h2.nth(2)).toHaveText('猫の年齢計算');
-    await expect(h2.nth(3)).toHaveText('猫のカロリー計算');
-    await expect(h2.nth(4)).toHaveText('猫の給餌量計算');
-    await expect(h2.nth(5)).toHaveText('猫の必要給水量計算');
+    await expect(h2.nth(0)).toHaveText('猫の食べ物安全性チェック');
+    await expect(h2.nth(1)).toHaveText('猫の年齢計算');
+    await expect(h2.nth(2)).toHaveText('猫のカロリー計算');
+    await expect(h2.nth(3)).toHaveText('猫の給餌量計算');
+    await expect(h2.nth(4)).toHaveText('猫の必要給水量計算');
+    await expect(h2.nth(5)).toHaveText('猫の肥満度チェック（BCS）');
 
     // 年齢計算カードのリンクで遷移できる
     await page.getByRole('link', { name: '猫の年齢計算ツールを開く' }).click();

@@ -18,10 +18,23 @@ test.describe('猫の肥満度チェック（BCS） E2E', () => {
         name: '猫の肥満度チェック｜BCS（ボディコンディションスコア）',
       }),
     ).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'チェックの前に' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '触診のしかた' })).toBeVisible();
-    await expect(page.locator('aside').getByText('プライモーディアルポーチ')).toBeVisible();
+    await expect(page.getByText('お腹のたるみ（プライモーディアルポーチ）について')).toBeVisible();
     await expect(page.getByRole('heading', { name: '5段階BCSの参考図' })).toBeVisible();
+    await expect(page.getByRole('img', { name: /ボディコンディションスコア/ })).toBeVisible();
+  });
+
+  test('結果に共有ボタンがあり、内訳は縦並び', async ({ page }) => {
+    await page.goto(PAGE);
+    await answerQuestion(page, 'ribs', 3);
+    await answerQuestion(page, 'waist', 3);
+    await answerQuestion(page, 'abdomen', 3);
+
+    const result = page.getByTestId('bcs-result');
+    await expect(result.locator('#bcsShareBtn')).toBeVisible();
+    await expect(result.getByText('肋骨（触診）')).toBeVisible();
+    await expect(result.getByText('腰（真上）')).toBeVisible();
+    await expect(result.getByText('腹部（横）')).toBeVisible();
   });
 
   test('match 結果と回答内訳・関連ツール導線が表示される', async ({ page }) => {
@@ -33,10 +46,11 @@ test.describe('猫の肥満度チェック（BCS） E2E', () => {
 
     const result = page.getByTestId('bcs-result');
     await expect(result).toHaveAttribute('data-result-type', 'match');
-    await expect(result).toContainText('5段階BCSの「3」に近い特徴が見られます');
+    await expect(result).toContainText('段階の目安');
     await expect(result).toContainText('理想的な体型の目安');
     await expect(result).toContainText('肋骨（触診）');
     await expect(result).toContainText('3');
+    await expect(result).not.toContainText('近い特徴が見られます');
     await expect(result).not.toContainText('BCS3と判定');
     await expect(result).not.toContainText('あなたの猫のBCSは');
 
@@ -54,8 +68,9 @@ test.describe('猫の肥満度チェック（BCS） E2E', () => {
 
     const result = page.getByTestId('bcs-result');
     await expect(result).toHaveAttribute('data-result-type', 'adjacent');
-    await expect(result).toContainText('5段階BCSの「3〜4」に近い特徴が見られます');
+    await expect(result).toContainText('3〜4');
     await expect(result).toContainText('理想的な体型〜やや肥満の境界付近の可能性があります');
+    await expect(result).not.toContainText('近い特徴が見られます');
     await expect(result).not.toContainText('BCS4と判定');
   });
 
@@ -88,7 +103,7 @@ test.describe('猫の肥満度チェック（BCS） E2E', () => {
     await expect(page.getByRole('heading', { name: 'よくある質問' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'BCSでは筋肉量までは分かりません' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '参考情報・出典' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: '免責事項' })).toBeVisible();
+    await expect(page.getByLabel('免責事項')).toContainText('家庭での体型観察の目安');
     await expect(
       page.getByRole('link', { name: '環境省「飼い主のためのペットフード・ガイドライン」' }).first(),
     ).toBeVisible();

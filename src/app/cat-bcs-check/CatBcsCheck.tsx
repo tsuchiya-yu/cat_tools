@@ -1,16 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import CatBcsCheckFAQ from '@/components/CatBcsCheckFAQ';
 import CatBcsReferenceFigure from '@/components/CatBcsReferenceFigure';
 import GuideSection from '@/components/GuideSection';
+import ShareMenu from '@/components/ShareMenu';
+import type { ShareMethod } from '@/components/ShareMenu';
 import {
   CALCULATE_CAT_CALORIE_PATH,
   CALCULATE_CAT_FEEDING_PATH,
+  CAT_BCS_CHECK_PATH,
 } from '@/constants/paths';
 import { CAT_BCS_CHECK_UI_TEXT } from '@/constants/text';
+import { event } from '@/lib/gtag';
 import {
   evaluateCatBcs,
   getCatBcsGuidanceBand,
@@ -103,52 +107,119 @@ function ResultSummary({
   let headline = '';
   let detail = '';
   let notes: string[] = [];
+  let shareFocus = '';
 
   if (result.type === 'match') {
     headline = text.MATCH_HEADLINE(result.score);
     detail = text.MATCH_LABELS[result.score];
+    shareFocus = headline;
   } else if (result.type === 'adjacent') {
     headline = text.ADJACENT_HEADLINE(result.lower, result.upper);
     detail = text.ADJACENT_LABELS[adjacentLabelKey(result.lower, result.upper)];
     notes = [text.ADJACENT_NOTE];
+    shareFocus = headline;
   } else {
     headline = text.UNRESOLVED_HEADLINE;
     notes =
       result.reason === 'palpation_vs_visual' ? [...text.UNRESOLVED_PALPATION] : [...text.UNRESOLVED_OTHER];
+    shareFocus = headline;
   }
 
-  return (
-    <section
-      className="mt-8 rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm"
-      aria-labelledby="bcs-result-title"
-      data-testid="bcs-result"
-      data-result-type={result.type}
-    >
-      <h2 id="bcs-result-title" className="text-xl font-extrabold text-gray-900 text-balance">
-        {text.TITLE}
-      </h2>
-      <p className="mt-2 text-sm text-gray-600">{text.NOT_DIAGNOSIS}</p>
+  const shareText = useMemo(
+    () => CAT_BCS_CHECK_UI_TEXT.SHARE.SHARE_TEXT(shareFocus),
+    [shareFocus],
+  );
 
-      <div className="mt-5 space-y-2" aria-live="polite">
-        <p className="text-lg font-bold text-gray-900 text-balance">{headline}</p>
-        {detail ? <p className="text-sm text-gray-800 leading-relaxed">{detail}</p> : null}
+  const handleShareSuccess = useCallback((method: ShareMethod) => {
+    event({
+      action: 'share',
+      params: {
+        tool_id: 'cat_bcs_check',
+        method,
+      },
+    });
+  }, []);
+
+  const breakdown = [
+    { label: text.BREAKDOWN.RIBS, value: ribs },
+    { label: text.BREAKDOWN.WAIST, value: waist },
+    { label: text.BREAKDOWN.ABDOMEN, value: abdomen },
+  ] as const;
+
+  return (
+    <section className="section mt-10" aria-live="polite" aria-labelledby="bcs-result-title">
+      <div
+        className="result relative text-center py-2 pb-6 border-b border-gray-200"
+        data-testid="bcs-result"
+        data-result-type={result.type}
+      >
+        <div id="bcs-result-title" className="text-gray-600 mb-1.5 tracking-wide text-sm">
+          {text.TITLE}
+        </div>
+        <p className="text-xs text-gray-500 mb-3">{text.NOT_DIAGNOSIS}</p>
+
+        {result.type === 'match' ? (
+          <div className="big flex items-baseline justify-center gap-2 text-[0] flex-wrap">
+            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
+              {result.score}
+            </span>
+            <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
+              段階の目安
+            </span>
+          </div>
+        ) : null}
+
+        {result.type === 'adjacent' ? (
+          <div className="big flex items-baseline justify-center gap-2 text-[0] flex-wrap">
+            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
+              {result.lower}〜{result.upper}
+            </span>
+            <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
+              段階の目安
+            </span>
+          </div>
+        ) : null}
+
+        {result.type === 'unresolved' ? (
+          <p className="font-extrabold text-balance text-pink-600 text-xl md:text-3xl tracking-tight">
+            {headline}
+          </p>
+        ) : null}
+
+        {detail ? (
+          <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed">{detail}</p>
+        ) : null}
         {notes.map((note) => (
-          <p key={note} className="text-sm text-gray-700 leading-relaxed text-pretty">
+          <p key={note} className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">
             {note}
           </p>
         ))}
+
+        <ShareMenu
+          shareText={shareText}
+          shareUrl={`https://cat-tools.catnote.tokyo${CAT_BCS_CHECK_PATH}`}
+          shareTitle={CAT_BCS_CHECK_UI_TEXT.HEADER.TITLE}
+          xHashtags={CAT_BCS_CHECK_UI_TEXT.SHARE.X_HASHTAGS}
+          buttonId="bcsShareBtn"
+          menuId="bcsShareMenu"
+          buttonClassName="absolute right-0 top-0 -translate-y-3/5"
+          menuClassName="top-12 border-gray-300 min-w-[220px]"
+          onShareSuccess={handleShareSuccess}
+        />
+
+        <div className="mt-8 flex flex-col text-left">
+          {breakdown.map((item) => (
+            <div key={item.label} className="py-4 border-t border-pink-100">
+              <div className="text-sm text-gray-500 mb-1.5">{item.label}</div>
+              <div className="font-extrabold text-2xl text-gray-900 tabular-nums">{item.value}</div>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-4 text-xs sm:text-sm text-gray-500 leading-relaxed text-left">
+          {text.REFERENCE_NOTE}
+        </p>
       </div>
-
-      <dl className="mt-5 grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm text-gray-800">
-        <dt className="font-semibold text-gray-900">{text.BREAKDOWN.RIBS}</dt>
-        <dd className="tabular-nums">{ribs}</dd>
-        <dt className="font-semibold text-gray-900">{text.BREAKDOWN.WAIST}</dt>
-        <dd className="tabular-nums">{waist}</dd>
-        <dt className="font-semibold text-gray-900">{text.BREAKDOWN.ABDOMEN}</dt>
-        <dd className="tabular-nums">{abdomen}</dd>
-      </dl>
-
-      <p className="mt-5 text-xs sm:text-sm text-gray-500 leading-relaxed">{text.REFERENCE_NOTE}</p>
     </section>
   );
 }
@@ -270,7 +341,7 @@ function SupplementaryContent() {
         <h2 id="bcs-cases-title" className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance">
           {text.CASES.TITLE}
         </h2>
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <div className="mt-5 flex flex-col gap-4">
           <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
             <h3 className="text-base font-bold text-gray-900">{text.CASES.PRIORITY_TITLE}</h3>
             <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed">
@@ -319,13 +390,6 @@ function SupplementaryContent() {
           ))}
         </ul>
       </section>
-
-      <section className="section mt-10 mb-4" aria-labelledby="bcs-disclaimer-title">
-        <h2 id="bcs-disclaimer-title" className="my-4 pt-4 font-extrabold text-xl md:text-2xl tracking-tight text-balance">
-          免責事項
-        </h2>
-        <p className="text-sm text-gray-700 leading-relaxed text-pretty">{text.DISCLAIMER}</p>
-      </section>
     </>
   );
 }
@@ -365,25 +429,7 @@ export default function CatBcsCheck() {
           {text.HEADER.DESCRIPTION}
         </p>
 
-        <GuideSection
-          whatTitle={text.GUIDE.WHAT_TITLE}
-          whatDescription={text.GUIDE.WHAT_DESCRIPTION}
-          usageTitle={text.GUIDE.USAGE_TITLE}
-          usageItems={text.GUIDE.USAGE_ITEMS}
-        />
-
         <CatBcsReferenceFigure />
-
-        <section className="mt-8 rounded-2xl border border-gray-200 bg-gray-50 p-5" aria-labelledby="bcs-precheck-title">
-          <h2 id="bcs-precheck-title" className="text-base font-bold text-gray-900">
-            {text.PRECHECK.TITLE}
-          </h2>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-gray-700 leading-relaxed">
-            {text.PRECHECK.ITEMS.map((item) => (
-              <li key={item}>{item}</li>
-            ))}
-          </ul>
-        </section>
 
         <section className="mt-8" aria-labelledby="bcs-palpation-title">
           <h2 id="bcs-palpation-title" className="text-xl md:text-2xl font-extrabold text-gray-900 text-balance">
@@ -418,9 +464,17 @@ export default function CatBcsCheck() {
           onChange={setAbdomen}
         />
 
-        <aside className="mt-6 rounded-xl border border-gray-200 bg-white p-4 text-sm text-gray-700 leading-relaxed text-pretty">
-          {text.POUCH_NOTE}
-        </aside>
+        <details className="mt-6 group rounded-xl border border-gray-200 bg-gray-50/80 open:bg-white">
+          <summary className="cursor-pointer list-none px-4 py-3 text-sm text-gray-600 marker:content-none [&::-webkit-details-marker]:hidden flex items-center justify-between gap-3">
+            <span>{text.POUCH_NOTE.SUMMARY}</span>
+            <span className="text-gray-400 group-open:rotate-180 transition-transform" aria-hidden>
+              ▾
+            </span>
+          </summary>
+          <p className="px-4 pb-4 text-sm text-gray-700 leading-relaxed text-pretty">
+            {text.POUCH_NOTE.BODY}
+          </p>
+        </details>
 
         {result && ribs != null && waist != null && abdomen != null ? (
           <>
@@ -435,6 +489,20 @@ export default function CatBcsCheck() {
       </section>
 
       <SupplementaryContent />
+
+      <GuideSection
+        className="mt-8"
+        whatTitle={text.GUIDE.WHAT_TITLE}
+        whatDescription={text.GUIDE.WHAT_DESCRIPTION}
+        usageTitle={text.GUIDE.USAGE_TITLE}
+        usageItems={text.GUIDE.USAGE_ITEMS}
+      />
+
+      <section className="section mt-8 mb-4" aria-label="免責事項">
+        <p className="text-sm text-gray-600 leading-relaxed text-pretty">
+          {text.SUPPLEMENTARY.DISCLAIMER}
+        </p>
+      </section>
     </main>
   );
 }
