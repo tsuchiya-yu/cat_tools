@@ -35,6 +35,7 @@ export default function CatBcsReferenceFigure() {
           >
             {text.SOURCE_LABEL}
           </a>
+          {text.CREDIT_SUFFIX}
         </figcaption>
       </figure>
     </section>

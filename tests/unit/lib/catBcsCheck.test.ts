@@ -67,6 +67,20 @@ describe('evaluateCatBcs', () => {
       }),
     ).toEqual({ type: 'unresolved', reason: 'palpation_vs_visual' });
   });
+
+  it('keeps adjacent ranges to exactly one stage across all 125 combinations', () => {
+    const scores: Score[] = [1, 2, 3, 4, 5];
+    for (const ribs of scores) {
+      for (const waist of scores) {
+        for (const abdomen of scores) {
+          const result = evaluateCatBcs({ ribs, waist, abdomen });
+          if (result.type === 'adjacent') {
+            expect(result.upper - result.lower).toBe(1);
+          }
+        }
+      }
+    }
+  });
 });
 
 describe('getCatBcsGuidanceBand', () => {

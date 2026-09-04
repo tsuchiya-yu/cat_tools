@@ -18,10 +18,12 @@ test.describe('猫の肥満度チェック（BCS） E2E', () => {
         name: '猫の肥満度チェック｜BCS（ボディコンディションスコア）',
       }),
     ).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'チェックする前に' })).toBeVisible();
     await expect(page.getByRole('heading', { name: '触診のしかた' })).toBeVisible();
     await expect(page.getByText('お腹のたるみ（プライモーディアルポーチ）について')).toBeVisible();
     await expect(page.getByRole('heading', { name: '5段階BCSの参考図' })).toBeVisible();
     await expect(page.getByRole('img', { name: /ボディコンディションスコア/ })).toBeVisible();
+    await expect(page.getByText(/ねこツールズ作成/)).toBeVisible();
   });
 
   test('結果に共有ボタンがあり、内訳は縦並び', async ({ page }) => {

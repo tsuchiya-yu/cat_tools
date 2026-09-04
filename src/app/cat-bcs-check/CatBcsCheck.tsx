@@ -55,7 +55,7 @@ function QuestionFieldset({
       <legend id={legendId} className="text-base sm:text-lg font-bold text-gray-900 text-balance px-0">
         {title}
       </legend>
-      <div className="mt-4 space-y-3" role="radiogroup" aria-labelledby={legendId}>
+      <div className="mt-4 space-y-3">
         {options.map((option) => {
           const optionId = `${questionKey}-option-${option.value}`;
           const checked = value === option.value;
@@ -147,53 +147,68 @@ function ResultSummary({
   ] as const;
 
   return (
-    <section className="section mt-10" aria-live="polite" aria-labelledby="bcs-result-title">
+    <section className="section mt-10" aria-labelledby="bcs-result-title">
       <div
         className="result relative text-center py-2 pb-6 border-b border-gray-200"
         data-testid="bcs-result"
         data-result-type={result.type}
       >
-        <div id="bcs-result-title" className="text-gray-600 mb-1.5 tracking-wide text-sm">
-          {text.TITLE}
+        <div>
+          <div id="bcs-result-title" className="text-gray-600 mb-1.5 tracking-wide text-sm">
+            {text.TITLE}
+          </div>
+          <p className="text-xs text-gray-500 mb-3">{text.NOT_DIAGNOSIS}</p>
+
+          {result.type === 'match' ? (
+            <div className="big flex items-baseline justify-center gap-2 text-[0] flex-wrap">
+              <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
+                {result.score}
+              </span>
+              <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
+                段階の目安
+              </span>
+            </div>
+          ) : null}
+
+          {result.type === 'adjacent' ? (
+            <div className="big flex items-baseline justify-center gap-2 text-[0] flex-wrap">
+              <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
+                {result.lower}〜{result.upper}
+              </span>
+              <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
+                段階の目安
+              </span>
+            </div>
+          ) : null}
+
+          {result.type === 'unresolved' ? (
+            <p className="font-extrabold text-balance text-pink-600 text-xl md:text-3xl tracking-tight">
+              {headline}
+            </p>
+          ) : null}
+
+          {detail ? (
+            <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed">{detail}</p>
+          ) : null}
+          {notes.map((note) => (
+            <p key={note} className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">
+              {note}
+            </p>
+          ))}
+
+          <div className="mt-8 flex flex-col text-left">
+            {breakdown.map((item) => (
+              <div key={item.label} className="py-4 border-t border-pink-100">
+                <div className="text-sm text-gray-500 mb-1.5">{item.label}</div>
+                <div className="font-extrabold text-2xl text-gray-900 tabular-nums">{item.value}</div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-4 text-xs sm:text-sm text-gray-500 leading-relaxed text-left">
+            {text.REFERENCE_NOTE}
+          </p>
         </div>
-        <p className="text-xs text-gray-500 mb-3">{text.NOT_DIAGNOSIS}</p>
-
-        {result.type === 'match' ? (
-          <div className="big flex items-baseline justify-center gap-2 text-[0] flex-wrap">
-            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
-              {result.score}
-            </span>
-            <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
-              段階の目安
-            </span>
-          </div>
-        ) : null}
-
-        {result.type === 'adjacent' ? (
-          <div className="big flex items-baseline justify-center gap-2 text-[0] flex-wrap">
-            <span className="numeral text-5xl md:text-7xl font-extrabold text-pink-600 font-mono tracking-tight">
-              {result.lower}〜{result.upper}
-            </span>
-            <span className="unit text-lg md:text-xl text-gray-900 relative -top-2 md:-top-2.5">
-              段階の目安
-            </span>
-          </div>
-        ) : null}
-
-        {result.type === 'unresolved' ? (
-          <p className="font-extrabold text-balance text-pink-600 text-xl md:text-3xl tracking-tight">
-            {headline}
-          </p>
-        ) : null}
-
-        {detail ? (
-          <p className="mt-2 text-sm md:text-base text-gray-800 leading-relaxed">{detail}</p>
-        ) : null}
-        {notes.map((note) => (
-          <p key={note} className="mt-2 text-sm text-gray-700 leading-relaxed text-pretty">
-            {note}
-          </p>
-        ))}
 
         <ShareMenu
           shareText={shareText}
@@ -206,19 +221,6 @@ function ResultSummary({
           menuClassName="top-12 border-gray-300 min-w-[220px]"
           onShareSuccess={handleShareSuccess}
         />
-
-        <div className="mt-8 flex flex-col text-left">
-          {breakdown.map((item) => (
-            <div key={item.label} className="py-4 border-t border-pink-100">
-              <div className="text-sm text-gray-500 mb-1.5">{item.label}</div>
-              <div className="font-extrabold text-2xl text-gray-900 tabular-nums">{item.value}</div>
-            </div>
-          ))}
-        </div>
-
-        <p className="mt-4 text-xs sm:text-sm text-gray-500 leading-relaxed text-left">
-          {text.REFERENCE_NOTE}
-        </p>
       </div>
     </section>
   );
@@ -431,6 +433,20 @@ export default function CatBcsCheck() {
 
         <CatBcsReferenceFigure />
 
+        <aside
+          className="mt-6 rounded-xl border border-gray-200 bg-gray-50 p-4"
+          aria-labelledby="bcs-check-notice-title"
+        >
+          <h2 id="bcs-check-notice-title" className="text-sm font-bold text-gray-900">
+            {text.PRECHECK.TITLE}
+          </h2>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-gray-700">
+            {text.PRECHECK.ITEMS.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </aside>
+
         <section className="mt-8" aria-labelledby="bcs-palpation-title">
           <h2 id="bcs-palpation-title" className="text-xl md:text-2xl font-extrabold text-gray-900 text-balance">
             {text.PALPATION_GUIDE.TITLE}
@@ -476,16 +492,16 @@ export default function CatBcsCheck() {
           </p>
         </details>
 
-        {result && ribs != null && waist != null && abdomen != null ? (
-          <>
+        <div aria-live="polite" aria-atomic="true">
+          {result && ribs != null && waist != null && abdomen != null ? (
             <ResultSummary ribs={ribs} waist={waist} abdomen={abdomen} result={result} />
-            {guidanceBand ? <GuidanceSection band={guidanceBand} /> : null}
-          </>
-        ) : (
-          <p className="mt-8 text-sm text-gray-600 leading-relaxed" aria-live="polite">
-            {text.RESULT.PENDING}
-          </p>
-        )}
+          ) : (
+            <p className="mt-8 text-sm text-gray-600 leading-relaxed">{text.RESULT.PENDING}</p>
+          )}
+        </div>
+        {result && ribs != null && waist != null && abdomen != null && guidanceBand ? (
+          <GuidanceSection band={guidanceBand} />
+        ) : null}
       </section>
 
       <SupplementaryContent />

@@ -6,9 +6,15 @@ export type CatBcsAnswers = {
   abdomen: Score;
 };
 
+export type AdjacentResult =
+  | { type: 'adjacent'; lower: 1; upper: 2 }
+  | { type: 'adjacent'; lower: 2; upper: 3 }
+  | { type: 'adjacent'; lower: 3; upper: 4 }
+  | { type: 'adjacent'; lower: 4; upper: 5 };
+
 export type CatBcsResult =
   | { type: 'match'; score: Score }
-  | { type: 'adjacent'; lower: Score; upper: Score }
+  | AdjacentResult
   | {
       type: 'unresolved';
       reason: 'palpation_vs_visual' | 'inconsistent_visuals' | 'spread';
@@ -27,6 +33,13 @@ function toScore(value: number): Score {
     throw new Error(`Invalid BCS score: ${value}`);
   }
   return value;
+}
+
+function toAdjacentResult(lower: Score, upper: Score): AdjacentResult {
+  if (upper - lower !== 1) {
+    throw new Error(`Adjacent BCS range must differ by 1: ${lower}-${upper}`);
+  }
+  return { type: 'adjacent', lower, upper } as AdjacentResult;
 }
 
 /**
@@ -49,7 +62,7 @@ export function evaluateCatBcs({ ribs, waist, abdomen }: CatBcsAnswers): CatBcsR
 
   // Rule B — 隣接段階の境界
   if (maxDev <= 1 && visualSpan <= 1 && hi - lo === 1) {
-    return { type: 'adjacent', lower: lo, upper: hi };
+    return toAdjacentResult(lo, hi);
   }
 
   // Rule C — 触診と見た目の食い違い（見た目の多数決で Q1 を上書きしない）

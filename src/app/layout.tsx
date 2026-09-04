@@ -123,7 +123,7 @@ export default function RootLayout({
               {/* ツール */}
               <div className="md:flex-1">
                 <h2 className="font-bold mb-2">{FOOTER_TEXT.TOOLS.TITLE}</h2>
-    <ul className="space-y-2">
+                <ul className="space-y-2">
                   <li>
                     <Link href={CAT_FOOD_SAFETY_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
                       {FOOTER_TEXT.TOOLS.LINKS.CAT_FOOD_SAFETY}
