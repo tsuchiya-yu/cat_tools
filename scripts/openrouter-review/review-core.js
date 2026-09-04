@@ -199,13 +199,28 @@ function parseJunieOutput(rawOutput, exitCode, stderr = '') {
     return { ok: false, failure: classifyFailure({ exitCode, errors, stderr, outputState: 'empty' }) };
   }
 
+  let reviewJson;
   try {
-    const review = normalizeReviewResult(parseReviewJson(output.result));
-    return { ok: true, review };
+    reviewJson = parseReviewJson(output.result);
   } catch {
     return {
       ok: false,
-      failure: classifyFailure({ exitCode, errors, stderr, outputState: 'invalid_review_json' }),
+      failure: {
+        ...classifyFailure({ exitCode, errors, stderr, outputState: 'invalid_review_json' }),
+        detail: 'invalid_result_json',
+      },
+    };
+  }
+
+  try {
+    return { ok: true, review: normalizeReviewResult(reviewJson) };
+  } catch (error) {
+    return {
+      ok: false,
+      failure: {
+        ...classifyFailure({ exitCode, errors, stderr, outputState: 'invalid_review_json' }),
+        detail: `invalid_review_schema: ${error.message}`,
+      },
     };
   }
 }

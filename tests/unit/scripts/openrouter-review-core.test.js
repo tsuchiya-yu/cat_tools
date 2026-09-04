@@ -117,7 +117,24 @@ describe('Junie output normalization', () => {
       JSON.stringify({ errors: [], result: `review result:\n${JSON.stringify(cleanReview)}` }),
       0,
     );
-    expect(parsed).toMatchObject({ ok: false, failure: { code: 'malformed_response' } });
+    expect(parsed).toMatchObject({
+      ok: false,
+      failure: { code: 'malformed_response', detail: 'invalid_result_json' },
+    });
+  });
+
+  test('reports only a safe schema validation reason for invalid structured output', () => {
+    const parsed = parseJunieOutput(
+      JSON.stringify({ errors: [], result: JSON.stringify({ ...cleanReview, status: 'unknown' }) }),
+      0,
+    );
+    expect(parsed).toMatchObject({
+      ok: false,
+      failure: {
+        code: 'malformed_response',
+        detail: 'invalid_review_schema: status must be clean or findings',
+      },
+    });
   });
 
   test.each([undefined, ''])('treats a successful empty response as transient', (output) => {

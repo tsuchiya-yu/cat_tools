@@ -166,6 +166,7 @@ async function main() {
     model: attempt.model,
     status: attempt.ok ? 'success' : 'failure',
     error: attempt.ok ? undefined : attempt.failure.code,
+    detail: attempt.ok ? undefined : attempt.failure.detail,
   }));
   console.log(JSON.stringify({ attempts: attemptSummary, final: outcome.ok ? 'success' : 'failure' }));
 
