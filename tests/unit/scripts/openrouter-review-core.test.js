@@ -1,17 +1,26 @@
 const {
+  buildReviewRequest,
   classifyFailure,
   collectRightSideLines,
   normalizeReviewResult,
   orchestrateReview,
-  parseJunieOutput,
+  parseOpenRouterResponse,
   validateFindingsAgainstDiff,
 } = require('../../../scripts/openrouter-review/review-core');
 
 const cleanReview = {
   status: 'clean',
-  summary: 'レビューを完了しました。',
+  summary: 'レビューを完了しました。指摘はありません。',
   findings: [],
 };
+
+function completion(review = cleanReview) {
+  return JSON.stringify({
+    id: 'generation-id',
+    model: 'openai/gpt-5.6-luna',
+    choices: [{ message: { content: JSON.stringify(review) }, finish_reason: 'stop' }],
+  });
+}
 
 describe('OpenRouter review fallback', () => {
   test('does not call fallback after primary succeeds', async () => {
@@ -22,10 +31,8 @@ describe('OpenRouter review fallback', () => {
     expect(execute).toHaveBeenCalledTimes(1);
   });
 
-  test('calls fallback once for the known missing choices/model response', async () => {
-    const failure = classifyFailure({
-      errors: ['OpenAI: Can not parse response. Fields [choices, model] are required but they were missing'],
-    });
+  test('calls fallback once for a response missing choices/model', async () => {
+    const failure = classifyFailure({ outputState: 'missing_completion_fields' });
     const execute = jest
       .fn()
       .mockResolvedValueOnce({ ok: false, failure })
@@ -36,25 +43,22 @@ describe('OpenRouter review fallback', () => {
     expect(execute).toHaveBeenCalledTimes(2);
   });
 
-  test.each([
-    'HTTP 401 Unauthorized',
-    'HTTP 402 insufficient credits',
-    'HTTP 403 budget limit exceeded',
-    'invalid model profile',
-    'maximum context length exceeded',
-  ])('fails closed without fallback for %s', async (message) => {
-    const failure = classifyFailure({ errors: [message] });
-    const execute = jest.fn().mockResolvedValue({ ok: false, failure });
-    const result = await orchestrateReview(execute);
-    expect(failure.retryable).toBe(false);
-    expect(result.ok).toBe(false);
-    expect(execute).toHaveBeenCalledTimes(1);
-  });
+  test.each([400, 401, 402, 403, 404, 413, 422])(
+    'fails closed without fallback for HTTP %s',
+    async (httpStatus) => {
+      const failure = classifyFailure({ httpStatus });
+      const execute = jest.fn().mockResolvedValue({ ok: false, failure });
+      const result = await orchestrateReview(execute);
+      expect(failure.retryable).toBe(false);
+      expect(result.ok).toBe(false);
+      expect(execute).toHaveBeenCalledTimes(1);
+    },
+  );
 
-  test.each(['HTTP 429 rate limit', 'HTTP 502', 'HTTP 503', 'HTTP 504', 'network connection reset']) (
-    'allows one fallback for %s',
-    async (message) => {
-      const failure = classifyFailure({ errors: [message] });
+  test.each([408, 429, 500, 502, 503, 504])(
+    'allows one fallback for HTTP %s',
+    async (httpStatus) => {
+      const failure = classifyFailure({ httpStatus });
       const execute = jest.fn().mockResolvedValue({ ok: false, failure });
       const result = await orchestrateReview(execute);
       expect(failure.retryable).toBe(true);
@@ -63,107 +67,128 @@ describe('OpenRouter review fallback', () => {
     },
   );
 
-  test('fails closed for an unknown error', async () => {
-    const failure = classifyFailure({ errors: ['unexpected provider behavior'] });
-    expect(failure).toMatchObject({ kind: 'unknown', retryable: false });
-  });
-
-  test('does not fallback after a worktree side effect', async () => {
-    const failure = classifyFailure({ worktreeChanged: true });
-    const execute = jest.fn().mockResolvedValue({ ok: false, failure });
-    const result = await orchestrateReview(execute);
-    expect(result.ok).toBe(false);
-    expect(execute).toHaveBeenCalledTimes(1);
-  });
-
-  test('does not fallback when Junie cannot start', async () => {
-    const failure = classifyFailure({ executionStartFailed: true, outputState: 'missing' });
-    const execute = jest.fn().mockResolvedValue({ ok: false, failure });
-    const result = await orchestrateReview(execute);
-    expect(failure).toMatchObject({ code: 'execution_start_failed', retryable: false });
-    expect(result.ok).toBe(false);
-    expect(execute).toHaveBeenCalledTimes(1);
-  });
-
-  test('does not let a missing output mask a configuration error', () => {
-    const failure = classifyFailure({
-      exitCode: 1,
-      stderr: 'Custom model profile was not found',
-      outputState: 'missing',
+  test('uses structured provider error codes instead of message matching', () => {
+    expect(classifyFailure({ errorCode: 'provider_unavailable' })).toMatchObject({ retryable: true });
+    expect(classifyFailure({ errorType: 'insufficient_credits' })).toMatchObject({ retryable: false });
+    expect(classifyFailure({ errorType: 'unexpected provider behavior' })).toMatchObject({
+      kind: 'unknown',
+      retryable: false,
     });
-    expect(failure.retryable).toBe(false);
+  });
+
+  test.each(['ECONNRESET', 'ETIMEDOUT', 'UND_ERR_CONNECT_TIMEOUT'])(
+    'allows fallback for known network failure %s',
+    (networkErrorCode) => {
+      expect(classifyFailure({ networkErrorCode })).toMatchObject({
+        code: 'network_error',
+        retryable: true,
+      });
+    },
+  );
+
+  test('fails closed for an unknown network failure', () => {
+    expect(classifyFailure({ networkErrorCode: 'UNEXPECTED' })).toMatchObject({
+      code: 'unknown_network_error',
+      retryable: false,
+    });
+  });
+
+  test('fails closed when deterministic review context exceeds the cap', () => {
+    expect(classifyFailure({ contextTooLarge: true })).toMatchObject({
+      code: 'context_too_large',
+      retryable: false,
+    });
   });
 });
 
-describe('Junie output normalization', () => {
-  test('accepts a structured clean result', () => {
-    const parsed = parseJunieOutput(
-      JSON.stringify({ errors: [], result: JSON.stringify(cleanReview) }),
-      0,
-    );
-    expect(parsed).toEqual({ ok: true, review: cleanReview });
+describe('OpenRouter structured output', () => {
+  test('builds a strict schema request with privacy and endpoint capability requirements', () => {
+    const request = buildReviewRequest({
+      model: 'openai/gpt-5.6-luna',
+      guidelines: 'Review carefully.',
+      context: 'diff data',
+    });
+    expect(request).toMatchObject({
+      model: 'openai/gpt-5.6-luna',
+      response_format: {
+        type: 'json_schema',
+        json_schema: { name: 'cat_tools_pr_review', strict: true },
+      },
+      provider: {
+        require_parameters: true,
+        zdr: true,
+        data_collection: 'deny',
+      },
+      stream: false,
+    });
+    expect(request).not.toHaveProperty('models');
+    expect(request).not.toHaveProperty('tools');
+    expect(request.response_format.json_schema.schema.required).toEqual([
+      'status',
+      'summary',
+      'findings',
+    ]);
   });
 
-  test('accepts a single JSON code fence emitted around a structured result', () => {
-    const parsed = parseJunieOutput(
-      JSON.stringify({ errors: [], result: `\`\`\`json\n${JSON.stringify(cleanReview)}\n\`\`\`` }),
-      0,
-    );
-    expect(parsed).toEqual({ ok: true, review: cleanReview });
+  test('accepts a schema-conforming clean completion', () => {
+    expect(parseOpenRouterResponse(completion(), 200)).toEqual({ ok: true, review: cleanReview });
   });
 
-  test('accepts exactly one structured JSON object from a Junie prose wrapper', () => {
-    const parsed = parseJunieOutput(
-      JSON.stringify({ errors: [], result: `review result:\n${JSON.stringify(cleanReview)}` }),
-      0,
-    );
-    expect(parsed).toEqual({ ok: true, review: cleanReview });
-  });
-
-  test('rejects a response containing multiple JSON objects', () => {
-    const parsed = parseJunieOutput(
-      JSON.stringify({
-        errors: [],
-        result: `${JSON.stringify(cleanReview)}\n${JSON.stringify(cleanReview)}`,
-      }),
-      0,
-    );
-    expect(parsed).toMatchObject({
+  test('treats missing choices/model as transient even when HTTP status is 200', () => {
+    expect(parseOpenRouterResponse(JSON.stringify({ id: 'bad' }), 200)).toMatchObject({
       ok: false,
-      failure: { code: 'malformed_response', detail: 'invalid_result_json: json_object_count_2' },
+      failure: { code: 'missing_completion_fields', retryable: true },
     });
   });
 
-  test('reports only a safe schema validation reason for invalid structured output', () => {
-    const parsed = parseJunieOutput(
-      JSON.stringify({ errors: [], result: JSON.stringify({ ...cleanReview, status: 'unknown' }) }),
-      0,
-    );
-    expect(parsed).toMatchObject({
+  test.each(['', '{broken'])('treats an empty or malformed success response as transient', (body) => {
+    expect(parseOpenRouterResponse(body, 200)).toMatchObject({
+      ok: false,
+      failure: { retryable: true },
+    });
+  });
+
+  test('treats malformed structured content as transient without exposing it', () => {
+    const body = JSON.stringify({
+      model: 'openai/gpt-5.6-luna',
+      choices: [{ message: { content: 'not json and must not appear in diagnostics' } }],
+    });
+    expect(parseOpenRouterResponse(body, 200)).toMatchObject({
+      ok: false,
+      failure: { code: 'malformed_response', detail: 'invalid_result_json' },
+    });
+  });
+
+  test('uses a structured HTTP error and does not expose its message', () => {
+    const result = parseOpenRouterResponse(JSON.stringify({
+      error: { code: 403, type: 'budget_error', message: 'sensitive upstream message' },
+    }), 403);
+    expect(result).toEqual({
+      ok: false,
+      failure: { kind: 'permanent', code: 'non_retryable_provider_error', retryable: false },
+    });
+  });
+
+  test('fails closed without fallback for a structured model refusal', () => {
+    const body = JSON.stringify({
+      model: 'openai/gpt-5.6-luna',
+      choices: [{ message: { refusal: 'not returned to diagnostics', content: '' } }],
+    });
+    expect(parseOpenRouterResponse(body, 200)).toEqual({
+      ok: false,
+      failure: { kind: 'permanent', code: 'non_retryable_provider_error', retryable: false },
+    });
+  });
+
+  test('rejects invalid review schema', () => {
+    const result = parseOpenRouterResponse(completion({ ...cleanReview, status: 'unknown' }), 200);
+    expect(result).toMatchObject({
       ok: false,
       failure: {
         code: 'malformed_response',
         detail: 'invalid_review_schema: status must be clean or findings',
       },
     });
-  });
-
-  test.each([undefined, ''])('treats a successful empty response as transient', (output) => {
-    const parsed = parseJunieOutput(output, 0);
-    expect(parsed.ok).toBe(false);
-    expect(parsed.failure.retryable).toBe(true);
-  });
-
-  test('treats malformed JSON output as transient', () => {
-    const parsed = parseJunieOutput('{broken', 1);
-    expect(parsed.ok).toBe(false);
-    expect(parsed.failure.retryable).toBe(true);
-  });
-
-  test('fails closed when Junie fails without a classifiable response', () => {
-    const parsed = parseJunieOutput(undefined, 1);
-    expect(parsed.ok).toBe(false);
-    expect(parsed.failure).toMatchObject({ kind: 'unknown', retryable: false });
   });
 
   test('requires findings bodies to match their severity', () => {

@@ -161,12 +161,6 @@ jobs:
           persist-credentials: false
           ref: ${{ needs.authorize.outputs.head_sha }}
 
-      - name: Install Junie CLI
-        run: |
-          set -euo pipefail
-          curl -fsSL https://junie.jetbrains.com/install.sh | JUNIE_VERSION=3013.5 bash
-          echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"
-
       - name: Generate and validate review
         id: generate-review
         env:

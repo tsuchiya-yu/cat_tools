@@ -2,7 +2,9 @@
 
 The review workflow generates findings without a GitHub write credential. A short-lived GitHub App token is created only after generation and validation have completed, and is used only to publish one pull request review.
 
-The workflow installs Junie CLI `3013.5` and checks out trusted review tooling separately from the pull request head. Automatic pull request and authorized comment events pin tooling to the pull request base SHA. An explicitly started `workflow_dispatch` canary pins tooling to the selected workflow ref. The workflow disables Junie's default project configuration, MCP, model, skill, command, and agent discovery, and loads the model profiles and guidelines only from that trusted tooling checkout. Never change the workflow to execute runner or publisher scripts from the pull request checkout.
+The workflow calls OpenRouter directly with a strict JSON Schema and checks out trusted review tooling separately from the pull request head. Automatic pull request and authorized comment events pin tooling to the pull request base SHA. An explicitly started `workflow_dispatch` canary pins tooling to the selected workflow ref. The model receives a deterministic PR diff and has no shell, file-write, GitHub API, or other tool access. Never change the workflow to execute runner or publisher scripts from the pull request checkout.
+
+The direct request is capped at 200,000 bytes of diff context and 8,000 output tokens. An oversized context fails closed instead of being silently truncated. Both model attempts require an endpoint that supports the request parameters, including Structured Outputs.
 
 ## GitHub App
 
@@ -36,7 +38,7 @@ Do not give the App Contents, Actions, Administration, Workflows, Issues, or Mem
 - Private Input & Output Logging disabled
 - a budget appropriate for at most two model attempts per review
 
-The committed Junie model profiles also send `provider.zdr: true` and `provider.data_collection: "deny"`. Account and guardrail policy must remain the non-bypassable backstop.
+Each request sends `provider.require_parameters: true`, `provider.zdr: true`, and `provider.data_collection: "deny"`. Account and guardrail policy must remain the non-bypassable backstop.
 
 ## Validation order
 
@@ -46,6 +48,6 @@ The committed Junie model profiles also send `provider.zdr: true` and `provider.
 4. Use the `OpenRouter PR Review` workflow's `workflow_dispatch` input with a non-draft, same-repository test PR.
 5. Confirm that exactly one review is published for the selected run ID and head SHA.
 6. Confirm OpenRouter activity shows an allowed model and a ZDR/data-collection-denied endpoint.
-7. Confirm the GitHub Actions run contains no uploaded Junie artifact and no prompt, source, raw response, session, transcript, API key, or Authorization header in logs.
+7. Confirm the GitHub Actions run has no review artifact and no prompt, source, raw response, API key, or Authorization header in logs.
 
 The workflow is advisory and must not be configured as a required branch-protection check.

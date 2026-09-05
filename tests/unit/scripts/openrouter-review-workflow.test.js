@@ -41,21 +41,20 @@ describe('OpenRouter review workflow security boundary', () => {
     expect(workflow).toContain('pull-requests: read');
   });
 
-  test('pins a CLI version that supports isolated configuration discovery', () => {
-    expect(workflow).toContain('JUNIE_VERSION=3013.5');
-    expect(workflow).toContain('echo "${HOME}/.local/bin" >> "${GITHUB_PATH}"');
+  test('calls OpenRouter directly without installing or invoking Junie', () => {
+    expect(workflow).not.toContain('Install Junie CLI');
+    expect(workflow).not.toContain('JUNIE_VERSION');
+    expect(workflow).not.toContain('junie ');
+    expect(workflow).toContain('scripts/openrouter-review/run-review.js');
   });
 });
 
 describe('OpenRouter provider privacy constraints', () => {
-  test.each([
-    ['openrouter-review.json', 'openai/gpt-5.6-luna'],
-    ['openrouter-review-fallback.json', 'google/gemini-3.7-flash'],
-  ])('%s enforces ZDR and denies data collection', (filename, model) => {
-    const profile = JSON.parse(readFileSync(path.join(repositoryRoot, '.junie/models', filename), 'utf8'));
-    expect(profile.id).toBe(model);
-    expect(profile.extraBody).toMatchObject({
-      provider: { zdr: true, data_collection: 'deny' },
-    });
+  test('keeps the API key scoped to the generation step', () => {
+    const generateIndex = workflow.indexOf('- name: Generate and validate review');
+    const tokenIndex = workflow.indexOf('- name: Create short-lived review publisher token');
+    const generationSection = workflow.slice(generateIndex, tokenIndex);
+    expect(generationSection).toContain('OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}');
+    expect(workflow.slice(tokenIndex)).not.toContain('OPENROUTER_API_KEY');
   });
 });
