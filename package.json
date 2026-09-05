@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "prebuild": "node scripts/validate-site-url.js && node scripts/generate-deployment-marker.js",
     "build": "next build --turbopack",
-    "postbuild": "next-sitemap",
+    "postbuild": "next-sitemap && node scripts/verify-guides-sitemap.js",
     "start": "next start",
     "lint": "eslint",
     "test": "jest",
@@ -23,11 +23,15 @@
     "@mui/material": "^7.3.2",
     "@mui/x-date-pickers": "^8.11.2",
     "date-fns": "^4.1.0",
+    "gray-matter": "^4.0.3",
     "next": "15.5.9",
+    "next-mdx-remote": "^6.0.0",
     "next-sitemap": "^4.2.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "remark-gfm": "^4.0.1",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
@@ -38,6 +42,7 @@
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.1",
     "@types/jest": "^29.5.8",
+    "@types/mdx": "^2.0.14",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

@@ -40,7 +40,8 @@ const toolPages = [
     path: '/calculate-cat-feeding',
     name: '猫の給餌量計算',
     url: 'https://cat-tools.catnote.tokyo/calculate-cat-feeding',
-    description: '1日の必要カロリーとフードのカロリー密度から、1日量と朝夜の目安量を計算します。',
+    description:
+      '猫の1日の必要カロリーとキャットフードのkcal/100gから給餌量を自動計算。2〜5種類のフードを混ぜる場合も、与えたいグラム数の比率を指定して、それぞれ1日何g与えるか確認できます。',
     applicationCategory: 'UtilitiesApplication',
     hasFaq: false,
   },
@@ -58,6 +59,14 @@ const toolPages = [
     url: 'https://cat-tools.catnote.tokyo/cat-food-safety',
     description: '食材名から猫にとって安全・注意・危険の目安を確認できます。',
     applicationCategory: 'ReferenceApplication',
+    hasFaq: true,
+  },
+  {
+    path: '/cat-bcs-check',
+    name: '猫の肥満度チェック（BCS）',
+    url: 'https://cat-tools.catnote.tokyo/cat-bcs-check',
+    description: '肋骨・腰・お腹の観察から、猫の体型（BCS）の目安を家庭で確認できます。',
+    applicationCategory: 'UtilitiesApplication',
     hasFaq: true,
   },
 ] as const;

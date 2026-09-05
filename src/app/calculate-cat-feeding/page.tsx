@@ -6,6 +6,10 @@ import { FEEDING_UI_TEXT } from "@/constants/text";
 import { createPageBreadcrumbList } from "@/lib/breadcrumbStructuredData";
 import { createWebApplicationStructuredData } from "@/lib/webApplicationStructuredData";
 
+const FEEDING_PAGE_TITLE = "猫の給餌量計算｜複数フードにも対応・1日の目安量を自動計算";
+const FEEDING_PAGE_DESCRIPTION =
+  "猫の1日の必要カロリーとキャットフードのkcal/100gから給餌量を自動計算。2〜5種類のフードを混ぜる場合も、与えたいグラム数の比率を指定して、それぞれ1日何g与えるか確認できます。";
+
 const feedingBreadcrumbStructuredData = createPageBreadcrumbList({
   name: FEEDING_UI_TEXT.BREADCRUMBS.FEEDING_CALCULATOR,
   path: CALCULATE_CAT_FEEDING_PATH,
@@ -14,36 +18,33 @@ const feedingBreadcrumbStructuredData = createPageBreadcrumbList({
 const feedingWebApplicationStructuredData = createWebApplicationStructuredData({
   name: '猫の給餌量計算',
   url: 'https://cat-tools.catnote.tokyo/calculate-cat-feeding',
-  description: '1日の必要カロリーとフードのカロリー密度から、1日量と朝夜の目安量を計算します。',
+  description: FEEDING_PAGE_DESCRIPTION,
   applicationCategory: 'UtilitiesApplication',
 });
 
 export const metadata: Metadata = {
-  title: "猫の給餌量計算｜1日の必要カロリーから与える目安量を自動計算",
-  description:
-    "1日の必要カロリーとフードのカロリー密度（kcal/100g）を入れるだけで、1日に与える目安量（g）と朝・夜に分けた1回量を自動計算します。",
+  title: FEEDING_PAGE_TITLE,
+  description: FEEDING_PAGE_DESCRIPTION,
   alternates: {
     canonical: "/calculate-cat-feeding",
   },
   openGraph: {
-    title: "猫の給餌量計算｜1日の必要カロリーから与える目安量を自動計算",
-    description:
-      "1日の必要カロリーとフードのカロリー密度（kcal/100g）を入れるだけで、1日に与える目安量（g）と朝・夜に分けた1回量を自動計算します。",
+    title: FEEDING_PAGE_TITLE,
+    description: FEEDING_PAGE_DESCRIPTION,
     url: "https://cat-tools.catnote.tokyo/calculate-cat-feeding",
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "猫の給餌量計算｜1日の必要カロリーから与える目安量を自動計算",
+        alt: FEEDING_PAGE_TITLE,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "猫の給餌量計算｜1日の必要カロリーから与える目安量を自動計算",
-    description:
-      "1日の必要カロリーとフードのカロリー密度（kcal/100g）を入れるだけで、1日に与える目安量（g）と朝・夜に分けた1回量を自動計算します。",
+    title: FEEDING_PAGE_TITLE,
+    description: FEEDING_PAGE_DESCRIPTION,
     images: ["/og.png"],
   },
 };

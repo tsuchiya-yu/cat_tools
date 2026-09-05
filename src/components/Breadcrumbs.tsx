@@ -23,29 +23,40 @@ export default function Breadcrumbs({
 
   return (
     <nav aria-label={ariaLabel} className={`${className} text-sm text-gray-600`}>
-      <ol className="flex items-center gap-2">
-        {items.map((item, idx) => (
-          <React.Fragment key={item.label}>
-            <li aria-current={item.href ? undefined : 'page'}>
-              {item.href ? (
-                <Link
-                  href={item.href}
-                  className="text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
-                  tabIndex={tabbable ? undefined : -1}
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                item.label
-              )}
-            </li>
-            {idx < items.length - 1 && (
-              <li aria-hidden="true" className="text-gray-400">
-                /
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1">
+        {items.map((item, idx) => {
+          const isLast = idx === items.length - 1;
+
+          return (
+            <React.Fragment key={item.label}>
+              <li
+                aria-current={item.href ? undefined : 'page'}
+                className={
+                  isLast
+                    ? 'min-w-0 max-w-full break-words'
+                    : 'shrink-0 whitespace-nowrap'
+                }
+              >
+                {item.href ? (
+                  <Link
+                    href={item.href}
+                    className="text-pink-600 hover:text-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-600 rounded"
+                    tabIndex={tabbable ? undefined : -1}
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  item.label
+                )}
               </li>
-            )}
-          </React.Fragment>
-        ))}
+              {!isLast && (
+                <li aria-hidden="true" className="shrink-0 text-gray-400">
+                  /
+                </li>
+              )}
+            </React.Fragment>
+          );
+        })}
       </ol>
     </nav>
   );

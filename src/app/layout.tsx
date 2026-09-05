@@ -12,9 +12,11 @@ import {
   CALCULATE_CAT_CALORIE_PATH,
   CALCULATE_CAT_FEEDING_PATH,
   CALCULATE_CAT_WATER_INTAKE_PATH,
+  CAT_BCS_CHECK_PATH,
   CAT_FOOD_SAFETY_PATH,
   CAT_MEAL_MANAGEMENT_PATH,
   CONTACT_FORM_URL,
+  GUIDES_PATH,
   X_PROFILE_URL,
 } from '@/constants/paths';
 import { FOOTER_TEXT } from '@/constants/text';
@@ -148,6 +150,11 @@ export default function RootLayout({
                       {FOOTER_TEXT.TOOLS.LINKS.CALCULATE_CAT_WATER_INTAKE}
                     </Link>
                   </li>
+                  <li>
+                    <Link href={CAT_BCS_CHECK_PATH} prefetch={false} className="hover:text-pink-600 transition-colors">
+                      {FOOTER_TEXT.TOOLS.LINKS.CAT_BCS_CHECK}
+                    </Link>
+                  </li>
                 </ul>
               </div>
 
@@ -155,6 +162,15 @@ export default function RootLayout({
               <div className="md:flex-1">
                 <h2 className="font-bold mb-2">{FOOTER_TEXT.GUIDES.TITLE}</h2>
                 <ul className="space-y-2">
+                  <li>
+                    <Link
+                      href={GUIDES_PATH}
+                      prefetch={false}
+                      className="hover:text-pink-600 transition-colors"
+                    >
+                      {FOOTER_TEXT.GUIDES.LINKS.GUIDES_INDEX}
+                    </Link>
+                  </li>
                   <li>
                     <Link
                       href={CAT_MEAL_MANAGEMENT_PATH}
