@@ -1257,15 +1257,14 @@ export const FEEDING_UI_TEXT = {
     ADD_BUTTON: '＋ フードを追加',
     MAX_HINT: '最大5種類まで追加できます',
     FOOD_HEADING: (index: number) => `フード${index}`,
-    NAME_LABEL: 'フード名（任意）',
+    NAME_LABEL: 'フード名',
     NAME_PLACEHOLDER: '例：ロイヤルカナン',
     DENSITY_LABEL: 'カロリー（kcal / 100g）',
-    RATIO_LABEL: '与えたい配分（g）',
+    RATIO_LABEL: '与える分量（g）',
     RATIO_HELP:
       '例：2種類を40g：20gくらいの割合で与えたい場合は「40」「20」と入力してください。入力した重量の比率を保ったまま、1日の必要カロリーに合う給餌量を計算します。ここで入力するg数は、計算後の最終給餌量ではありません。',
     DELETE_LABEL: (index: number) => `フード${index}を削除`,
     FALLBACK_NAME: (index: number) => `フード${index}`,
-    TOTAL_GRAMS: (grams: string) => `合計: 約${grams}g`,
     TOTAL_KCAL: (kcal: string) => `合計カロリー: 約${kcal}kcal`,
     DAY_AMOUNT: (grams: string) => `1日: 約${grams}g`,
     MORNING_AMOUNT: (grams: string) => `朝: 約${grams}g`,
@@ -1276,6 +1275,8 @@ export const FEEDING_UI_TEXT = {
     CALORIE_PAGE: '猫のカロリー計算ページ',
   },
   WARNINGS: {
+    NUMBER: '数値を入力してください。',
+    POSITIVE: '0より大きい値を入力してください。',
     KCAL_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/日）から外れています。結果は参考としてご利用ください。`,
     DENSITY_RANGE: (min: number, max: number) => `目安の範囲（${min}〜${max}kcal/100g）から外れています。結果は参考としてご利用ください。`,
   },
@@ -1283,7 +1284,7 @@ export const FEEDING_UI_TEXT = {
     TEXT: (total: number, morning: number, night: number) =>
       `うちの猫の給餌量は 1日 ${total} g（朝 ${morning} g / 夜 ${night} g）でした🐾`,
     MULTI_TEXT: (totalGrams: string, totalKcal: string) =>
-      `うちの猫の給餌量は 合計 約${totalGrams}g（約${totalKcal}kcal）でした🐾`,
+      `うちの猫の給餌量（1日）の目安は 約${totalGrams}g（約${totalKcal}kcal）でした🐾`,
     X_HASHTAGS: ['#ねこツールズ', '#猫の給餌量計算'] as const,
   },
   SUPPLEMENTARY: {
@@ -1311,7 +1312,7 @@ export const FEEDING_UI_TEXT = {
       TITLE: '2種類以上のキャットフードを混ぜる場合',
       BODY: [
         '2種類以上のキャットフードを混ぜて与える場合、それぞれのカロリー密度（kcal/100g）が異なることがほとんどです。そのため、単純に「合計で何g」だけを決めても、1日の必要カロリーと一致しないことがあります。',
-        'この計算機では、各フードについて普段与えたいグラム数（与えたい配分）を入力すると、その重量比を保ったまま、1日の必要カロリーに合う量へ自動で合わせます。たとえば「40g : 20g」と入力した場合は、最終量ではなく「2 : 1」の比率として扱います。2g : 1g や 20g : 10g でも同じ比率なので、計算結果は同じになります。',
+        'この計算機では、各フードについて普段与えたいグラム数（与える分量）を入力すると、その重量比を保ったまま、1日の必要カロリーに合う量へ自動で合わせます。たとえば「40g : 20g」と入力した場合は、最終量ではなく「2 : 1」の比率として扱います。2g : 1g や 20g : 10g でも同じ比率なので、計算結果は同じになります。',
         '具体例として、必要カロリーが200kcal、フードAが400kcal/100gで配分40g、フードBが360kcal/100gで配分20gの場合、入力どおりに与えると232kcalになります。これを200kcalへ合わせると、フードAは約34.5g、フードBは約17.2g、合計は約51.7gが目安です。',
         'この結果はカロリーと重量の目安であり、複数フードを組み合わせた際の栄養バランスそのものを判定するものではありません。主食として与える場合は各製品の表示を確認し、療法食を使っている場合は自己判断で他のフードと混ぜず、獣医師の指示を優先してください。',
       ],
@@ -1550,10 +1551,10 @@ export const FEEDING_FAQ_ITEMS = [
   {
     question: '2種類以上のキャットフードを混ぜても計算できますか？',
     answer:
-      'はい。最大5種類まで計算できます。各フードのkcal/100gと、与えたい配分（g）を入力してください。入力した重量の比率を保ったまま、1日の必要カロリーに合う各フードの給餌量を計算します。',
+      'はい。最大5種類まで計算できます。各フードのkcal/100gと、与える分量（g）を入力してください。入力した重量の比率を保ったまま、1日の必要カロリーに合う各フードの給餌量を計算します。',
   },
   {
-    question: '「与えたい配分（g）」とは何ですか？',
+    question: '「与える分量（g）」とは何ですか？',
     answer:
       '最終的に与える給餌量そのものではありません。フード同士の重量比を指定するための基準値です。たとえば40gと20gなら「2 : 1」の比率として扱い、その比率を保ったまま必要カロリーに合う最終量を計算します。',
   },

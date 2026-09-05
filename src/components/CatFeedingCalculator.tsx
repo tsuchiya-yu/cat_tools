@@ -52,13 +52,25 @@ function createFoodId(): string {
   return `food-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function createEmptyFood(density = ""): FoodItem {
+function createEmptyFood(density = "", name = ""): FoodItem {
   return {
     id: createFoodId(),
-    name: "",
+    name,
     density,
     ratioGrams: "",
   };
+}
+
+function defaultFoodName(index: number): string {
+  return FEEDING_UI_TEXT.MULTI_FOOD.FALLBACK_NAME(index);
+}
+
+function withDefaultFoodNames(foods: FoodItem[]): FoodItem[] {
+  if (foods.length < 2) return foods;
+  return foods.map((food, index) => ({
+    ...food,
+    name: food.name.trim() || defaultFoodName(index + 1),
+  }));
 }
 
 function parseFoodsFromSearchParams(params: URLSearchParams): FoodItem[] {
@@ -85,7 +97,7 @@ function parseFoodsFromSearchParams(params: URLSearchParams): FoodItem[] {
     });
   }
 
-  return foods;
+  return withDefaultFoodNames(foods);
 }
 
 function buildFeedingPath(dailyKcal: string, foods: FoodItem[]): string {
@@ -115,23 +127,47 @@ function buildFeedingPath(dailyKcal: string, foods: FoodItem[]): string {
 }
 
 function formatDisplayNumber(value: number): string {
-  return Number.isInteger(value) ? String(value) : String(value);
+  return String(value);
+}
+
+type NumberFieldWarnOptions = {
+  min?: number;
+  max?: number;
+  rangeWarning?: (min: number, max: number) => string;
+};
+
+function numberFieldWarnText(value: string, options: NumberFieldWarnOptions = {}): string {
+  const trimmed = value.trim();
+  if (!trimmed) return "";
+
+  const num = normalizeNumberInput(value);
+  if (num == null) {
+    return FEEDING_UI_TEXT.WARNINGS.NUMBER;
+  }
+  if (!(num > 0)) {
+    return FEEDING_UI_TEXT.WARNINGS.POSITIVE;
+  }
+  if (
+    options.min != null &&
+    options.max != null &&
+    options.rangeWarning &&
+    (num < options.min || num > options.max)
+  ) {
+    return options.rangeWarning(options.min, options.max);
+  }
+  return "";
 }
 
 function densityWarnTextFor(value: string): string {
-  const trimmed = value.trim();
-  if (!trimmed) return "";
-  const num = normalizeNumberInput(value);
-  if (
-    num != null &&
-    (num < FEEDING_RANGE.density.min || num > FEEDING_RANGE.density.max)
-  ) {
-    return FEEDING_UI_TEXT.WARNINGS.DENSITY_RANGE(
-      FEEDING_RANGE.density.min,
-      FEEDING_RANGE.density.max,
-    );
-  }
-  return "";
+  return numberFieldWarnText(value, {
+    min: FEEDING_RANGE.density.min,
+    max: FEEDING_RANGE.density.max,
+    rangeWarning: FEEDING_UI_TEXT.WARNINGS.DENSITY_RANGE,
+  });
+}
+
+function ratioWarnTextFor(value: string): string {
+  return numberFieldWarnText(value);
 }
 
 function FeedingInputGroup({
@@ -149,6 +185,12 @@ function FeedingInputGroup({
 }: FeedingInputGroupProps) {
   const resolvedHelpId = helpId ?? `${id}Help`;
   const resolvedWarnId = warnId ?? `${id}Warn`;
+  const hasHelp = Boolean(help);
+  const hasWarn = Boolean(warnText);
+  const describedBy = [hasHelp ? resolvedHelpId : null, resolvedWarnId]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-base font-bold text-gray-900">{label}</label>
@@ -158,15 +200,21 @@ function FeedingInputGroup({
         inputMode={inputMode}
         placeholder={placeholder}
         maxLength={maxLength}
-        aria-describedby={`${resolvedHelpId} ${resolvedWarnId}`}
+        aria-describedby={describedBy}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full h-14 px-6 border-2 border-pink-200 rounded-lg text-base text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-35"
       />
-      <div id={resolvedHelpId} className="text-xs text-gray-500">
-        {help}
-      </div>
-      <div id={resolvedWarnId} className="text-red-700 text-xs mt-1.5 min-h-[1.2em]" aria-live="polite">
+      {hasHelp ? (
+        <div id={resolvedHelpId} className="text-xs text-gray-500">
+          {help}
+        </div>
+      ) : null}
+      <div
+        id={resolvedWarnId}
+        className={hasWarn ? "text-red-700 text-xs mt-1.5" : "sr-only"}
+        aria-live="polite"
+      >
         {warnText}
       </div>
     </div>
@@ -252,13 +300,7 @@ function FeedingSupplementaryContent() {
         <p className="text-sm text-gray-700 leading-relaxed text-pretty">
           {supplementaryText.CONDITIONS.INTRO}
         </p>
-        <div
-          className="mt-6 grid"
-          style={{
-            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-            gap: 'calc(var(--spacing) * 2)',
-          }}
-        >
+        <div className="mt-6 flex flex-col gap-2 sm:grid sm:grid-cols-2">
           {supplementaryText.CONDITIONS.ITEMS.map((item) => (
             <article key={item.TITLE} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
               <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
@@ -468,7 +510,11 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
 
   const handleAddFood = React.useCallback(() => {
     if (foods.length >= MAX_FOODS) return;
-    const next = [...foods, createEmptyFood()];
+    const nextIndex = foods.length + 1;
+    const next = withDefaultFoodNames([
+      ...foods,
+      createEmptyFood("", defaultFoodName(nextIndex)),
+    ]);
     setFoods(next);
     syncUrl(dailyKcal, next);
   }, [dailyKcal, foods, syncUrl]);
@@ -495,13 +541,15 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
   const kcalNum = React.useMemo(() => normalizeNumberInput(dailyKcal), [dailyKcal]);
   const hasKcalInput = React.useMemo(() => dailyKcal.trim() !== "", [dailyKcal]);
 
-  const kcalWarnText = React.useMemo(() => (
-    hasKcalInput &&
-    kcalNum != null &&
-    (kcalNum < FEEDING_RANGE.kcal.min || kcalNum > FEEDING_RANGE.kcal.max)
-      ? FEEDING_UI_TEXT.WARNINGS.KCAL_RANGE(FEEDING_RANGE.kcal.min, FEEDING_RANGE.kcal.max)
-      : ""
-  ), [hasKcalInput, kcalNum]);
+  const kcalWarnText = React.useMemo(
+    () =>
+      numberFieldWarnText(dailyKcal, {
+        min: FEEDING_RANGE.kcal.min,
+        max: FEEDING_RANGE.kcal.max,
+        rangeWarning: FEEDING_UI_TEXT.WARNINGS.KCAL_RANGE,
+      }),
+    [dailyKcal],
+  );
 
   const singleDensity = foods[0]?.density ?? "";
   const singleDensityNum = React.useMemo(() => normalizeNumberInput(singleDensity), [singleDensity]);
@@ -617,7 +665,7 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
                 warnId="densityWarn"
               />
             ) : (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-10">
                 <p className="text-xs text-gray-500 leading-relaxed">
                   {FEEDING_UI_TEXT.MULTI_FOOD.RATIO_HELP}
                 </p>
@@ -637,7 +685,7 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
                       className="flex flex-col gap-3 border-0 p-0 m-0"
                       data-testid={`food-group-${foodNumber}`}
                     >
-                      <legend className="text-base font-extrabold text-gray-900 px-0">
+                      <legend className="mb-2 text-2xl font-extrabold text-gray-900 px-0">
                         {FEEDING_UI_TEXT.MULTI_FOOD.FOOD_HEADING(foodNumber)}
                       </legend>
 
@@ -673,8 +721,8 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
                         placeholder="例：40"
                         value={food.ratioGrams}
                         onChange={(value) => handleFoodFieldChange(index, "ratioGrams", value)}
-                        help="比率指定用のグラム数です。最終給餌量そのものではありません。"
-                        warnText=""
+                        help="比率の目安として入力してください。最終給餌量そのものではありません。"
+                        warnText={ratioWarnTextFor(food.ratioGrams)}
                         helpId={ratioHelpId}
                         warnId={ratioWarnId}
                       />
@@ -751,13 +799,20 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
         <section className="section mt-6" aria-live="polite" data-testid="multi-food-result">
           <div className="relative pt-6 pb-4 border-b border-gray-200">
             <div className="text-gray-600 text-[12px] tracking-[0.04em]">{FEEDING_UI_TEXT.RESULT.MULTI_TITLE}</div>
-            <div className="mt-3 space-y-1 text-center">
-              <p id="multiTotalGrams" className="text-base font-bold text-gray-900">
-                {FEEDING_UI_TEXT.MULTI_FOOD.TOTAL_GRAMS(formatDisplayNumber(multiDisplay.totalGrams))}
-              </p>
-              <p id="multiTotalKcal" className="text-sm text-gray-700">
-                {FEEDING_UI_TEXT.MULTI_FOOD.TOTAL_KCAL(formatDisplayNumber(multiDisplay.totalKcal))}
-              </p>
+            <div className="text-center mt-2">
+              <div className="text-sm text-gray-600">合計</div>
+              <div className="mt-1">
+                <span
+                  id="multiTotalGrams"
+                  className="numeral tracking-[-.01em] text-5xl md:text-6xl font-extrabold text-pink-600"
+                >
+                  {formatDisplayNumber(multiDisplay.totalGrams)}
+                </span>
+                <span className="text-[18px] md:text-[20px] text-gray-900 relative -top-2 md:-top-3 ml-1">g</span>
+              </div>
+            </div>
+            <div id="multiTotalKcal" className="text-center mt-2 text-[16px] font-bold text-gray-900">
+              {FEEDING_UI_TEXT.MULTI_FOOD.TOTAL_KCAL(formatDisplayNumber(multiDisplay.totalKcal))}
             </div>
 
             <div className="mt-6 space-y-5">

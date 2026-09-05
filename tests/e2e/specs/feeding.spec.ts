@@ -9,8 +9,8 @@ test.describe('猫の給餌量計算 E2E', () => {
     await expect(page.locator('#kcalInput')).toBeVisible();
     await expect(page.locator('#densityInput')).toBeVisible();
     await expect(page.getByRole('button', { name: '＋ フードを追加' })).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'フード名（任意）' })).toHaveCount(0);
-    await expect(page.getByRole('textbox', { name: '与えたい配分（g）' })).toHaveCount(0);
+    await expect(page.getByRole('textbox', { name: 'フード名' })).toHaveCount(0);
+    await expect(page.getByRole('textbox', { name: '与える分量（g）' })).toHaveCount(0);
 
     // 結果セクションは両入力が揃うまで表示しない
     await expect(page.locator('section[aria-live="polite"]')).toHaveCount(0);
@@ -84,6 +84,28 @@ test.describe('猫の給餌量計算 E2E', () => {
     await expect(page.locator('section[aria-live="polite"]')).toHaveCount(1);
   });
 
+  test('数値以外の入力でエラーメッセージが出る', async ({ page }) => {
+    await page.goto(PAGE);
+    await page.fill('#kcalInput', 'あああ');
+    await page.fill('#densityInput', 'いいい');
+
+    await expect(page.locator('#kcalWarn')).toHaveText('数値を入力してください。');
+    await expect(page.locator('#densityWarn')).toHaveText('数値を入力してください。');
+    await expect(page.locator('section[aria-live="polite"]')).toHaveCount(1);
+    await expect(page.locator('#dailyGram')).toHaveText('--');
+  });
+
+  test('複数フードの分量に数値以外を入れるとエラーになる', async ({ page }) => {
+    await page.goto(PAGE);
+    await page.fill('#kcalInput', '200');
+    await page.fill('#densityInput', '400');
+    await page.getByRole('button', { name: '＋ フードを追加' }).click();
+
+    const ratioInputs = page.getByLabel('与える分量（g）');
+    await ratioInputs.nth(0).fill('あああ');
+    await expect(page.getByText('数値を入力してください。').first()).toBeVisible();
+  });
+
   test('リンク: カロリー計算ページへの導線が存在', async ({ page }) => {
     await page.goto(PAGE);
     // 入力セクションの導線リンクを検証（文言で特定）
@@ -107,7 +129,7 @@ test.describe('猫の給餌量計算 E2E', () => {
     await expect(page.getByText('ウェットフードだけでも同じように計算できる？')).toBeVisible();
     await expect(page.getByText('フードを変えたら給餌量も変えるべき？')).toBeVisible();
     await expect(page.getByText('2種類以上のキャットフードを混ぜても計算できますか？')).toBeVisible();
-    await expect(page.getByText('「与えたい配分（g）」とは何ですか？')).toBeVisible();
+    await expect(page.getByText('「与える分量（g）」とは何ですか？')).toBeVisible();
     await expect(page.getByText('ドライフードとウェットフードを一緒に計算できますか？')).toBeVisible();
 
     const relatedToolLink = page.getByRole('link', { name: '猫のカロリー計算ページ' });
@@ -151,8 +173,10 @@ test.describe('猫の給餌量計算 E2E', () => {
     await expect(page.getByTestId('food-group-1')).toBeVisible();
     await expect(page.getByTestId('food-group-2')).toBeVisible();
     await expect(page.locator('#densityInput')).toHaveValue('400');
-    await expect(page.getByLabel('フード名（任意）')).toHaveCount(2);
-    await expect(page.getByLabel('与えたい配分（g）')).toHaveCount(2);
+    await expect(page.getByLabel('フード名')).toHaveCount(2);
+    await expect(page.getByLabel('フード名').nth(0)).toHaveValue('フード1');
+    await expect(page.getByLabel('フード名').nth(1)).toHaveValue('フード2');
+    await expect(page.getByLabel('与える分量（g）')).toHaveCount(2);
     await expect(page.locator('section[aria-live="polite"]')).toHaveCount(0);
 
     for (let i = 0; i < 3; i += 1) {
@@ -171,7 +195,7 @@ test.describe('猫の給餌量計算 E2E', () => {
 
     await expect(page.getByTestId('food-group-2')).toHaveCount(0);
     await expect(page.locator('#densityInput')).toHaveValue('400');
-    await expect(page.getByRole('textbox', { name: 'フード名（任意）' })).toHaveCount(0);
+    await expect(page.getByRole('textbox', { name: 'フード名' })).toHaveCount(0);
     await expect(page.getByRole('button', { name: '＋ フードを追加' })).toBeEnabled();
   });
 
@@ -181,7 +205,7 @@ test.describe('猫の給餌量計算 E2E', () => {
     await page.fill('#densityInput', '400');
     await page.getByRole('button', { name: '＋ フードを追加' }).click();
 
-    const ratioInputs = page.getByLabel('与えたい配分（g）');
+    const ratioInputs = page.getByLabel('与える分量（g）');
     await ratioInputs.nth(0).fill('40');
     await ratioInputs.nth(1).fill('20');
     await expect(page.getByTestId('multi-food-result')).toHaveCount(0);
@@ -191,7 +215,7 @@ test.describe('猫の給餌量計算 E2E', () => {
 
     const result = page.getByTestId('multi-food-result');
     await expect(result).toBeVisible();
-    await expect(page.locator('#multiTotalGrams')).toHaveText('合計: 約51.7g');
+    await expect(page.locator('#multiTotalGrams')).toHaveText('51.7');
     await expect(page.locator('#multiTotalKcal')).toHaveText('合計カロリー: 約200kcal');
 
     const food1Result = page.getByTestId('food-result-1');
@@ -204,7 +228,7 @@ test.describe('猫の給餌量計算 E2E', () => {
     await expect(food2Result).toContainText('フード2');
     await expect(food2Result).toContainText('1日: 約17.2g');
 
-    const nameInputs = page.getByLabel('フード名（任意）');
+    const nameInputs = page.getByLabel('フード名');
     await nameInputs.nth(0).fill('フードA');
     await nameInputs.nth(1).fill('フードB');
     await expect(food1Result).toContainText('フードA');
@@ -218,8 +242,8 @@ test.describe('猫の給餌量計算 E2E', () => {
     await page.getByRole('button', { name: '＋ フードを追加' }).click();
 
     const densityLabels = page.getByLabel('カロリー（kcal / 100g）');
-    const ratioInputs = page.getByLabel('与えたい配分（g）');
-    const nameInputs = page.getByLabel('フード名（任意）');
+    const ratioInputs = page.getByLabel('与える分量（g）');
+    const nameInputs = page.getByLabel('フード名');
 
     await ratioInputs.nth(0).fill('40');
     await nameInputs.nth(0).fill('フードA');
@@ -238,6 +262,20 @@ test.describe('猫の給餌量計算 E2E', () => {
     await page.locator('#shareBtn').click();
     await expect(page.getByRole('menuitem', { name: 'リンクをコピー' })).toBeVisible();
     await expect(page.locator('#shareMenu')).toBeVisible();
+    const xShareLink = page.getByRole('menuitem', { name: 'Xでシェア' });
+    await expect(xShareLink).toBeVisible();
+    const xHref = await xShareLink.getAttribute('href');
+    expect(xHref).toBeTruthy();
+    const sharedPageUrl = new URL(xHref!).searchParams.get('url') ?? '';
+    expect(sharedPageUrl).toContain('kcal=200');
+    expect(sharedPageUrl).toContain('d=400');
+    expect(sharedPageUrl).toContain('g1=40');
+    expect(sharedPageUrl).toContain('d2=360');
+    expect(sharedPageUrl).toContain('g2=20');
+    expect(decodeURIComponent(sharedPageUrl)).toContain('n1=フードA');
+    expect(decodeURIComponent(sharedPageUrl)).toContain('n2=フードB');
+    const sharedText = new URL(xHref!).searchParams.get('text') ?? '';
+    expect(sharedText).toContain('給餌量（1日）の目安');
 
     await page.goto(
       `${PAGE}?kcal=200&d=400&g1=40&n1=${encodeURIComponent('フードA')}&d2=360&g2=20&n2=${encodeURIComponent('フードB')}`,
@@ -284,7 +322,7 @@ test.describe('猫の給餌量計算 E2E', () => {
     await page.getByRole('button', { name: '＋ フードを追加' }).click();
 
     const densityLabels = page.getByLabel('カロリー（kcal / 100g）');
-    const ratioInputs = page.getByLabel('与えたい配分（g）');
+    const ratioInputs = page.getByLabel('与える分量（g）');
     await ratioInputs.nth(0).fill('40');
     await densityLabels.nth(1).fill('360');
     await ratioInputs.nth(1).fill('20');

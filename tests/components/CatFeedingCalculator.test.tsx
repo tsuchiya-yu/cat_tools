@@ -33,7 +33,7 @@ describe('CatFeedingCalculator multi-food', () => {
     render(<CatFeedingCalculator />);
 
     expect(screen.getByLabelText('フードのカロリー（kcal/100g）')).toBeInTheDocument();
-    expect(screen.queryByLabelText('フード名（任意）')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('フード名')).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText('1日の必要カロリー（kcal）'), {
       target: { value: '200' },
@@ -48,7 +48,7 @@ describe('CatFeedingCalculator multi-food', () => {
     expect(screen.getAllByLabelText('カロリー（kcal / 100g）')[0]).toHaveValue('400');
     expect(screen.queryByTestId('multi-food-result')).not.toBeInTheDocument();
 
-    const ratioInputs = screen.getAllByLabelText('与えたい配分（g）');
+    const ratioInputs = screen.getAllByLabelText('与える分量（g）');
     fireEvent.change(ratioInputs[0], { target: { value: '40' } });
     fireEvent.change(ratioInputs[1], { target: { value: '20' } });
     expect(screen.queryByTestId('multi-food-result')).not.toBeInTheDocument();
@@ -57,7 +57,7 @@ describe('CatFeedingCalculator multi-food', () => {
     fireEvent.change(densityInputs[1], { target: { value: '360' } });
 
     const result = screen.getByTestId('multi-food-result');
-    expect(within(result).getByText('合計: 約51.7g')).toBeInTheDocument();
+    expect(within(result).getByText('51.7')).toBeInTheDocument();
     expect(within(result).getByText('合計カロリー: 約200kcal')).toBeInTheDocument();
     expect(within(screen.getByTestId('food-result-1')).getByText('フード1')).toBeInTheDocument();
     expect(within(screen.getByTestId('food-result-1')).getByText('1日: 約34.5g')).toBeInTheDocument();
@@ -99,5 +99,15 @@ describe('CatFeedingCalculator multi-food', () => {
 
     expect(screen.getByText('59')).toBeInTheDocument();
     expect(screen.getByText('朝 30 g / 夜 29 g')).toBeInTheDocument();
+  });
+
+  it('数値以外の入力でエラーメッセージを表示する', () => {
+    render(<CatFeedingCalculator />);
+
+    fireEvent.change(screen.getByLabelText('フードのカロリー（kcal/100g）'), {
+      target: { value: 'あああ' },
+    });
+
+    expect(screen.getByText('数値を入力してください。')).toBeInTheDocument();
   });
 });
