@@ -5,6 +5,12 @@ on:
     types: [opened, reopened, ready_for_review]
   issue_comment:
     types: [created]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Pull request number for the isolated real-model canary"
+        required: true
+        type: number
 
 permissions: {}
 
@@ -16,6 +22,10 @@ jobs:
       pull-requests: read
     outputs:
       allowed: ${{ steps.authorize.outputs.allowed }}
+      base_ref: ${{ steps.authorize.outputs.base_ref }}
+      head_sha: ${{ steps.authorize.outputs.head_sha }}
+      pr_number: ${{ steps.authorize.outputs.pr_number }}
+      tooling_sha: ${{ steps.authorize.outputs.tooling_sha }}
       reason: ${{ steps.authorize.outputs.reason }}
     steps:
       - name: Check event and pull request
@@ -25,14 +35,24 @@ jobs:
           COMMENT_BODY: ${{ github.event.comment.body }}
           EVENT_NAME: ${{ github.event_name }}
           GH_TOKEN: ${{ github.token }}
+          INPUT_PR_NUMBER: ${{ inputs.pr_number }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           PR_DRAFT: ${{ github.event.pull_request.draft }}
           PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           REPOSITORY: ${{ github.repository }}
+          WORKFLOW_SHA: ${{ github.sha }}
         run: |
           set -euo pipefail
 
           allowed=false
+          base_ref=""
+          head_sha=""
+          pr_number=""
+          tooling_sha=""
           reason="unsupported event"
 
           if [[ "${EVENT_NAME}" == "pull_request" ]]; then
@@ -42,6 +62,10 @@ jobs:
               reason="fork pull request"
             else
               allowed=true
+              base_ref="${PR_BASE_REF}"
+              head_sha="${PR_HEAD_SHA}"
+              pr_number="${PR_NUMBER}"
+              tooling_sha="${PR_BASE_SHA}"
               reason="eligible pull request event"
             fi
           elif [[ "${EVENT_NAME}" == "issue_comment" ]]; then
@@ -62,12 +86,37 @@ jobs:
                 reason="fork pull request"
               else
                 allowed=true
+                base_ref="$(jq -r '.base.ref' <<<"${pr_json}")"
+                head_sha="$(jq -r '.head.sha' <<<"${pr_json}")"
+                pr_number="${ISSUE_NUMBER}"
+                tooling_sha="$(jq -r '.base.sha' <<<"${pr_json}")"
                 reason="authorized manual review request"
               fi
+            fi
+          elif [[ "${EVENT_NAME}" == "workflow_dispatch" ]]; then
+            pr_json="$(gh api "repos/${REPOSITORY}/pulls/${INPUT_PR_NUMBER}" 2>/dev/null || true)"
+
+            if [[ -z "${pr_json}" ]]; then
+              reason="canary pull request was not found"
+            elif [[ "$(jq -r '.draft' <<<"${pr_json}")" == "true" ]]; then
+              reason="draft pull request"
+            elif [[ "$(jq -r '.head.repo.full_name' <<<"${pr_json}")" != "${REPOSITORY}" ]]; then
+              reason="fork pull request"
+            else
+              allowed=true
+              base_ref="$(jq -r '.base.ref' <<<"${pr_json}")"
+              head_sha="$(jq -r '.head.sha' <<<"${pr_json}")"
+              pr_number="${INPUT_PR_NUMBER}"
+              tooling_sha="${WORKFLOW_SHA}"
+              reason="authorized isolated canary"
             fi
           fi
 
           echo "allowed=${allowed}" >> "${GITHUB_OUTPUT}"
+          echo "base_ref=${base_ref}" >> "${GITHUB_OUTPUT}"
+          echo "head_sha=${head_sha}" >> "${GITHUB_OUTPUT}"
+          echo "pr_number=${pr_number}" >> "${GITHUB_OUTPUT}"
+          echo "tooling_sha=${tooling_sha}" >> "${GITHUB_OUTPUT}"
           echo "reason=${reason}" >> "${GITHUB_OUTPUT}"
           echo "Review authorization: ${allowed} (${reason})"
 
@@ -76,35 +125,83 @@ jobs:
     needs: authorize
     if: needs.authorize.outputs.allowed == 'true'
     concurrency:
-      group: openrouter-pr-review-${{ github.event.pull_request.number || github.event.issue.number || github.run_id }}
+      group: openrouter-pr-review-${{ needs.authorize.outputs.pr_number }}
       cancel-in-progress: true
     runs-on: ubuntu-latest
     timeout-minutes: 20
     permissions:
       contents: read
-      issues: write
-      pull-requests: write
+      issues: read
+      pull-requests: read
     steps:
-      - name: Checkout repository
+      - name: Verify review secrets are configured
+        env:
+          APP_ID_CONFIGURED: ${{ secrets.OPENROUTER_REVIEW_APP_ID != '' }}
+          APP_KEY_CONFIGURED: ${{ secrets.OPENROUTER_REVIEW_APP_PRIVATE_KEY != '' }}
+          OPENROUTER_CONFIGURED: ${{ secrets.OPENROUTER_API_KEY != '' }}
+        run: |
+          set -euo pipefail
+          [[ "${APP_ID_CONFIGURED}" == "true" ]] || { echo "::error::OPENROUTER_REVIEW_APP_ID is not configured"; exit 1; }
+          [[ "${APP_KEY_CONFIGURED}" == "true" ]] || { echo "::error::OPENROUTER_REVIEW_APP_PRIVATE_KEY is not configured"; exit 1; }
+          [[ "${OPENROUTER_CONFIGURED}" == "true" ]] || { echo "::error::OPENROUTER_API_KEY is not configured"; exit 1; }
+
+      - name: Checkout trusted review tooling
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 1
+          fetch-depth: 0
+          path: review-tools
           persist-credentials: false
+          ref: ${{ needs.authorize.outputs.tooling_sha }}
 
-      - name: Run Junie code review
-        id: junie-review
-        continue-on-error: true
-        uses: JetBrains/junie-github-action@c2ae82fc9fbe0eb81942ceb3d9bd3f89a6b17b95 # v1.7.4
+      - name: Checkout pull request for read-only review
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          openrouter_api_key: ${{ secrets.OPENROUTER_API_KEY }}
-          model: custom:openrouter-review
-          prompt: code-review
-          use_single_comment: "false"
-          junie_guidelines_filename: guidelines.md
+          fetch-depth: 0
+          path: review-target
+          persist-credentials: false
+          ref: ${{ needs.authorize.outputs.head_sha }}
 
-      - name: Record non-blocking review failure
-        if: steps.junie-review.outcome == 'failure'
+      - name: Generate and validate review
+        id: generate-review
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          REVIEW_RESULT_FILE: ${{ runner.temp }}/openrouter-review/result.json
         run: |
-          echo "::warning::Junie review failed. This advisory workflow does not block other checks or merging."
-          echo "## Junie review" >> "${GITHUB_STEP_SUMMARY}"
-          echo "The advisory review failed. Check this run's logs and OpenRouter activity." >> "${GITHUB_STEP_SUMMARY}"
+          set -euo pipefail
+          node "${GITHUB_WORKSPACE}/review-tools/scripts/openrouter-review/run-review.js" \
+            --project "${GITHUB_WORKSPACE}/review-target" \
+            --trusted-root "${GITHUB_WORKSPACE}/review-tools" \
+            --base-ref "${{ needs.authorize.outputs.base_ref }}" \
+            --head-sha "${{ needs.authorize.outputs.head_sha }}" \
+            --result-file "${REVIEW_RESULT_FILE}"
+
+      - name: Create short-lived review publisher token
+        id: review-app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.OPENROUTER_REVIEW_APP_ID }}
+          private-key: ${{ secrets.OPENROUTER_REVIEW_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-pull-requests: write
+
+      - name: Publish validated review
+        env:
+          GH_TOKEN: ${{ steps.review-app-token.outputs.token }}
+          REVIEW_RESULT_FILE: ${{ runner.temp }}/openrouter-review/result.json
+        run: |
+          set -euo pipefail
+          node "${GITHUB_WORKSPACE}/review-tools/scripts/openrouter-review/publish-review.js" \
+            --result-file "${REVIEW_RESULT_FILE}" \
+            --repository "${GITHUB_REPOSITORY}" \
+            --pull-number "${{ needs.authorize.outputs.pr_number }}" \
+            --run-id "${GITHUB_RUN_ID}"
+
+      - name: Clean up transient review data
+        if: always()
+        run: |
+          set -euo pipefail
+          find "${RUNNER_TEMP}" -maxdepth 1 -type d -name 'cat-tools-openrouter-review-*' -exec find {} -type f -delete \; 2>/dev/null || true
+          find "${RUNNER_TEMP}" -maxdepth 1 -type d -name 'cat-tools-openrouter-review-*' -exec find {} -depth -type d -empty -delete \; 2>/dev/null || true
+          find "${RUNNER_TEMP}/openrouter-review" -type f -delete 2>/dev/null || true
+          find "${RUNNER_TEMP}/openrouter-review" -depth -type d -empty -delete 2>/dev/null || true
