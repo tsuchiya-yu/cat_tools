@@ -21,7 +21,7 @@
     "href": "/calculate-cat-feeding",
     "ariaLabel": "猫の給餌量計算ツールを開く",
     "title": "猫の給餌量計算",
-    "description": "必要カロリーとkcal/100gから、1日量と朝夜の目安を表示します。"
+    "description": "必要カロリーとkcal/100gから1日量と朝夜の目安を表示。複数フードの比率計算にも対応します。"
   },
   {
     "href": "/calculate-cat-water-intake",
