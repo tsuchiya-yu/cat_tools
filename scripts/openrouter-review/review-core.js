@@ -207,8 +207,13 @@ function parseReviewJson(result) {
     }
   }
 
-  if (depth !== 0 || candidates.length !== 1) throw new Error('expected one JSON object');
-  return JSON.parse(candidates[0]);
+  if (depth !== 0) throw new Error('unbalanced_json_object');
+  if (candidates.length !== 1) throw new Error(`json_object_count_${candidates.length}`);
+  try {
+    return JSON.parse(candidates[0]);
+  } catch {
+    throw new Error('invalid_json_object');
+  }
 }
 
 function parseJunieOutput(rawOutput, exitCode, stderr = '') {
@@ -237,12 +242,12 @@ function parseJunieOutput(rawOutput, exitCode, stderr = '') {
   let reviewJson;
   try {
     reviewJson = parseReviewJson(output.result);
-  } catch {
+  } catch (error) {
     return {
       ok: false,
       failure: {
         ...classifyFailure({ exitCode, errors, stderr, outputState: 'invalid_review_json' }),
-        detail: 'invalid_result_json',
+        detail: `invalid_result_json: ${error.message}`,
       },
     };
   }

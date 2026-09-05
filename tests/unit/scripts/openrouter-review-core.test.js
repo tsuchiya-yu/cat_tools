@@ -130,7 +130,7 @@ describe('Junie output normalization', () => {
     );
     expect(parsed).toMatchObject({
       ok: false,
-      failure: { code: 'malformed_response', detail: 'invalid_result_json' },
+      failure: { code: 'malformed_response', detail: 'invalid_result_json: json_object_count_2' },
     });
   });
 
