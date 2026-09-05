@@ -33,7 +33,7 @@ describe('CatFeedingCalculator multi-food', () => {
     render(<CatFeedingCalculator />);
 
     expect(screen.getByLabelText('フードのカロリー（kcal/100g）')).toBeInTheDocument();
-    expect(screen.queryByLabelText('フード名')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('フード名（任意）')).not.toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText('1日の必要カロリー（kcal）'), {
       target: { value: '200' },
@@ -48,7 +48,7 @@ describe('CatFeedingCalculator multi-food', () => {
     expect(screen.getAllByLabelText('カロリー（kcal / 100g）')[0]).toHaveValue('400');
     expect(screen.queryByTestId('multi-food-result')).not.toBeInTheDocument();
 
-    const ratioInputs = screen.getAllByLabelText('与える分量（g）');
+    const ratioInputs = screen.getAllByLabelText('与えたい配分（g）');
     fireEvent.change(ratioInputs[0], { target: { value: '40' } });
     fireEvent.change(ratioInputs[1], { target: { value: '20' } });
     expect(screen.queryByTestId('multi-food-result')).not.toBeInTheDocument();
@@ -109,5 +109,17 @@ describe('CatFeedingCalculator multi-food', () => {
     });
 
     expect(screen.getByText('数値を入力してください。')).toBeInTheDocument();
+  });
+
+  it('0以下の配分でエラーメッセージを表示する', async () => {
+    const user = userEvent.setup();
+    render(<CatFeedingCalculator />);
+
+    await user.click(screen.getByRole('button', { name: '＋ フードを追加' }));
+    fireEvent.change(screen.getAllByLabelText('与えたい配分（g）')[0], {
+      target: { value: '0' },
+    });
+
+    expect(screen.getByText('0より大きい値を入力してください。')).toBeInTheDocument();
   });
 });

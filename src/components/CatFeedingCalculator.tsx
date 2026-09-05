@@ -52,25 +52,13 @@ function createFoodId(): string {
   return `food-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
 
-function createEmptyFood(density = "", name = ""): FoodItem {
+function createEmptyFood(density = ""): FoodItem {
   return {
     id: createFoodId(),
-    name,
+    name: "",
     density,
     ratioGrams: "",
   };
-}
-
-function defaultFoodName(index: number): string {
-  return FEEDING_UI_TEXT.MULTI_FOOD.FALLBACK_NAME(index);
-}
-
-function withDefaultFoodNames(foods: FoodItem[]): FoodItem[] {
-  if (foods.length < 2) return foods;
-  return foods.map((food, index) => ({
-    ...food,
-    name: food.name.trim() || defaultFoodName(index + 1),
-  }));
 }
 
 function parseFoodsFromSearchParams(params: URLSearchParams): FoodItem[] {
@@ -97,7 +85,7 @@ function parseFoodsFromSearchParams(params: URLSearchParams): FoodItem[] {
     });
   }
 
-  return withDefaultFoodNames(foods);
+  return foods;
 }
 
 function buildFeedingPath(dailyKcal: string, foods: FoodItem[]): string {
@@ -300,7 +288,13 @@ function FeedingSupplementaryContent() {
         <p className="text-sm text-gray-700 leading-relaxed text-pretty">
           {supplementaryText.CONDITIONS.INTRO}
         </p>
-        <div className="mt-6 flex flex-col gap-2 sm:grid sm:grid-cols-2">
+        <div
+          className="mt-6 grid"
+          style={{
+            gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+            gap: 'calc(var(--spacing) * 2)',
+          }}
+        >
           {supplementaryText.CONDITIONS.ITEMS.map((item) => (
             <article key={item.TITLE} className="h-full rounded-2xl border border-gray-200 bg-white p-4 sm:p-5 shadow-sm">
               <h3 className="text-sm sm:text-base font-bold text-gray-900 text-balance">{item.TITLE}</h3>
@@ -510,11 +504,7 @@ export default function CatFeedingCalculator({ initialKcal = "", initialDensity 
 
   const handleAddFood = React.useCallback(() => {
     if (foods.length >= MAX_FOODS) return;
-    const nextIndex = foods.length + 1;
-    const next = withDefaultFoodNames([
-      ...foods,
-      createEmptyFood("", defaultFoodName(nextIndex)),
-    ]);
+    const next = [...foods, createEmptyFood()];
     setFoods(next);
     syncUrl(dailyKcal, next);
   }, [dailyKcal, foods, syncUrl]);
