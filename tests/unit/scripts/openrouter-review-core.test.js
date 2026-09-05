@@ -112,9 +112,20 @@ describe('Junie output normalization', () => {
     expect(parsed).toEqual({ ok: true, review: cleanReview });
   });
 
-  test('does not extract JSON from surrounding prose', () => {
+  test('accepts exactly one structured JSON object from a Junie prose wrapper', () => {
     const parsed = parseJunieOutput(
       JSON.stringify({ errors: [], result: `review result:\n${JSON.stringify(cleanReview)}` }),
+      0,
+    );
+    expect(parsed).toEqual({ ok: true, review: cleanReview });
+  });
+
+  test('rejects a response containing multiple JSON objects', () => {
+    const parsed = parseJunieOutput(
+      JSON.stringify({
+        errors: [],
+        result: `${JSON.stringify(cleanReview)}\n${JSON.stringify(cleanReview)}`,
+      }),
       0,
     );
     expect(parsed).toMatchObject({

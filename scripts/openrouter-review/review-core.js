@@ -173,7 +173,42 @@ function normalizeReviewResult(value) {
 function parseReviewJson(result) {
   const trimmed = result.trim();
   const fenced = /^```(?:json)?\s*\n([\s\S]*?)\n```$/i.exec(trimmed);
-  return JSON.parse(fenced ? fenced[1] : trimmed);
+  if (fenced) return JSON.parse(fenced[1]);
+
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    // Junie may add a short natural-language wrapper even when the model returns
+    // structured output. Accept only one complete top-level JSON object; the
+    // object still goes through the strict normalized review schema below.
+  }
+
+  const candidates = [];
+  let start = -1;
+  let depth = 0;
+  let inString = false;
+  let escaped = false;
+  for (let index = 0; index < trimmed.length; index += 1) {
+    const character = trimmed[index];
+    if (inString) {
+      if (escaped) escaped = false;
+      else if (character === '\\') escaped = true;
+      else if (character === '"') inString = false;
+      continue;
+    }
+    if (character === '"') {
+      inString = true;
+    } else if (character === '{') {
+      if (depth === 0) start = index;
+      depth += 1;
+    } else if (character === '}' && depth > 0) {
+      depth -= 1;
+      if (depth === 0) candidates.push(trimmed.slice(start, index + 1));
+    }
+  }
+
+  if (depth !== 0 || candidates.length !== 1) throw new Error('expected one JSON object');
+  return JSON.parse(candidates[0]);
 }
 
 function parseJunieOutput(rawOutput, exitCode, stderr = '') {
