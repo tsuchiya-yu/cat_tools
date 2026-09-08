@@ -195,7 +195,7 @@ describe('OpenRouter structured output', () => {
     expect(() => normalizeReviewResult({
       status: 'findings',
       summary: '問題があります。',
-      findings: [{ severity: 'P2', path: 'src/a.ts', line: 3, body: '[P1] mismatch' }],
+      findings: [{ severity: 'P2', path: 'src/a.ts', line: 3, startLine: null, body: '[P1] mismatch' }],
     })).toThrow('body must start with its severity');
   });
 
@@ -203,8 +203,57 @@ describe('OpenRouter structured output', () => {
     expect(() => normalizeReviewResult({
       status: 'findings',
       summary: '問題があります。',
-      findings: [{ severity: 'P2', path: '../secret', line: 3, body: '[P2] 問題です。' }],
+      findings: [{ severity: 'P2', path: '../secret', line: 3, startLine: null, body: '[P2] 問題です。' }],
     })).toThrow('invalid path');
+  });
+
+  test('rejects unexpected top-level properties', () => {
+    expect(() => normalizeReviewResult({
+      ...cleanReview,
+      unexpected: 'anything',
+    })).toThrow('unexpected property: unexpected');
+    expect(parseOpenRouterResponse(completion({ ...cleanReview, unexpected: 'anything' }), 200)).toMatchObject({
+      ok: false,
+      failure: {
+        code: 'malformed_response',
+        detail: 'invalid_review_schema: review result has unexpected property: unexpected',
+      },
+    });
+  });
+
+  test('rejects unexpected finding properties', () => {
+    expect(() => normalizeReviewResult({
+      status: 'findings',
+      summary: '問題があります。',
+      findings: [{
+        severity: 'P2',
+        path: 'src/a.ts',
+        line: 3,
+        startLine: null,
+        body: '[P2] 問題です。',
+        extra: true,
+      }],
+    })).toThrow('unexpected property: extra');
+  });
+
+  test('rejects findings that omit startLine', () => {
+    expect(() => normalizeReviewResult({
+      status: 'findings',
+      summary: '問題があります。',
+      findings: [{ severity: 'P2', path: 'src/a.ts', line: 10, body: '[P2] foo' }],
+    })).toThrow('missing startLine');
+  });
+
+  test('keeps startLine null after normalization', () => {
+    expect(normalizeReviewResult({
+      status: 'findings',
+      summary: '問題があります。',
+      findings: [{ severity: 'P2', path: 'src/a.ts', line: 10, startLine: null, body: '[P2] foo' }],
+    })).toEqual({
+      status: 'findings',
+      summary: '問題があります。',
+      findings: [{ severity: 'P2', path: 'src/a.ts', line: 10, startLine: null, body: '[P2] foo' }],
+    });
   });
 });
 
@@ -220,6 +269,16 @@ describe('PR diff validation', () => {
 
   test('collects only valid right-side lines', () => {
     expect([...collectRightSideLines(patch)]).toEqual([10, 11, 12, 13]);
+  });
+
+  test('treats hunk lines that start with +++ as additions', () => {
+    const plusPlusPlusPatch = [
+      '@@ -1,2 +1,3 @@',
+      ' context',
+      '+++counter;',
+      '+next();',
+    ].join('\n');
+    expect([...collectRightSideLines(plusPlusPlusPatch)]).toEqual([1, 2, 3]);
   });
 
   test('converts a validated finding to a GitHub review comment', () => {
@@ -248,13 +307,13 @@ describe('PR diff validation', () => {
     const review = normalizeReviewResult({
       status: 'findings',
       summary: '1件あります。',
-      findings: [{ severity: 'P2', path: findingPath, line, body: '[P2] 問題です。' }],
+      findings: [{ severity: 'P2', path: findingPath, line, startLine: null, body: '[P2] 問題です。' }],
     });
     expect(() => validateFindingsAgainstDiff(review, [file])).toThrow();
   });
 
   test('rejects duplicate findings', () => {
-    const finding = { severity: 'P2', path: 'src/a.ts', line: 11, body: '[P2] 問題です。' };
+    const finding = { severity: 'P2', path: 'src/a.ts', line: 11, startLine: null, body: '[P2] 問題です。' };
     const review = normalizeReviewResult({ status: 'findings', summary: '重複です。', findings: [finding, finding] });
     expect(() => validateFindingsAgainstDiff(review, [{ filename: 'src/a.ts', patch }])).toThrow('duplicate');
   });

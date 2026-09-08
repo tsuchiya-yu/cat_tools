@@ -161,10 +161,22 @@ function isSafeRelativePath(value) {
   );
 }
 
+const REVIEW_RESULT_KEYS = new Set(['status', 'summary', 'findings']);
+const FINDING_KEYS = new Set(['severity', 'path', 'line', 'startLine', 'body']);
+
+function assertNoAdditionalProperties(value, allowedKeys, label) {
+  for (const key of Object.keys(value)) {
+    if (!allowedKeys.has(key)) {
+      throw new Error(`${label} has unexpected property: ${key}`);
+    }
+  }
+}
+
 function normalizeReviewResult(value) {
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
     throw new Error('review result must be an object');
   }
+  assertNoAdditionalProperties(value, REVIEW_RESULT_KEYS, 'review result');
 
   const { status, summary, findings } = value;
   if (status !== 'clean' && status !== 'findings') {
@@ -187,6 +199,10 @@ function normalizeReviewResult(value) {
     if (!finding || typeof finding !== 'object' || Array.isArray(finding)) {
       throw new Error(`finding ${index} must be an object`);
     }
+    assertNoAdditionalProperties(finding, FINDING_KEYS, `finding ${index}`);
+    if (!Object.prototype.hasOwnProperty.call(finding, 'startLine')) {
+      throw new Error(`finding ${index} is missing startLine`);
+    }
     if (!['P0', 'P1', 'P2', 'P3'].includes(finding.severity)) {
       throw new Error(`finding ${index} has an invalid severity`);
     }
@@ -196,11 +212,14 @@ function normalizeReviewResult(value) {
     if (!Number.isInteger(finding.line) || finding.line < 1) {
       throw new Error(`finding ${index} has an invalid line`);
     }
-    if (
-      finding.startLine != null &&
-      (!Number.isInteger(finding.startLine) || finding.startLine < 1 || finding.startLine > finding.line)
-    ) {
-      throw new Error(`finding ${index} has an invalid startLine`);
+    if (finding.startLine !== null) {
+      if (
+        !Number.isInteger(finding.startLine) ||
+        finding.startLine < 1 ||
+        finding.startLine > finding.line
+      ) {
+        throw new Error(`finding ${index} has an invalid startLine`);
+      }
     }
     if (
       typeof finding.body !== 'string' ||
@@ -217,7 +236,7 @@ function normalizeReviewResult(value) {
       severity: finding.severity,
       path: finding.path,
       line: finding.line,
-      ...(finding.startLine == null ? {} : { startLine: finding.startLine }),
+      startLine: finding.startLine,
       body: finding.body.trim(),
     };
   });
@@ -331,10 +350,12 @@ function collectRightSideLines(patch) {
       continue;
     }
     if (!inHunk || line.startsWith('\\ No newline')) continue;
-    if (line.startsWith('+') && !line.startsWith('+++')) {
+    // Inside a hunk, lines starting with '+' are additions (including code like "+++counter;").
+    // File headers ("+++ b/file") only appear before the first hunk, when inHunk is false.
+    if (line.startsWith('+')) {
       validLines.add(newLine);
       newLine += 1;
-    } else if (line.startsWith('-') && !line.startsWith('---')) {
+    } else if (line.startsWith('-')) {
     } else if (line.startsWith(' ')) {
       validLines.add(newLine);
       newLine += 1;
@@ -370,7 +391,7 @@ function validateFindingsAgainstDiff(review, changedFiles) {
     path: finding.path,
     line: finding.line,
     side: 'RIGHT',
-    ...(finding.startLine === undefined
+    ...(finding.startLine == null
       ? {}
       : { start_line: finding.startLine, start_side: 'RIGHT' }),
     body: finding.body,

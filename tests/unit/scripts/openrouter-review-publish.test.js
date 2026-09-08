@@ -10,7 +10,7 @@ const basePayload = {
     status: 'findings',
     summary: '1件の指摘があります。',
     findings: [
-      { severity: 'P2', path: 'src/a.ts', line: 2, body: '[P2] 問題があります。' },
+      { severity: 'P2', path: 'src/a.ts', line: 2, startLine: null, body: '[P2] 問題があります。' },
     ],
   },
 };
