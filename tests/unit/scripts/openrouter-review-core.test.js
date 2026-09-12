@@ -119,15 +119,35 @@ describe('OpenRouter structured output', () => {
         zdr: true,
         data_collection: 'deny',
       },
+      max_completion_tokens: 8_000,
       stream: false,
     });
     expect(request).not.toHaveProperty('models');
     expect(request).not.toHaveProperty('tools');
+    expect(request).not.toHaveProperty('max_tokens');
     expect(request.response_format.json_schema.schema.required).toEqual([
       'status',
       'summary',
       'findings',
     ]);
+  });
+
+  test('uses max_tokens for the Gemini fallback request shape', () => {
+    const request = buildReviewRequest({
+      model: 'google/gemini-3.7-flash',
+      guidelines: 'Review carefully.',
+      context: 'diff data',
+    });
+    expect(request).toMatchObject({
+      model: 'google/gemini-3.7-flash',
+      max_tokens: 8_000,
+      provider: {
+        require_parameters: true,
+        zdr: true,
+        data_collection: 'deny',
+      },
+    });
+    expect(request).not.toHaveProperty('max_completion_tokens');
   });
 
   test('accepts a schema-conforming clean completion', () => {

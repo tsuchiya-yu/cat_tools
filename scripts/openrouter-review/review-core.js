@@ -120,6 +120,17 @@ function classifyFailure({
   return { kind: UNKNOWN_ERROR, code: 'unknown_provider_error', retryable: false };
 }
 
+const MAX_OUTPUT_TOKENS = 8_000;
+
+// ZDR endpoints advertise different output-limit parameter names.
+// With require_parameters=true, the request must use a name each model supports.
+function outputLimitForModel(model) {
+  if (model === 'openai/gpt-5.6-luna') {
+    return { max_completion_tokens: MAX_OUTPUT_TOKENS };
+  }
+  return { max_tokens: MAX_OUTPUT_TOKENS };
+}
+
 function buildReviewRequest({ model, guidelines, context }) {
   return {
     model,
@@ -145,7 +156,7 @@ function buildReviewRequest({ model, guidelines, context }) {
       zdr: true,
       data_collection: 'deny',
     },
-    max_tokens: 8_000,
+    ...outputLimitForModel(model),
     stream: false,
   };
 }
