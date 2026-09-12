@@ -58,3 +58,43 @@ describe('OpenRouter provider privacy constraints', () => {
     expect(workflow.slice(tokenIndex)).not.toContain('OPENROUTER_API_KEY');
   });
 });
+
+describe('OpenRouter untrusted workflow input handling', () => {
+  function stepSection(startName, endName) {
+    const start = workflow.indexOf(`- name: ${startName}`);
+    const end = endName ? workflow.indexOf(`- name: ${endName}`, start + 1) : workflow.length;
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    return workflow.slice(start, end);
+  }
+
+  test('passes base_ref and head_sha to generation through env, not run-body interpolation', () => {
+    const generationSection = stepSection(
+      'Generate and validate review',
+      'Create short-lived review publisher token',
+    );
+    const runIndex = generationSection.indexOf('run: |');
+    expect(runIndex).toBeGreaterThan(-1);
+    const envSection = generationSection.slice(0, runIndex);
+    const runSection = generationSection.slice(runIndex);
+
+    expect(envSection).toContain('BASE_REF: ${{ needs.authorize.outputs.base_ref }}');
+    expect(envSection).toContain('HEAD_SHA: ${{ needs.authorize.outputs.head_sha }}');
+    expect(runSection).toContain('--base-ref "${BASE_REF}"');
+    expect(runSection).toContain('--head-sha "${HEAD_SHA}"');
+    expect(runSection).not.toContain('${{ needs.authorize.outputs.base_ref }}');
+    expect(runSection).not.toContain('${{ needs.authorize.outputs.head_sha }}');
+  });
+
+  test('passes pull number to publish through env when the write token is present', () => {
+    const publishSection = stepSection('Publish validated review', 'Clean up transient review data');
+    const runIndex = publishSection.indexOf('run: |');
+    expect(runIndex).toBeGreaterThan(-1);
+    const envSection = publishSection.slice(0, runIndex);
+    const runSection = publishSection.slice(runIndex);
+
+    expect(envSection).toContain('PULL_NUMBER: ${{ needs.authorize.outputs.pr_number }}');
+    expect(runSection).toContain('--pull-number "${PULL_NUMBER}"');
+    expect(runSection).not.toContain('${{ needs.authorize.outputs.pr_number }}');
+  });
+});

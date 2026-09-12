@@ -166,13 +166,15 @@ jobs:
         env:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           REVIEW_RESULT_FILE: ${{ runner.temp }}/openrouter-review/result.json
+          BASE_REF: ${{ needs.authorize.outputs.base_ref }}
+          HEAD_SHA: ${{ needs.authorize.outputs.head_sha }}
         run: |
           set -euo pipefail
           node "${GITHUB_WORKSPACE}/review-tools/scripts/openrouter-review/run-review.js" \
             --project "${GITHUB_WORKSPACE}/review-target" \
             --trusted-root "${GITHUB_WORKSPACE}/review-tools" \
-            --base-ref "${{ needs.authorize.outputs.base_ref }}" \
-            --head-sha "${{ needs.authorize.outputs.head_sha }}" \
+            --base-ref "${BASE_REF}" \
+            --head-sha "${HEAD_SHA}" \
             --result-file "${REVIEW_RESULT_FILE}"
 
       - name: Create short-lived review publisher token
@@ -189,12 +191,13 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.review-app-token.outputs.token }}
           REVIEW_RESULT_FILE: ${{ runner.temp }}/openrouter-review/result.json
+          PULL_NUMBER: ${{ needs.authorize.outputs.pr_number }}
         run: |
           set -euo pipefail
           node "${GITHUB_WORKSPACE}/review-tools/scripts/openrouter-review/publish-review.js" \
             --result-file "${REVIEW_RESULT_FILE}" \
             --repository "${GITHUB_REPOSITORY}" \
-            --pull-number "${{ needs.authorize.outputs.pr_number }}" \
+            --pull-number "${PULL_NUMBER}" \
             --run-id "${GITHUB_RUN_ID}"
 
       - name: Clean up transient review data
