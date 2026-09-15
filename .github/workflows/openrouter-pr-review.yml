@@ -45,7 +45,7 @@ jobs:
               reason="eligible pull request event"
             fi
           elif [[ "${EVENT_NAME}" == "issue_comment" ]]; then
-            if [[ "${COMMENT_BODY}" != "@junie-agent code-review" ]]; then
+            if [[ "${COMMENT_BODY}" != "/ai-review" ]]; then
               reason="comment is not an exact review command"
             elif [[ ! "${COMMENT_ASSOCIATION}" =~ ^(OWNER|MEMBER|COLLABORATOR)$ ]]; then
               reason="comment author is not trusted"
