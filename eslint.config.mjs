@@ -31,6 +31,8 @@ const eslintConfig = [
       "next-sitemap.config.js",
       "src/lib/guides/meta.cjs",
       "scripts/verify-guides-sitemap.js",
+      "scripts/openrouter-review/**/*.js",
+      "tests/unit/scripts/openrouter-review-*.test.js",
     ],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
