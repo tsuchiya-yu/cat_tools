@@ -129,7 +129,7 @@ E2E 詳細は `README-playwright.md` を参照してください。
 同一リポジトリ内のPRを作成・再オープン・Draft解除したとき、Junie GitHub Actionが日本語で参考レビューを投稿します。pushだけでは再実行されません。再レビューが必要な場合は、PRへ次のコメントを完全一致で投稿してください。
 
 ```text
-@junie-agent code-review
+/ai-review
 ```
 
 リポジトリ管理者は、PRレビュー専用のOpenRouter APIキーをRepository Secret `OPENROUTER_API_KEY`へ登録してください。キーは用途と費用を分離するため既存用途と共有せず、OpenRouter側で月額上限、利用モデル、Prompt / Response Logging、Zero Data Retentionを設定します。
