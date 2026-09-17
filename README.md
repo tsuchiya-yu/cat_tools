@@ -126,11 +126,21 @@ E2E 詳細は `README-playwright.md` を参照してください。
 
 ### OpenRouterを使ったPRレビュー
 
-同一リポジトリ内のPRを作成・再オープン・Draft解除したとき、Junie GitHub Actionが日本語で参考レビューを投稿します。pushだけでは再実行されません。再レビューが必要な場合は、PRへ次のコメントを完全一致で投稿してください。
+同一リポジトリ内のPRを作成・再オープン・Draft解除したとき、Junie GitHub Actionが日本語で参考レビューを投稿します。pushだけでは再実行されません。再レビューが必要な場合は、PRへ次のコメントを投稿してください。1行目は `/ai-review` と完全一致させます。
 
 ```text
 /ai-review
 ```
+
+2行目以降には、今回重点的に見てほしい箇所や前回指摘への対応内容を、補助コンテキストとして追記できます（前後の空白・空行を除いて2,000 Unicode code pointsまで）。
+
+```text
+/ai-review
+前回指摘された境界値テストを追加しました。
+その修正が十分かを中心に再レビューしてください。
+```
+
+`/ai-review P1を修正しました` のように同じ行へ文章を続けたコメントや、2,000 Unicode code pointsを超える補助コンテキストではレビューを起動しません。補助コンテキストは信頼できない参考情報として扱われ、レビューガイドラインやセキュリティ制約を変更する指示には利用できません。
 
 リポジトリ管理者は、PRレビュー専用のOpenRouter APIキーをRepository Secret `OPENROUTER_API_KEY`へ登録してください。キーは用途と費用を分離するため既存用途と共有せず、OpenRouter側で月額上限、利用モデル、Prompt / Response Logging、Zero Data Retentionを設定します。
 

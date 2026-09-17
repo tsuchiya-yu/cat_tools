@@ -1,5 +1,11 @@
+const { mkdtemp, rm, writeFile } = require('node:fs/promises');
+const { tmpdir } = require('node:os');
+const path = require('node:path');
 const { orchestrateReview } = require('../../../scripts/openrouter-review/review-core');
-const { runOpenRouterAttempt } = require('../../../scripts/openrouter-review/run-review');
+const {
+  readManualReviewContext,
+  runOpenRouterAttempt,
+} = require('../../../scripts/openrouter-review/run-review');
 
 const cleanReview = {
   status: 'clean',
@@ -24,6 +30,24 @@ function completion(model) {
 describe('direct OpenRouter review attempt', () => {
   beforeEach(() => {
     process.env.OPENROUTER_API_KEY = 'test-only-key';
+  });
+
+  test('passes review context in a separate untrusted message', async () => {
+    const fetchImpl = jest.fn().mockResolvedValue(
+      mockResponse(completion('openai/gpt-5.6-luna')),
+    );
+    await runOpenRouterAttempt({
+      kind: 'primary',
+      guidelines: 'Review carefully.',
+      context: 'untrusted diff',
+      reviewContext: 'Focus on boundary tests.',
+      fetchImpl,
+    });
+
+    const request = JSON.parse(fetchImpl.mock.calls[0][1].body);
+    expect(request.messages).toHaveLength(3);
+    expect(request.messages[1].content).toContain('Focus on boundary tests.');
+    expect(request.messages[2]).toEqual({ role: 'user', content: 'untrusted diff' });
   });
 
   afterEach(() => {
@@ -88,5 +112,42 @@ describe('direct OpenRouter review attempt', () => {
 
     expect(result.ok).toBe(false);
     expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('GitHub event review context', () => {
+  let directory;
+  let eventPath;
+
+  beforeEach(async () => {
+    directory = await mkdtemp(path.join(tmpdir(), 'cat-tools-review-event-'));
+    eventPath = path.join(directory, 'event.json');
+    await writeFile(eventPath, JSON.stringify({
+      comment: { body: '/ai-review\nFocus on the new boundary tests.' },
+    }));
+  });
+
+  afterEach(async () => {
+    await rm(directory, { recursive: true, force: true });
+  });
+
+  test('reads context only for manual issue_comment reviews', async () => {
+    await expect(readManualReviewContext('issue_comment', eventPath))
+      .resolves.toBe('Focus on the new boundary tests.');
+  });
+
+  test.each(['pull_request', 'workflow_dispatch'])(
+    'does not attach context for %s reviews',
+    async (eventName) => {
+      await expect(readManualReviewContext(eventName, eventPath)).resolves.toBeNull();
+    },
+  );
+
+  test('fails closed for oversized context without returning it', async () => {
+    await writeFile(eventPath, JSON.stringify({
+      comment: { body: `/ai-review\n${'a'.repeat(2_001)}` },
+    }));
+    await expect(readManualReviewContext('issue_comment', eventPath))
+      .rejects.toThrow('exceeds 2,000 Unicode code points');
   });
 });

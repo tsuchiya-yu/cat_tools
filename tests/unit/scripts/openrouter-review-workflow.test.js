@@ -97,4 +97,13 @@ describe('OpenRouter untrusted workflow input handling', () => {
     expect(runSection).toContain('--pull-number "${PULL_NUMBER}"');
     expect(runSection).not.toContain('${{ needs.authorize.outputs.pr_number }}');
   });
+
+  test('reads manual comments from the event file without exporting their body', () => {
+    expect(workflow).toContain("readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8')");
+    expect(workflow).toContain("command !== '/ai-review'");
+    expect(workflow).toContain('[...context].length > 2000');
+    expect(workflow).not.toContain('COMMENT_BODY:');
+    expect(workflow).not.toContain('review_context=');
+    expect(workflow).not.toContain('context=${{');
+  });
 });

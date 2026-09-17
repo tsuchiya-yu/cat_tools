@@ -7,6 +7,7 @@ const {
   buildReviewRequest,
   classifyFailure,
   orchestrateReview,
+  parseManualReviewComment,
   parseOpenRouterResponse,
 } = require('./review-core');
 
@@ -73,7 +74,28 @@ function getNetworkErrorCode(error) {
   return typeof value === 'string' ? value : undefined;
 }
 
-async function runOpenRouterAttempt({ kind, guidelines, context, fetchImpl = fetch }) {
+async function readManualReviewContext(eventName, eventPath) {
+  if (eventName !== 'issue_comment') return null;
+  if (!eventPath) throw new Error('missing GitHub event payload path');
+
+  const event = JSON.parse(await readFile(eventPath, 'utf8'));
+  const parsed = parseManualReviewComment(event?.comment?.body);
+  if (!parsed.ok) {
+    if (parsed.reason === 'context_too_large') {
+      throw new Error('manual review context exceeds 2,000 Unicode code points');
+    }
+    throw new Error('manual review command is invalid');
+  }
+  return parsed.reviewContext;
+}
+
+async function runOpenRouterAttempt({
+  kind,
+  guidelines,
+  context,
+  reviewContext = null,
+  fetchImpl = fetch,
+}) {
   const model = MODELS[kind];
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), ATTEMPT_TIMEOUT_MS);
@@ -89,7 +111,7 @@ async function runOpenRouterAttempt({ kind, guidelines, context, fetchImpl = fet
         'HTTP-Referer': 'https://github.com/tsuchiya-yu/cat_tools',
         'X-Title': 'cat_tools PR Review',
       },
-      body: JSON.stringify(buildReviewRequest({ model, guidelines, context })),
+      body: JSON.stringify(buildReviewRequest({ model, guidelines, context, reviewContext })),
       signal: controller.signal,
     });
     rawBody = await response.text();
@@ -124,6 +146,10 @@ async function main() {
   const baseRef = readArg('--base-ref');
   const headSha = readArg('--head-sha');
   const resultFile = path.resolve(readArg('--result-file'));
+  const reviewContext = await readManualReviewContext(
+    process.env.GITHUB_EVENT_NAME,
+    process.env.GITHUB_EVENT_PATH,
+  );
 
   let context;
   try {
@@ -140,7 +166,7 @@ async function main() {
   const guidelines = await readFile(path.join(trustedRoot, '.junie', 'guidelines.md'), 'utf8');
 
   const outcome = await orchestrateReview((kind) =>
-    runOpenRouterAttempt({ kind, guidelines, context }),
+    runOpenRouterAttempt({ kind, guidelines, context, reviewContext }),
   );
 
   const attemptSummary = outcome.attempts.map((attempt) => ({
@@ -175,4 +201,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { buildReviewContext, runOpenRouterAttempt };
+module.exports = { buildReviewContext, readManualReviewContext, runOpenRouterAttempt };
