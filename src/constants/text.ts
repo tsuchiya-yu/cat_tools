@@ -1625,6 +1625,11 @@ export const WATER_INTAKE_UI_TEXT = {
       '異常が続く場合は受診を推奨します。',
     ],
   },
+  SHARE: {
+    TEXT: (min: string, max: string) =>
+      `うちの猫の器からの飲水目安は、1日${min}〜${max}mLでした🐾`,
+    X_HASHTAGS: ['#ねこツールズ', '#猫の給水量計算'] as const,
+  },
   SUPPLEMENTARY: {
     RESULT_GUIDE: {
       TITLE: '計算結果の見方',
