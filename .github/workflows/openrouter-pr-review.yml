@@ -32,7 +32,6 @@ jobs:
         id: authorize
         env:
           COMMENT_ASSOCIATION: ${{ github.event.comment.author_association }}
-          COMMENT_BODY: ${{ github.event.comment.body }}
           EVENT_NAME: ${{ github.event_name }}
           GH_TOKEN: ${{ github.token }}
           INPUT_PR_NUMBER: ${{ inputs.pr_number }}
@@ -69,8 +68,30 @@ jobs:
               reason="eligible pull request event"
             fi
           elif [[ "${EVENT_NAME}" == "issue_comment" ]]; then
-            if [[ "${COMMENT_BODY}" != "/ai-review" ]]; then
-              reason="comment is not an exact review command"
+            comment_status="$(node <<'NODE'
+          const { readFileSync } = require('node:fs');
+          const event = JSON.parse(readFileSync(process.env.GITHUB_EVENT_PATH, 'utf8'));
+          const body = event?.comment?.body;
+          if (typeof body !== 'string') {
+            process.stdout.write('invalid_command');
+            process.exit();
+          }
+          const [command, ...contextLines] = body.split(/\r?\n/);
+          const context = contextLines.join('\n').trim();
+          if (command !== '/ai-review') {
+            process.stdout.write('invalid_command');
+          } else if ([...context].length > 2000) {
+            process.stdout.write('context_too_large');
+          } else {
+            process.stdout.write('valid');
+          }
+          NODE
+            )"
+
+            if [[ "${comment_status}" == "invalid_command" ]]; then
+              reason="comment does not start with an exact review command"
+            elif [[ "${comment_status}" == "context_too_large" ]]; then
+              reason="manual review context exceeds the limit"
             elif [[ ! "${COMMENT_ASSOCIATION}" =~ ^(OWNER|MEMBER|COLLABORATOR)$ ]]; then
               reason="comment author is not trusted"
             elif [[ -z "${ISSUE_NUMBER}" ]]; then
