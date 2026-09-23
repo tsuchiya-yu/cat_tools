@@ -659,7 +659,6 @@ export const CAT_BCS_CHECK_UI_TEXT = {
     ALT: '環境省資料をもとにした猫のボディコンディションスコア（BCS）1〜5の参考図',
     CREDIT_PREFIX: '出典: ',
     SOURCE_LABEL: '環境省「飼い主のためのペットフード・ガイドライン」',
-    CREDIT_SUFFIX: 'をWeb表示用に切り出し・形式変換して、ねこツールズ作成',
     SOURCE_URL:
       'https://www.env.go.jp/nature/dobutsu/aigo/2_data/pamph/petfood_guide_1808/pdf/6.pdf',
   },
