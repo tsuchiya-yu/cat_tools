@@ -59,7 +59,7 @@
 | `bombay` | [TICA: Bombay](https://tica.org/breed/bombay/) | `medium` | `short` |
 | `munchkin` | [TICA: Munchkin](https://tica.org/breed/munchkin/) | `medium` | `short` |
 | `minuet` | [TICA: Minuet](https://tica.org/breed/minuet/) | `medium` | `short` |
-| `maine-coon` | [TICA: Maine Coon](https://tica.org/breed/maine-coon/) | `large` | `long` |
+| `maine-coon` | [TICA: Maine Coon](https://tica.org/breed/maine-coon/) | `large` | `medium` |
 | `ragamuffin` | [CFA: Ragamuffin](https://cfa.org/breed/ragamuffin/) | `large` | `long` |
 | `ragdoll` | [TICA: Ragdoll](https://tica.org/breed/ragdoll/) | `large` | `medium` |
 | `laperm` | [TICA: LaPerm](https://tica.org/breed/laperm/) | `medium` | `medium` |
@@ -82,9 +82,9 @@
 | ミヌエット | `short` | TICA の Minuet に対応。Longhair も存在する。 |
 | ラパーマ | `medium` | TICA の LaPerm に対応する長毛側の、中程度から長めの巻き毛。LaPerm Shorthair も存在する。 |
 
-ベンガルも TICA には Bengal Longhair が別にあるが、本マスタは同名の Bengal に対応する短毛を採用する。ノルウェージャンフォレストキャット、サイベリアン、バーマン、ソマリ、ターキッシュバン、ターキッシュアンゴラ、ネベロング、ラグドール等の `medium` は、資料のセミロング・中長毛の記述による。バリニーズは [CFA の標準](https://cfa.org/breed/balinese/)でも中程度の長さ、尾が最も長いと記述されるため `medium` とする。
+ベンガルも TICA には Bengal Longhair が別にあるが、本マスタは同名の Bengal に対応する短毛を採用する。メインクーン、ノルウェージャンフォレストキャット、サイベリアン、バーマン、ソマリ、ターキッシュバン、ターキッシュアンゴラ、ネベロング、ラグドール等の `medium` は、資料のセミロング・中長毛の記述による。バリニーズは [CFA の標準](https://cfa.org/breed/balinese/)でも中程度の長さ、尾が最も長いと記述されるため `medium` とする。
 
-スフィンクスの `hairless` は無毛型の外見の区分であり、産毛まで完全にないという意味ではない。メインクーンとラガマフィンは主参照先の長毛の紹介に合わせて `long` としたが、部位で長さが異なる。
+スフィンクスの `hairless` は無毛型の外見の区分であり、産毛まで完全にないという意味ではない。ラガマフィンは主参照先の長毛の紹介に合わせて `long` としたが、部位で長さが異なる。
 
 ## 由来・名称・分類の補足
 

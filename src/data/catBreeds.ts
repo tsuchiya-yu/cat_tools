@@ -413,7 +413,7 @@ export const catBreeds: readonly CatBreed[] = [
     sortKeyJa: 'めいんくうん',
     origin: 'アメリカ',
     size: 'large',
-    coatLength: 'long',
+    coatLength: 'medium',
     summary: '長い胴体と幅のある胸を持つ大型の猫種です。豊かな尾や大きな耳、足先の房毛が特徴で、長さに変化のある被毛ががっしりした体を覆い、全体に力強い姿をしています。',
   },
   {
