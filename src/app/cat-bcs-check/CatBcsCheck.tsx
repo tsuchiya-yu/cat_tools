@@ -424,7 +424,7 @@ export default function CatBcsCheck() {
 
       <section className="section mt-6">
         <p className="eyebrow text-sm tracking-wider uppercase text-pink-600 mt-6">{text.HEADER.EYECATCH}</p>
-        <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0 text-balance">
+        <h1 className="text-3xl md:text-4xl leading-tight font-bold mt-1.5 mb-0 text-pretty">
           {text.HEADER.TITLE}
         </h1>
         <p className="lead text-sm text-gray-600 mt-2.5 mb-6 leading-relaxed text-pretty">
